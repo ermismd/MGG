@@ -25,11 +25,11 @@ In these GH-pages the progress of the development will be periodically updated.
 * Finalized GitHub pages for the GSoC project
 * Set Up the Environment
 * Created mock apps for training using OSGI services and Maven
-<br><br>
+
 
 
 * * *
-<br><br>
+
 
 
 ## Coding Period
