@@ -14,9 +14,12 @@ It will facilitate the visualization and exploration of annotated microbial netw
 In these GH-pages the progress of the development will be periodically updated.
 
 
+
  * * *
  
-### Preparation/Bonding Period<br><br>
+ 
+ 
+## Preparation/Bonding Period<br><br>
 
 * Understanding StringApp, scNetViz
 * Finalized GitHub pages for the GSoC project
@@ -28,9 +31,11 @@ In these GH-pages the progress of the development will be periodically updated.
 * * *
 <br><br>
 
-### Coding Period
 
-#### Week 1 & 2
+## Coding Period
+
+
+### Week 1 & 2
 
 1.  Forked scNetViz 
              - Renamed to MGG
@@ -39,24 +44,14 @@ In these GH-pages the progress of the development will be periodically updated.
 4.  Load and read an abudance table in the app
  
 
-
-#### Week 3 & 4
-
-1.  SOON tm
-2.  SOON tm
-3.  SOON tm
-
-
-
-#### Week 5 & 6
+### Week 3 & 4
 
 1.  SOON tm
 2.  SOON tm
 3.  SOON tm
-4.  SOON tm
 
 
-#### Week 7 & 8
+### Week 5 & 6
 
 1.  SOON tm
 2.  SOON tm
@@ -64,8 +59,15 @@ In these GH-pages the progress of the development will be periodically updated.
 4.  SOON tm
 
 
-#### Week 9 & 10
+### Week 7 & 8
 
+1.  SOON tm
+2.  SOON tm
+3.  SOON tm
+4.  SOON tm
+
+
+### Week 9 & 10
 
 1. SOON tm
 2. SOON tm
@@ -73,7 +75,7 @@ In these GH-pages the progress of the development will be periodically updated.
 4. SOON tm
 
 
-#### Week 11 & 12
+### Week 11 & 12
 
 - SOON tm
   - SUB-SOON tm
