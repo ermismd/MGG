@@ -14,13 +14,11 @@ It will facilitate the visualization and exploration of annotated microbial netw
 In these GH-pages the progress of the development will be periodically updated.
 
 
-
-
  * * *
  
 ### Preparation/Bonding Period<br><br>
 
-* Understanding StringApp
+* Understanding StringApp, scNetViz
 * Finalized GitHub pages for the GSoC project
 * Set Up the Environment
 * Created mock apps for training using OSGI services and Maven
@@ -29,15 +27,17 @@ In these GH-pages the progress of the development will be periodically updated.
 
 * * *
 <br><br>
+
 ### Coding Period
 
 #### Week 1 & 2
 
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-
-
+1.  Forked scNetViz 
+             - Renamed to MGG
+2.  Created new Github pages to keep track of progress
+3.  Refactor the app      
+4.  Load and read an abudance table in the app
+ 
 
 
 #### Week 3 & 4
@@ -50,55 +50,49 @@ In these GH-pages the progress of the development will be periodically updated.
 
 #### Week 5 & 6
 
-| etc           |   etc             | three |
-|:-------------|:------------------|:--------|
-| ok           | example           | example |
-| ok           | example           | example |
-| ok           | example           | example |
-| ok           | example           | example |
-
-
-
+1.  SOON tm
+2.  SOON tm
+3.  SOON tm
+4.  SOON tm
 
 
 #### Week 7 & 8
 
-*   Progress
-*   Progress
-*   Progress
-*   Progress 
+1.  SOON tm
+2.  SOON tm
+3.  SOON tm
+4.  SOON tm
 
 
 #### Week 9 & 10
 
-*  Progress
-*  Progress 
-*  Progress
-*  Progress
+
+1. SOON tm
+2. SOON tm
+3. SOON tm
+4. SOON tm
 
 
 #### Week 11 & 12
 
-- Progress
-  - sub-Progress
-  - sub-Progress
-    - sub-Progress
-    - sub-Progress
-- Progress
-  - sub-Progress
-  - sub-Progress
-  - sub-Progress
-- Progress
-  - sub-Progress
-  - sub-Progress
-- Progress
+- SOON tm
+  - SUB-SOON tm
+    - SUB-SUB-SOON tm
+- SOON tm
+  - SUB-SOON tm
+  - SUB-SOON tm
+  - SUB-SOON tm
+- SOON tm
+  - SUB-SOON tm
+  - SUB-SOON tm
+- SOON tm
 
 * * *
 
+
+
+
 |<img src="assets/img/triangle.png" width="50">|
-
-
-
 
 * * *
 [Link to another page](./another-page.html).
