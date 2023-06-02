@@ -42,9 +42,9 @@ In these GH-pages the progress of the development will be periodically updated.
 
 #### Week 3 & 4
 
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
+1.  SOON tm
+2.  SOON tm
+3.  SOON tm
 
 
 
