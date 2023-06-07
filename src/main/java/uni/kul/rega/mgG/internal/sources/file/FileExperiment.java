@@ -33,14 +33,14 @@ import uni.kul.rega.mgG.internal.api.Experiment;
 import uni.kul.rega.mgG.internal.api.Matrix;
 import uni.kul.rega.mgG.internal.api.Metadata;
 import uni.kul.rega.mgG.internal.api.Source;
-import uni.kul.rega.mgG.internal.model.DifferentialExpression;
+//import uni.kul.rega.mgG.internal.model.DifferentialExpression;
 import uni.kul.rega.mgG.internal.model.MatrixMarket;
 import uni.kul.rega.mgG.internal.model.ScNVManager;
 import uni.kul.rega.mgG.internal.utils.CSVReader;
 import uni.kul.rega.mgG.internal.utils.CSVWriter;
 import uni.kul.rega.mgG.internal.utils.FileUtils;
 import uni.kul.rega.mgG.internal.utils.HTTPUtils;
-import uni.kul.rega.mgG.internal.utils.ModelUtils;
+//import uni.kul.rega.mgG.internal.utils.ModelUtils;
 
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -53,9 +53,9 @@ public class FileExperiment implements Experiment {
 	List<String[]> rowTable = null;
 	List<String[]> colTable = null;
 	MatrixMarket mtx = null;
-	final List<Category> categories;
-	double[][] tSNE;
-	String plotType = null;
+	//final List<Category> categories;
+	//double[][] tSNE;
+	//String plotType = null;
 	// GXACluster fileCluster = null;
 	// GXAIDF fileIDF = null;
 	// GXADesign fileDesign = null;
@@ -64,7 +64,7 @@ public class FileExperiment implements Experiment {
 	final FileExperiment fileExperiment;
 	final FileSource source;
 	final FileMetadata fileMetadata;
-	DifferentialExpression diffExp = null;
+	//DifferentialExpression diffExp = null;
 	FileExperimentTableModel tableModel = null;
 
 	int rowIndexKey = 1;
@@ -79,7 +79,7 @@ public class FileExperiment implements Experiment {
 		this.source = source;
 		this.fileMetadata = metadata;
 		this.accession = metadata.get(Metadata.ACCESSION).toString();
-		categories = new ArrayList<Category>();
+		//categories = new ArrayList<Category>();
 	}
 
 	public Matrix getMatrix() { return mtx; }
@@ -91,39 +91,39 @@ public class FileExperiment implements Experiment {
 	// public GXACluster getClusters() { return fileCluster; }
 	// public GXADesign getDesign() { return fileDesign; }
 
-	public List<Category> getCategories() { return categories; }
+	//public List<Category> getCategories() { return categories; }
 
-	public Category getCategory(String categoryName) { 
-		for (Category cat: categories) {
-			if (cat.toString().equals(categoryName))
-				return cat;
-		}
-		return null;
-	}
+//	public Category getCategory(String categoryName) { 
+//		for (Category cat: categories) {
+//			if (cat.toString().equals(categoryName))
+//				return cat;
+//		}
+//		return null;
+//	}
 
-	public void addCategory(Category c) { categories.add(c); }
+	//public void addCategory(Category c) { categories.add(c); }
 
-	public Category getDefaultCategory() { 
-		if (categories.size() > 0)
-			return categories.get(0); 
-		return null;
-	}
+//	public Category getDefaultCategory() { 
+//		if (categories.size() > 0)
+//			return categories.get(0); 
+//		return null;
+//	}
 
-	@Override
-	public void setTSNE(double[][] tsne) {
-		tSNE = tsne;
-	}
+//	@Override
+//	public void setTSNE(double[][] tsne) {
+//		tSNE = tsne;
+//	}
+//
+//	@Override
+//	public double[][] getTSNE() {
+//		return tSNE;
+//	}
 
-	@Override
-	public double[][] getTSNE() {
-		return tSNE;
-	}
-
-	@Override
-	public void setPlotType(String type) { this.plotType = type; }
-
-	@Override
-	public String getPlotType() { return plotType; }
+//	@Override
+//	public void setPlotType(String type) { this.plotType = type; }
+//
+//	@Override
+//	public String getPlotType() { return plotType; }
 
 	public Metadata getMetadata() { return fileMetadata; }
 
@@ -137,8 +137,8 @@ public class FileExperiment implements Experiment {
 		return tableModel;
 	}
 
-	public DifferentialExpression getDiffExp() { return diffExp; }
-	public void setDiffExp(DifferentialExpression de) { diffExp = de; }
+	//public DifferentialExpression getDiffExp() { return diffExp; }
+	//public void setDiffExp(DifferentialExpression de) { diffExp = de; }
 
 	public void readMTX (final TaskMonitor monitor, boolean skipFirst) {
 		// Initialize
@@ -270,18 +270,18 @@ public class FileExperiment implements Experiment {
 		builder.append("\"metadata\": "+fileMetadata.toJSON()+",\n");
 		builder.append("\"rows\": "+getMatrix().getNRows()+",\n");
 		builder.append("\"columns\": "+getMatrix().getNCols()+",\n");
-		List<Category> categories = getCategories();
+		//List<Category> categories = getCategories();
 		builder.append("\"categories\": [");
-		int nCat = categories.size();
-		for (Category cat: categories) {
-			builder.append(cat.toJSON());
-			if (nCat-- > 1) builder.append(",\n");
-		}
+		//int nCat = categories.size();
+		//for (Category cat: categories) {
+			//builder.append(cat.toJSON());
+			//if (nCat-- > 1) builder.append(",\n");
+		//}
 		builder.append("]");
-		if (diffExp != null) {
-			builder.append(",\""+ScNVManager.DIFFEXP+"\":");
-			builder.append(diffExp.toJSON()+"\n");
-		}
+		//if (diffExp != null) {
+			//builder.append(",\""+ScNVManager.DIFFEXP+"\":");
+			//builder.append(diffExp.toJSON()+"\n");
+		//}
 		builder.append("}");
 		return builder.toString();
 	}
@@ -328,69 +328,69 @@ public class FileExperiment implements Experiment {
 			return;
 		}
 
-		// Save each Category as a CSV
-		for (Category cat: categories) {
-			try {
-				String catPrefix = URLEncoder.encode(expPrefix+"."+cat.getSource().getName()+"."+cat.toString());
-				File catFile = new File(tmpDir, catPrefix+".csv");
-				cat.saveFile(catFile);
-				files.add(catFile);
-			} catch (Exception e) {
-				logger.error("Unable to save categtory data for "+accession+" "+cat+" in session: "+e.toString());
-				e.printStackTrace();
-			}
-		}
+//		// Save each Category as a CSV
+//		for (Category cat: categories) {
+//			try {
+//				String catPrefix = URLEncoder.encode(expPrefix+"."+cat.getSource().getName()+"."+cat.toString());
+//				File catFile = new File(tmpDir, catPrefix+".csv");
+//				cat.saveFile(catFile);
+//				files.add(catFile);
+//			} catch (Exception e) {
+//				logger.error("Unable to save categtory data for "+accession+" "+cat+" in session: "+e.toString());
+//				e.printStackTrace();
+//			}
+//		}
 
 		// Save the current DiffExp as a CSV
-		if (diffExp != null) {
-			try {
-				String dePrefix = URLEncoder.encode(expPrefix+".diffExp");
-				File deFile = new File(tmpDir, dePrefix+".csv");
-				diffExp.saveFile(deFile);
-				files.add(deFile);
-			} catch (Exception e) {
-				logger.error("Unable to save differential expression results for "+diffExp.toString()+" in session: "+e.toString());
-				e.printStackTrace();
-			}
-		}
+		//if (diffExp != null) {
+			//try {
+				//String dePrefix = URLEncoder.encode(expPrefix+".diffExp");
+				//File deFile = new File(tmpDir, dePrefix+".csv");
+				//diffExp.saveFile(deFile);
+			//	files.add(deFile);
+			//} catch (Exception e) {
+			//	logger.error("Unable to save differential expression results for "+diffExp.toString()+" in session: "+e.toString());
+				//e.printStackTrace();
+			//}
+		//}
 	}
 
 
-	public FileCategory loadCategoryFromSession(JSONObject jsonCategory, Map<String,File>fileMap) throws Exception {
-    File catFile = null;
-    String catName = URLEncoder.encode((String)jsonCategory.get("name")+".csv");
-    for (String fileName: fileMap.keySet()) {
-      if (fileName.endsWith(catName)) {
-        catFile = fileMap.get(fileName);
-        break;
-      }
-    }
-    if (catFile == null) {
-      throw new Exception ("Can't find category file for "+(String)jsonCategory.get("name"));
-    }
+//	public FileCategory loadCategoryFromSession(JSONObject jsonCategory, Map<String,File>fileMap) throws Exception {
+//    File catFile = null;
+//    String catName = URLEncoder.encode((String)jsonCategory.get("name")+".csv");
+//    for (String fileName: fileMap.keySet()) {
+//      if (fileName.endsWith(catName)) {
+//        catFile = fileMap.get(fileName);
+//        break;
+//      }
+//    }
+//    if (catFile == null) {
+//      throw new Exception ("Can't find category file for "+(String)jsonCategory.get("name"));
+//    }
+//
+//    FileCategory cat = FileCategory.fetchCategory(scNVManager, this, catFile, (String)jsonCategory.get("type"), 
+//                                                  (String)jsonCategory.get("name"), false, 1, 0, false, null);
+//    addCategory(cat);
+//    return cat;
+//  }
 
-    FileCategory cat = FileCategory.fetchCategory(scNVManager, this, catFile, (String)jsonCategory.get("type"), 
-                                                  (String)jsonCategory.get("name"), false, 1, 0, false, null);
-    addCategory(cat);
-    return cat;
-  }
-
-	public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Map<String, File> fileMap) throws IOException {
-		// Get the file
-		String deFileName = URLEncoder.encode(source.getName()+"."+accession+".diffExp")+".csv";
-		if (fileMap.containsKey(deFileName)) {
-			File deFile = fileMap.get(deFileName);
-			try {
-				diffExp = new DifferentialExpression(scNVManager, this, jsonDiffExp, deFile);
-			} catch (Exception e) {
-				logger.error("Unable to read differential expression data for "+accession+" in session: "+e.toString());
-				e.printStackTrace();
-				return null;
-			}
-			return diffExp;
-		}
-		return null;
-	}
+//	public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Map<String, File> fileMap) throws IOException {
+//		// Get the file
+//		String deFileName = URLEncoder.encode(source.getName()+"."+accession+".diffExp")+".csv";
+//		if (fileMap.containsKey(deFileName)) {
+//			File deFile = fileMap.get(deFileName);
+//			try {
+//				diffExp = new DifferentialExpression(scNVManager, this, jsonDiffExp, deFile);
+//			} catch (Exception e) {
+//				logger.error("Unable to read differential expression data for "+accession+" in session: "+e.toString());
+//				e.printStackTrace();
+//				return null;
+//			}
+//			return diffExp;
+//		}
+//		return null;
+//	}
 
 	public boolean isColumnFile(String fileName) {
 		String name = FileUtils.baseName(fileName);

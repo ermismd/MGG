@@ -16,15 +16,15 @@ import uni.kul.rega.mgG.internal.api.Experiment;
 import uni.kul.rega.mgG.internal.api.Metadata;
 
 public class FileUtils {
-	public static void skipHeader(List<String[]> table) {
-		if ((table.size() > 0) && (table.get(0).length > 1) && 
-		    !ModelUtils.isInteger(table.get(0)[0])) {
-			// It is -- skip it
-			System.out.println("Skipping header");
-			table.remove(0);
-		}
-		return;
-	}
+//	public static void skipHeader(List<String[]> table) {
+//		if ((table.size() > 0) && (table.get(0).length > 1) && 
+//		    !ModelUtils.isInteger(table.get(0)[0])) {
+//			// It is -- skip it
+//			System.out.println("Skipping header");
+//			table.remove(0);
+//		}
+//		return;
+//	}
 
 	public static boolean isTar(String fileName) {
 		if (fileName.endsWith(".tar") || fileName.endsWith(".tgz") || fileName.endsWith(".tar.gz"))

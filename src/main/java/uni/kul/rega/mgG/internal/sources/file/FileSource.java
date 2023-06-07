@@ -18,11 +18,11 @@ import uni.kul.rega.mgG.internal.api.Category;
 import uni.kul.rega.mgG.internal.api.Experiment;
 import uni.kul.rega.mgG.internal.api.Metadata;
 import uni.kul.rega.mgG.internal.api.Source;
-import uni.kul.rega.mgG.internal.model.DifferentialExpression;
+
 import uni.kul.rega.mgG.internal.model.ScNVManager;
-import uni.kul.rega.mgG.internal.sources.file.tasks.FileCategoryTaskFactory;
+
 import uni.kul.rega.mgG.internal.sources.file.tasks.FileExperimentTaskFactory;
-import uni.kul.rega.mgG.internal.tasks.ShowExperimentTableTaskFactory;
+//import uni.kul.rega.mgG.internal.tasks.ShowExperimentTableTaskFactory;
 import uni.kul.rega.mgG.internal.utils.HTTPUtils;
 
 import org.cytoscape.application.CyUserLog;
@@ -76,18 +76,19 @@ public class FileSource implements Source {
 			scNVManager.registerService(new FileExperimentTaskFactory(manager, this), TaskFactory.class, props);
 		}
 
-		{
-			Properties props = new Properties();
-			props.put(TITLE, "Import from file...");
-			props.put(PREFERRED_MENU, "Apps.scNetViz.Add Category[100.1]");
-			props.setProperty(IN_TOOL_BAR, "FALSE");
-			props.setProperty(IN_MENU_BAR, "TRUE");
-			props.setProperty(MENU_GRAVITY, "100.0");
-			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-			props.setProperty(COMMAND_DESCRIPTION, "Add a category to an experiment from a file");
-			props.setProperty(COMMAND, "add file category");
-			scNVManager.registerService(new FileCategoryTaskFactory(manager, this), TaskFactory.class, props);
-		}
+		
+//		{
+//			Properties props = new Properties();
+//			props.put(TITLE, "Import from file...");
+//			props.put(PREFERRED_MENU, "Apps.scNetViz.Add Category[100.1]");
+//			props.setProperty(IN_TOOL_BAR, "FALSE");
+//			props.setProperty(IN_MENU_BAR, "TRUE");
+//			props.setProperty(MENU_GRAVITY, "100.0");
+//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
+//			props.setProperty(COMMAND_DESCRIPTION, "Add a category to an experiment from a file");
+//			props.setProperty(COMMAND, "add file category");
+//			scNVManager.registerService(new FileCategoryTaskFactory(manager, this), TaskFactory.class, props);
+//	}
 		
 	}
 
@@ -145,32 +146,32 @@ public class FileSource implements Source {
 		return exp;
 	}
 
-	public Category loadCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String, File> fileMap) {
-		if (experiment instanceof FileExperiment) {
-			Category category = null;
-			try {
-				category = ((FileExperiment)experiment).loadCategoryFromSession(jsonCategory, fileMap);
-			} catch (Exception e) {
-				logger.error("Unable to load category from session: "+e.toString());
-				return null;
-			}
-			return category;
-		} else {
-      logger.error("Not a FileExperiment!");
-      System.out.println("Not a FileExperiment!");
-    }
+//	public Category loadCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String, File> fileMap) {
+//		if (experiment instanceof FileExperiment) {
+//			Category category = null;
+//			try {
+//				category = ((FileExperiment)experiment).loadCategoryFromSession(jsonCategory, fileMap);
+//			} catch (Exception e) {
+//				logger.error("Unable to load category from session: "+e.toString());
+//				return null;
+//			}
+//			return category;
+//		} else {
+//      logger.error("Not a FileExperiment!");
+//      System.out.println("Not a FileExperiment!");
+//    }
 
-		return null;
-	}
+	//	return null;
+	//}
 
-	public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String, File> fileMap) {
-    DifferentialExpression diffExp = null;
-    try {
-      diffExp = ((FileExperiment)experiment).loadDiffExpFromSession(jsonDiffExp, fileMap);
-    } catch (Exception e) {
-      logger.error("Unable to load differential expression from session: "+e.toString());
-      return null;
-    }
-    return diffExp;
-	}
+//	public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String, File> fileMap) {
+//    DifferentialExpression diffExp = null;
+//    try {
+//      diffExp = ((FileExperiment)experiment).loadDiffExpFromSession(jsonDiffExp, fileMap);
+//    } catch (Exception e) {
+//      logger.error("Unable to load differential expression from session: "+e.toString());
+//      return null;
+//    }
+//    return diffExp;
+//	}
 }

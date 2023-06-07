@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.simple.JSONObject;
 
-import uni.kul.rega.mgG.internal.model.DifferentialExpression;
+//import uni.kul.rega.mgG.internal.model.DifferentialExpression;
 
 public interface Source {
 	public static String SOURCENAME = "name";
@@ -14,6 +14,6 @@ public interface Source {
 	public List<Metadata> getMetadata();
 	public Experiment getExperiment(String accession);
 	public Experiment loadExperimentFromSession(JSONObject jsonExperiment, Map<String,File> fileMap);
-	public Category loadCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String,File> fileMap);
-	public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String,File> fileMap);
+	//public Category loadCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String,File> fileMap);
+	//public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String,File> fileMap);
 }

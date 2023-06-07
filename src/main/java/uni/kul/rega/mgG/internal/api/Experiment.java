@@ -4,29 +4,29 @@ import java.io.File;
 import java.util.List;
 import javax.swing.table.TableModel;
 
-import uni.kul.rega.mgG.internal.model.DifferentialExpression;
+//import uni.kul.rega.mgG.internal.model.DifferentialExpression;
 
 public interface Experiment {
 	public Source getSource();
 	public Matrix getMatrix();
-	public List<Category> getCategories();
-	public Category getCategory(String categoryName);
+	//public List<Category> getCategories();
+	//public Category getCategory(String categoryName);
 	public Metadata getMetadata();
-	public void addCategory(Category category);
-	public String getSpecies();
+	//public void addCategory(Category category);
+	//public String getSpecies();
 
-	public Category getDefaultCategory();
+	//public Category getDefaultCategory();
 
-	public DifferentialExpression getDiffExp();
-	public void setDiffExp(DifferentialExpression expr);
+	//public DifferentialExpression getDiffExp();
+	//public void setDiffExp(DifferentialExpression expr);
 
 	public String toJSON();
 	public String toHTML();
 
-	public double[][] getTSNE();
-	public void setTSNE(double[][] tnse);
-	public String getPlotType();
-	public void setPlotType(String type);
+	//public double[][] getTSNE();
+	//public void setTSNE(double[][] tnse);
+	//public String getPlotType();
+	//public void setPlotType(String type);
 
 	// For efficiency purposes, sometimes implementations
 	// of Experiment might want to provide their own

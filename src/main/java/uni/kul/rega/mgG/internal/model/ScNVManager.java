@@ -25,11 +25,11 @@ import uni.kul.rega.mgG.internal.api.Category;
 import uni.kul.rega.mgG.internal.api.Experiment;
 import uni.kul.rega.mgG.internal.api.Metadata;
 import uni.kul.rega.mgG.internal.api.Source;
-import uni.kul.rega.mgG.internal.tasks.ShowResultsPanelTask;
+//import uni.kul.rega.mgG.internal.tasks.ShowResultsPanelTask;
 import uni.kul.rega.mgG.internal.utils.LogUtils;
-import uni.kul.rega.mgG.internal.utils.ModelUtils;
-import uni.kul.rega.mgG.internal.view.ExperimentFrame;
-import uni.kul.rega.mgG.internal.view.ScNVCytoPanel;
+//import uni.kul.rega.mgG.internal.utils.ModelUtils;
+//import uni.kul.rega.mgG.internal.view.ExperimentFrame;
+//import uni.kul.rega.mgG.internal.view.ScNVCytoPanel;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
@@ -60,10 +60,10 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 
 	final Map<String, Experiment> experimentMap;
 	final Map<String, Source> sourceMap;
-	final Map<Experiment, ExperimentFrame> frameMap;
+	//final Map<Experiment, ExperimentFrame> frameMap;
 	final CyServiceRegistrar registrar; 
 	final ScNVSettings settings;
-	private ScNVCytoPanel cytoPanel;
+	//private ScNVCytoPanel cytoPanel;
 	private Icon scNetVizIcon;
 
 	public final static String APP_NAME = "edu.ucsf.rbvi.scNetViz";
@@ -76,7 +76,7 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 	public ScNVManager(final CyServiceRegistrar registrar) {
 		experimentMap = new HashMap<>();
 		sourceMap = new HashMap<>();
-		frameMap = new HashMap<>();
+		//frameMap = new HashMap<>();
 		this.registrar = registrar;
 		this.availableCommands = registrar.getService(AvailableCommands.class);
 		this.ceTaskFactory = registrar.getService(CommandExecutorTaskFactory.class);
@@ -113,19 +113,19 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 		if (experimentMap.containsKey(accession)) {
 			Experiment exp = experimentMap.get(accession);
 			experimentMap.remove(accession);
-			if (frameMap.containsKey(exp)) {
-				frameMap.get(exp).dispose();
-				frameMap.remove(exp);
+			//if (frameMap.containsKey(exp)) {
+				//frameMap.get(exp).dispose();
+				//frameMap.remove(exp);
 			}
 
 			//TODO: what about results panel?
-			if (cytoPanel != null) {
-				if (cytoPanel.getExperiment().equals(exp)) {
-					unregisterService(cytoPanel, CytoPanelComponent.class);
-					cytoPanel = null;
-				}
-			}
-		}
+			//if (cytoPanel != null) {
+			//	if (cytoPanel.getExperiment().equals(exp)) {
+					//unregisterService(cytoPanel, CytoPanelComponent.class);
+					//cytoPanel = null;
+				//}
+			//}
+		//}
 	}
 
 	public Experiment getExperiment(String accession) {
@@ -141,41 +141,41 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 		return experimentMap.keySet();
 	}
 
-	public void addExperimentFrame(Experiment experiment, ExperimentFrame expFrame) {
-		frameMap.put(experiment, expFrame);
-	}
+	//public void addExperimentFrame(Experiment experiment, ExperimentFrame expFrame) {
+		//frameMap.put(experiment, expFrame);
+	//}
 
-	public ExperimentFrame getExperimentFrame(Experiment experiment) {
-		return frameMap.get(experiment);
-	}
+	//public ExperimentFrame getExperimentFrame(Experiment experiment) {
+	//	return frameMap.get(experiment);
+	//}
 
-	public String getSetting(ScNVSettings.SETTING setting) {
-		return settings.getSetting(setting);
-	}
+//	public String getSetting(ScNVSettings.SETTING setting) {
+//		return settings.getSetting(setting);
+//	}
+//
+//	public void setSetting(ScNVSettings.SETTING setting, double value) {
+//		setSetting(setting, String.valueOf(value));
+//	}
+//
+//	public void setSetting(ScNVSettings.SETTING setting, int value) {
+//		setSetting(setting, String.valueOf(value));
+//	}
+//
+//	public void setSetting(ScNVSettings.SETTING setting, boolean value) {
+//		setSetting(setting, String.valueOf(value));
+//	}
+//
+//	public void setSetting(ScNVSettings.SETTING setting, String value) {
+//		settings.setSetting(setting, value);
+//	}
 
-	public void setSetting(ScNVSettings.SETTING setting, double value) {
-		setSetting(setting, String.valueOf(value));
-	}
-
-	public void setSetting(ScNVSettings.SETTING setting, int value) {
-		setSetting(setting, String.valueOf(value));
-	}
-
-	public void setSetting(ScNVSettings.SETTING setting, boolean value) {
-		setSetting(setting, String.valueOf(value));
-	}
-
-	public void setSetting(ScNVSettings.SETTING setting, String value) {
-		settings.setSetting(setting, value);
-	}
-
-	public void setCytoPanel(ScNVCytoPanel panel) {
-		this.cytoPanel = panel;
-	}
+	//public void setCytoPanel(ScNVCytoPanel panel) {
+		//this.cytoPanel = panel;
+	//}
 
 	public Icon getIcon() { return scNetVizIcon; }
 
-	public ScNVCytoPanel getCytoPanel() { return this.cytoPanel; }
+	//public ScNVCytoPanel getCytoPanel() { return this.cytoPanel; }
 
 	public void executeCommand(String namespace, String command, Map<String, Object> args, boolean synchronous) {
 		executeCommand(namespace, command, args, null, synchronous);
@@ -251,12 +251,12 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 	public void handleEvent(SessionLoadedEvent e) {
 		System.out.println("SessionLoaded");
 
-		// First, if we have a results panel, unregister it
-		if (cytoPanel != null) {
-			unregisterService(cytoPanel, CytoPanelComponent.class);
-			unregisterService(cytoPanel, SetCurrentNetworkListener.class);
-			cytoPanel = null;
-		}
+//		// First, if we have a results panel, unregister it
+//		if (cytoPanel != null) {
+//			unregisterService(cytoPanel, CytoPanelComponent.class);
+//			unregisterService(cytoPanel, SetCurrentNetworkListener.class);
+//			cytoPanel = null;
+//		}
 		Map<String,List<File>> appFiles = e.getLoadedSession().getAppFileListMap();
 		if (!appFiles.containsKey(APP_NAME)) {
 			System.out.println("Don't see "+APP_NAME+"!");
@@ -289,30 +289,30 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 		for (Object exp: experiments) {
 			JSONObject jsonExp = (JSONObject) exp;
 			Experiment experiment = getExperimentFromSession(jsonExp, fileMap);
-			if (experiment == null) continue;
+			//if (experiment == null) continue;
 
-			if (jsonExp.containsKey(CATEGORIES)) {
-				JSONArray categories = (JSONArray) jsonExp.get(CATEGORIES);
-				for (Object cat: categories) {
-					Category category = getCategoryFromSession((JSONObject)cat, experiment, fileMap);
-				}
+			//if (jsonExp.containsKey(CATEGORIES)) {
+				//JSONArray categories = (JSONArray) jsonExp.get(CATEGORIES);
+				//for (Object cat: categories) {
+				//	Category category = getCategoryFromSession((JSONObject)cat, experiment, fileMap);
+				//}
+			//}
+
+			//if (jsonExp.containsKey(DIFFEXP)) {
+			//	getDiffExpFromSession((JSONObject)jsonExp.get(DIFFEXP), experiment, fileMap);
 			}
 
-			if (jsonExp.containsKey(DIFFEXP)) {
-				getDiffExpFromSession((JSONObject)jsonExp.get(DIFFEXP), experiment, fileMap);
-			}
-
-      addExperiment((String)experiment.getMetadata().get(Metadata.ACCESSION), experiment);
-		}
+     // addExperiment((String)experiment.getMetadata().get(Metadata.ACCESSION), experiment);
+		//}
 
 		CyNetwork network = getService(CyApplicationManager.class).getCurrentNetwork();
 		if (network != null) {
-			Experiment exp = ModelUtils.getExperimentFromNetwork(this, network);
-			if (exp != null) {
+			//Experiment exp = ModelUtils.getExperimentFromNetwork(this, network);
+			//if (exp != null) {
 				// Now, show the results panel
-				Task resultsPanelTask = new ShowResultsPanelTask(this, exp);
-				executeTasks(new TaskIterator(resultsPanelTask));
-			}
+				//Task resultsPanelTask = new ShowResultsPanelTask(this, exp);
+				//executeTasks(new TaskIterator(resultsPanelTask));
+			//}
 		}
 	}
 
@@ -362,14 +362,14 @@ public class ScNVManager implements SessionAboutToBeSavedListener, SessionLoaded
 		return null;
 	}
 
-	private Category getCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String,File> fileMap) {
-		String src = (String)jsonCategory.get(SOURCE_NAME);
-		if (sourceMap.containsKey(src))
-			return sourceMap.get(src).loadCategoryFromSession(jsonCategory, experiment, fileMap);
-		return null;
-	}
-
-	private void getDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String,File> fileMap) {
-		experiment.getSource().loadDiffExpFromSession(jsonDiffExp, experiment, fileMap);
-	}
+//	private Category getCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String,File> fileMap) {
+//		String src = (String)jsonCategory.get(SOURCE_NAME);
+//		if (sourceMap.containsKey(src))
+//			//return sourceMap.get(src).loadCategoryFromSession(jsonCategory, experiment, fileMap);
+//		return null;
+//	}
+//
+//	private void getDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String,File> fileMap) {
+//		experiment.getSource().loadDiffExpFromSession(jsonDiffExp, experiment, fileMap);
+//	}
 }

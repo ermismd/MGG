@@ -58,12 +58,12 @@ public class SimpleTable extends JTable {
 			columnModel.getColumn(col).setPreferredWidth(100);
 		}
 
-		setDefaultRenderer(MyDouble.class, new DoubleTableCellRenderer());
-		setDefaultRenderer(PercentDouble.class, new PercentTableCellRenderer());
-		setDefaultRenderer(PValueDouble.class, new PValueTableCellRenderer());
+		//setDefaultRenderer(MyDouble.class, new DoubleTableCellRenderer());
+		//setDefaultRenderer(PercentDouble.class, new PercentTableCellRenderer());
+		//setDefaultRenderer(PValueDouble.class, new PValueTableCellRenderer());
 
 		JTableHeader header = getTableHeader();
-		header.setDefaultRenderer(new HeaderRenderer(this));
+		//header.setDefaultRenderer(new HeaderRenderer(this));
 		header.setFont(new Font("SansSerif", Font.BOLD, 10));
 
 		setRowSorter(new NaNTableRowSorter(tableModel));
