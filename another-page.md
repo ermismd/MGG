@@ -16,8 +16,8 @@
       background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
-      font-size: 7px; /* Increase the font size as needed */
-      width: 600px; /* Increase the width as needed */
+      font-size: 6px; /* Increase the font size as needed */
+      width: 800px; /* Increase the width as needed */
 	  }
 	   h2 {
       font-size: 16px; /* Decrease the font size of the headers */
@@ -43,22 +43,21 @@
 public class MicroBetaGUIImportAction extends AbstractCyAction {
 
 	private final CySwingApplication swingApplication;
-	    private final CytoPanel cytoPanelWest;
-	    private final CyApplicationManager cyApplicationManager;  
+	private final CytoPanel cytoPanelWest;
+	private final CyApplicationManager cyApplicationManager;  
 	    
 	    
-	    public MicroBetaGUIImportAction(CySwingApplication cytoscapeDesktopService,CyApplicationManager cyApplicationManager2) {
-	        super("Import CSV File");
+	public MicroBetaGUIImportAction(CySwingApplication cytoscapeDesktopService,
+	CyApplicationManager cyApplicationManager2) {
+	
+	   super("Import CSV File");
+	   this.swingApplication = cytoscapeDesktopService;
+	   this.cytoPanelWest = swingApplication.getCytoPanel(CytoPanelName.WEST);
+	   this.cyApplicationManager = cyApplicationManager2;
 
-	        this.swingApplication = cytoscapeDesktopService;
-	        this.cytoPanelWest = swingApplication.getCytoPanel(CytoPanelName.WEST);
-			this.cyApplicationManager = cyApplicationManager2;
-
-	        setPreferredMenu("Apps.MicroBetaGUI");
-	        setMenuGravity(1.0f);
-	        
-	            
-	        
+	    setPreferredMenu("Apps.MicroBetaGUI");
+	    setMenuGravity(1.0f);
+	             
 	    }
 
 	  
@@ -77,14 +76,14 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 	    }
 
 		private void processCSVFile(final TaskMonitor monitor,String filePath) {
-			try {
-		        // Call CSVReader from Utils to parse the TSV/CSV file with tab delimiter
-				 List<String[]> csvData = CSVReader.readCSV(monitor, filePath);
+		    try {
+		    // Call CSVReader from Utils to parse the TSV/CSV file with tab delimiter
+		       List<String[]> csvData = CSVReader.readCSV(monitor, filePath);
 
-				    // Find the headers(the first row that has more than 1 columns)
-			        String[] headers = null;
-			        for (String[] row : csvData) {
-			            if (row.length > 1) {
+		   // Find the headers(the first row that has more than 1 columns)
+			     String[] headers = null;
+			      for (String[] row : csvData) {
+			         if (row.length > 1) {
 			                headers = row;
 			                break;
 			            }
@@ -127,7 +126,8 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		
 		
 		/*
-		 * showDataInPanel method  displays the JSON data passed as a JSONArray. It creates a new  JSONDisplayPanel  from +
+		 * showDataInPanel method  displays the JSON data passed as a JSONArray. 
+		 *It creates a new  JSONDisplayPanel from +
 		 * the internal.view package
 		 */
 		
@@ -148,7 +148,7 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		            String jsonQuery = jsonArray.toJSONString();
 
 		            // Set the server URL
-		            String serverURL = "https://example.com/api/endpoint"; // Replace with the actual server URL
+		            String serverURL = "https://example.com/api/endpoint"; 
 
 		            // Create an instance of CloseableHttpClient
 		            CloseableHttpClient httpclient = HttpClients.createDefault();
