@@ -13,8 +13,7 @@
   <style>
    .panel {
       display: none;
-      background-color: black; /* Change the background color to black */
-      color: white; /* Change the text color to white */
+      background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
       font-size: 10px; /* Increase the font size as needed */
