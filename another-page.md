@@ -22,10 +22,11 @@
 
     h2 {
       font-size: 14px; /* Decrease the font size of the headers */
+	margin-top: 20px; /* Increase the margin-top for the header */
     }
 
     .panel-button {
-      margin-bottom: 50px; /* Add space between each panel button */
+      margin-bottom: 20px; /* Add space between each panel button */
     }
   </style>
 </head>
