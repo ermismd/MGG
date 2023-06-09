@@ -16,8 +16,8 @@
       background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
-      font-size: 18px; /* Increase the font size as needed */
-      width: 500px; /* Increase the width as needed */
+      font-size: 9px; /* Increase the font size as needed */
+      width: 1000px; /* Increase the width as needed */
 	  }
 	   h2 {
       font-size: 16px; /* Decrease the font size of the headers */
