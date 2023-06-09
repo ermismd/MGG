@@ -1,20 +1,31 @@
 ## INFO WEEK1 AND WEEK2
 
 
+
+#### Created 2 classes that allows users to import a CSV/TSV file ,process it, display the JSON data in a panel and send the JSON data to a server.
+
+ * * *
+ * * *
+ 
+ 
 <html>
 <head>
   <style>
-    .panel {
+   .panel {
       display: none;
       background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
       font-size: 18px; /* Increase the font size as needed */
+      width: 500px; /* Increase the width as needed */
+	  }
+	   h2 {
+      font-size: 16px; /* Decrease the font size of the headers */
     }
   </style>
 </head>
 <body>
-  <h2>Week 1</h2>
+  <h2>Class 1</h2>
   <button onclick="showMicroBetaGUIImportAction()">MicroBetaGUIImportAction</button>
   <div class="panel" id="MicroBetaGUIImportAction">
     <p>
@@ -28,7 +39,7 @@
 
 public class MicroBetaGUIImportAction extends AbstractCyAction {
 
-	  private final CySwingApplication swingApplication;
+	private final CySwingApplication swingApplication;
 	    private final CytoPanel cytoPanelWest;
 	    private final CyApplicationManager cyApplicationManager;  
 	    
@@ -167,7 +178,7 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
     </p>
   </div>
 
-  <h2>Week 2</h2>
+  <h2>Class 2</h2>
   <button onclick="showJSONDisplayPanel()">JSONDisplayPanel</button>
   <div class="panel" id="JSONDisplayPanel">
     <p>
@@ -239,7 +250,9 @@ public class JSONDisplayPanel extends JPanel {
   </script>
 </body>
 </html>
-  
+
+* * *
+* * *
 
 
 [back](./)
