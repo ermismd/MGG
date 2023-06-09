@@ -258,7 +258,7 @@ public class JSONDisplayPanel extends JPanel {
 
 	
 	
-
+<br> <!-- Add an empty line -->
 
 
 
