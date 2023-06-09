@@ -1,6 +1,6 @@
 ## INFO WEEK1 AND WEEK2
 
-<!DOCTYPE html>
+
 <html>
 <head>
   <style>
@@ -13,7 +13,7 @@
   </style>
 </head>
 <body>
-  <button onclick="showSoonText()">Show SOON tm</button>
+  <button onclick="showSoonText()">MicroBetaGUIImportAction</button>
   <div class="panel" id="soonPanel">
     <p>SOON tm</p>
   </div>
