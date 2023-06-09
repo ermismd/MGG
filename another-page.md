@@ -23,6 +23,7 @@
     h2 {
       font-size: 14px; /* Decrease the font size of the headers */
 	margin-top: 20px; /* Increase the margin-top for the header */
+	  margin-bottom: 20px; /* Add margin-bottom for spacing */
     }
 
     .panel-button {
@@ -158,7 +159,8 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		            CloseableHttpClient httpclient = HttpClients.createDefault();
 
 		            // Send the JSON data to the server
-		            JSONObject jsonResponse = HTTPUtils.postJSON(serverURL, httpclient, jsonQuery, null);
+		            JSONObject jsonResponse = HTTPUtils.postJSON(serverURL, 
+			    		httpclient, jsonQuery, null);
 
 		            // Process the server response if needed
 		            if (jsonResponse != null) {
