@@ -9,15 +9,16 @@
       background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
+      font-size: 18px; /* Increase the font size as needed */
     }
   </style>
 </head>
 <body>
-  <button onclick="showSoonText()">MicroBetaGUIImportAction</button>
-  <div class="panel" id="soonPanel">
+  <h2>Week 1</h2>
+  <button onclick="showMicroBetaGUIImportAction()">MicroBetaGUIImportAction</button>
+  <div class="panel" id="MicroBetaGUIImportAction">
     <p>
-
-/*
+      /*
  * 
  * The MicroBetaGUIImportAction represents an action in the mgG application + 
  * that allows users to import a CSV file ,process it, display the JSON data in a panel, +
@@ -31,17 +32,22 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 	    private final CytoPanel cytoPanelWest;
 	    private final CyApplicationManager cyApplicationManager;  
 	    
+	    
 	    public MicroBetaGUIImportAction(CySwingApplication cytoscapeDesktopService,CyApplicationManager cyApplicationManager2) {
 	        super("Import CSV File");
 
 	        this.swingApplication = cytoscapeDesktopService;
 	        this.cytoPanelWest = swingApplication.getCytoPanel(CytoPanelName.WEST);
-			    this.cyApplicationManager = cyApplicationManager2;
+			this.cyApplicationManager = cyApplicationManager2;
 
 	        setPreferredMenu("Apps.MicroBetaGUI");
-	        setMenuGravity(1.0f);    
+	        setMenuGravity(1.0f);
+	        
+	            
+	        
 	    }
-      
+
+	  
 		@Override
 	    public void actionPerformed(ActionEvent e) {
 	        //  dialog to choose the CSV 
@@ -120,6 +126,8 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		    frame.pack();
 		    frame.setVisible(true);
 		}
+		
+		
 		  private void sendJSONDataToServer(JSONArray jsonArray) {
 		        try {
 		            // Convert the JSONArray to a JSON string
@@ -150,41 +158,28 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }
-		    }		
+		    }
+
+		
+
+		
 }
-</p>
+    </p>
   </div>
 
-  <script>
-    function showSoonText() {
-      var panel = document.getElementById("soonPanel");
-      if (panel.style.display === "none") {
-        panel.style.display = "block";
-      } else {
-        panel.style.display = "none";
-      }
-    }
-  </script>
-</body>
-</html>
-
-
- <html>
-<head>
-  <style>
-    .panel {
-      display: none;
-      background-color: #f1f1f1;
-      padding: 10px;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
-  <button onclick="showSoonText()">JSONDisplayPanel</button>
-  <div class="panel" id="soonPanel">
+  <h2>Week 2</h2>
+  <button onclick="showJSONDisplayPanel()">JSONDisplayPanel</button>
+  <div class="panel" id="JSONDisplayPanel">
     <p>
+ package uni.kul.rega.mgG.internal.view;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
 
 public class JSONDisplayPanel extends JPanel {
     private JTable table;
@@ -219,12 +214,22 @@ public class JSONDisplayPanel extends JPanel {
         }
     }
 }
-</p>
+      }
+    </p>
   </div>
 
   <script>
-    function showSoonText() {
-      var panel = document.getElementById("soonPanel");
+    function showMicroBetaGUIImportAction() {
+      var panel = document.getElementById("MicroBetaGUIImportAction");
+      if (panel.style.display === "none") {
+        panel.style.display = "block";
+      } else {
+        panel.style.display = "none";
+      }
+    }
+    
+    function showJSONDisplayPanel() {
+      var panel = document.getElementById("JSONDisplayPanel");
       if (panel.style.display === "none") {
         panel.style.display = "block";
       } else {
@@ -233,7 +238,7 @@ public class JSONDisplayPanel extends JPanel {
     }
   </script>
 </body>
-</html> 
+</html>
   
 
 
