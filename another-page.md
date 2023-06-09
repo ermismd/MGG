@@ -5,7 +5,7 @@
 #### Created 2 classes that allows users to import a CSV/TSV file ,process it, display the JSON data in a panel and send the JSON data to a server.
 
  * * *
- * * *
+
  
  
 <html>
@@ -22,13 +22,16 @@
 	   h2 {
       font-size: 16px; /* Decrease the font size of the headers */
     }
+	.panel-button {
+      margin-bottom: 10px; /* Add space between each panel button */
+    }
   </style>
 </head>
 <body>
   <h2>Class 1</h2>
   <button onclick="showMicroBetaGUIImportAction()">MicroBetaGUIImportAction</button>
   <div class="panel" id="MicroBetaGUIImportAction">
-    <p>
+    <pre>
       /*
  * 
  * The MicroBetaGUIImportAction represents an action in the mgG application + 
@@ -175,23 +178,14 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 
 		
 }
-    </p>
+    </pre>
   </div>
 
   <h2>Class 2</h2>
   <button onclick="showJSONDisplayPanel()">JSONDisplayPanel</button>
   <div class="panel" id="JSONDisplayPanel">
-    <p>
- package uni.kul.rega.mgG.internal.view;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-
+    <pre>
+ 
 public class JSONDisplayPanel extends JPanel {
     private JTable table;
 
@@ -225,8 +219,8 @@ public class JSONDisplayPanel extends JPanel {
         }
     }
 }
-      }
-    </p>
+      
+    </pre>
   </div>
 
   <script>
