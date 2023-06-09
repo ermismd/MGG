@@ -20,6 +20,13 @@ import static org.cytoscape.work.ServiceProperties.TOOLTIP;
 import java.util.Properties;
 
 import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.application.swing.CyAction;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.application.swing.events.CytoPanelComponentSelectedListener;
 import org.cytoscape.io.BasicCyFileFilter;
 import org.cytoscape.io.DataCategory;
 import org.cytoscape.io.read.InputStreamTaskFactory;
@@ -38,16 +45,20 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uni.kul.rega.mgG.internal.model.ScNVManager;
+import uni.kul.rega.mgG.internal.sources.file.tasks.MicroBetaGUIImportAction;
+
+
+
+//import uni.kul.rega.mgG.internal.model.ScNVManager;
 //import uni.kul.rega.mgG.internal.model.Species;
-import uni.kul.rega.mgG.internal.sources.file.FileSource;
+//import uni.kul.rega.mgG.internal.sources.file.FileSource;
 
 //import uni.kul.rega.mgG.internal.tasks.CalculateDECommandTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.CreateNetworkTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.DeleteExperimentTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.ExportCategoryTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.ExportDiffExpTaskFactory;
-import uni.kul.rega.mgG.internal.tasks.ExportExperimentTaskFactory;
+//import uni.kul.rega.mgG.internal.tasks.ExportExperimentTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.GetExperimentTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.ListExperimentsTaskFactory;
 //import uni.kul.rega.mgG.internal.tasks.ProcessAllTaskFactory;
@@ -71,10 +82,10 @@ public class CyActivator extends AbstractCyActivator {
 	}
 
 	public void start(BundleContext bc) {
-		final StreamUtil streamUtil = getService(bc, StreamUtil.class);
+		//final StreamUtil streamUtil = getService(bc, StreamUtil.class);
 		final CyServiceRegistrar serviceRegistrar = getService(bc, CyServiceRegistrar.class);
 
-		final ScNVManager scNVManager = new ScNVManager(serviceRegistrar);
+		//final ScNVManager scNVManager = new ScNVManager(serviceRegistrar);
 
 		// Commands
 		//
@@ -90,178 +101,27 @@ public class CyActivator extends AbstractCyActivator {
 		// *scnetviz get experiment accession=yyyy
 		// *scnetviz show experiment table accession=yyyy
 		// *scnetviz export experiment accession=yyyy file=*
-		//
-		// Category commands
-		// *scnetviz export category accession=yyyy category=zzzz file=*
-		// ??scnetviz show category accession=yyyy category=zzzz
-		// scnetviz calculate diffexp accession=yyyy category=zzzz categoryrow=nnn logfc=ddd min.pct=ppp
-		//
-		// Differential expression commands
-		// *scnetviz export diffexp accesssion=yyyy file=*
-		// scnetviz create networks accession=yyyy category=zzzz categoryrow=nnn logfc=ddd min.pct=ppp pvalue=ddd log2fc=nnn topgenes=nnn maxgenes=nnn
-		// scnetviz show violin accession=yyyy
-		// scnetviz show heatmap accession=yyyy
+		
+
+		// scNVManager.addSource(new HCASource(scNVManager));
+		//scNVManager.addSource(new FileSource(scNVManager));
+		
+		
+		// Get services
+        CySwingApplication cytoscapeDesktopService = getService(bc, CySwingApplication.class);
+        CyApplicationManager cyApplicationManager = getService(bc, CyApplicationManager.class);
+
+        // Register the action
+        MicroBetaGUIImportAction action = new MicroBetaGUIImportAction(cytoscapeDesktopService, cyApplicationManager);
+        registerService(bc, action, CyAction.class);
+    
 
 		
-		// scNVManager.addSource(new HCASource(scNVManager));
-		scNVManager.addSource(new FileSource(scNVManager));
 
 		
 		
 		// Register our menu items
-//		{
-//			TaskFactory louvainTF = new RemoteLouvainTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "Louvain clustering");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz.Add Category[100.1]");
-//			props.setProperty(MENU_GRAVITY, "110.0");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "add louvain category");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the Louvain clustering");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(louvainTF, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			TaskFactory leidenTF = new RemoteLeidenTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "Leiden clustering");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz.Add Category[100.1]");
-//			props.setProperty(MENU_GRAVITY, "120.0");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "add leiden category");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the Leiden clustering");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(leidenTF, TaskFactory.class, props);
-//		}
-//
-//		
-//		{
-//			tSNETaskFactory calcTSNE = new tSNETaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "t-SNE (local)");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz.New cell plot[200.1]");
-//			props.setProperty(MENU_GRAVITY, "200.0");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "calculate tSNE");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the tSNE embedding (local)");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(calcTSNE, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			RemoteUMAPTaskFactory calcUMAP = new RemoteUMAPTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "UMAP");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz.New cell plot[200.1]");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(MENU_GRAVITY, "210.0");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "calculate UMAP");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the UMAP embedding (remote)");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(calcUMAP, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			RemoteGraphTaskFactory calcGraph = new RemoteGraphTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "Graph layout");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz.New cell plot[200.1]");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(MENU_GRAVITY, "220.0");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "calculate draw_graph");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the graph layout embedding");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(calcGraph, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			RemoteTSNETaskFactory calcTSNE = new RemoteTSNETaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "t-SNE (on server)");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz.New cell plot[200.1]");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(MENU_GRAVITY, "230.0");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "calculate tsne");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the t-SNE embedding (remote)");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(calcTSNE, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			ShowExperimentTableTaskFactory show = new ShowExperimentTableTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "Show Experiment Tables");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz");
-//			props.setProperty(MENU_GRAVITY, "299.0");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(INSERT_SEPARATOR_BEFORE, "TRUE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "show experiment table");
-//			props.setProperty(COMMAND_DESCRIPTION, "Display the experiment table for a single experiment");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(show, TaskFactory.class, props);
-//		}
-//
-//    {
-//			ShowCellPlotTaskFactory show = new ShowCellPlotTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "show cell plot");
-//			props.setProperty(COMMAND_DESCRIPTION, "Display the current cell plot (UMAP, t-SNE) for a single experiment");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "false");
-//			scNVManager.registerService(show, TaskFactory.class, props);
-//		}
-//
-//    {
-//			ShowDiffPlotTaskFactory show = new ShowDiffPlotTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "show diff plot");
-//			props.setProperty(COMMAND_DESCRIPTION, "Display the differential expression plot for a single experiment");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "false");
-//			scNVManager.registerService(show, TaskFactory.class, props);
-//		}
-//
-//		{
-//			ShowResultsPanelTaskFactory results = new ShowResultsPanelTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "Show Results Panel");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz");
-//			props.setProperty(MENU_GRAVITY, "300.0");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			scNVManager.registerService(results, TaskFactory.class, props);
-//		}
+
 //
 //		{
 //			DeleteExperimentTaskFactory deleteExp = new DeleteExperimentTaskFactory(scNVManager);
@@ -281,17 +141,7 @@ public class CyActivator extends AbstractCyActivator {
 //			scNVManager.registerService(deleteExp, TaskFactory.class, props);
 //		}
 //
-//		{
-//			SettingsTaskFactory settings = new SettingsTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(TITLE, "Settings");
-//			props.setProperty(PREFERRED_MENU, "Apps.scNetViz");
-//			props.setProperty(INSERT_SEPARATOR_BEFORE, "TRUE");
-//			props.setProperty(MENU_GRAVITY, "400.0");
-//			props.setProperty(IN_TOOL_BAR, "FALSE");
-//			props.setProperty(IN_MENU_BAR, "TRUE");
-//			scNVManager.registerService(settings, TaskFactory.class, props);
-//		}
+//	
 //
 //		// Commands
 //		{
@@ -305,18 +155,7 @@ public class CyActivator extends AbstractCyActivator {
 //			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
 //			scNVManager.registerService(processAll, TaskFactory.class, props);
 //		}
-//
-//		{
-//			CalculateDECommandTaskFactory calcDE = new CalculateDECommandTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "calculate diffexp");
-//			props.setProperty(COMMAND_DESCRIPTION, "Calculate the table of differential gene expression");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(calcDE, TaskFactory.class, props);
-//		}
+
 //
 //		{
 //			SelectTaskFactory select = new SelectTaskFactory(scNVManager);
@@ -330,77 +169,26 @@ public class CyActivator extends AbstractCyActivator {
 //			scNVManager.registerService(select, TaskFactory.class, props);
 //		}
 //
-//		{
-//			ListExperimentsTaskFactory list = new ListExperimentsTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "list experiments");
-//			props.setProperty(COMMAND_DESCRIPTION, "List the currently loaded experiments");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(list, TaskFactory.class, props);
-//		}
-//
-//		{
-//			GetExperimentTaskFactory getExp = new GetExperimentTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "show experiment");
-//			props.setProperty(COMMAND_DESCRIPTION, "Show a currently loaded experiment");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(getExp, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			CreateNetworkTaskFactory createNet = new CreateNetworkTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "create network");
-//			props.setProperty(COMMAND_DESCRIPTION, "Create the networks for differentially expressed genes");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(createNet, TaskFactory.class, props);
-//		}
-//
-//		{
-//			ExportCategoryTaskFactory expCat = new ExportCategoryTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "export category");
-//			props.setProperty(COMMAND_DESCRIPTION, "Export a currently loaded category table");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(expCat, TaskFactory.class, props);
-//		}
-//		
-//		{
-//			ExportDiffExpTaskFactory expDE = new ExportDiffExpTaskFactory(scNVManager);
-//			Properties props = new Properties();
-//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-//			props.setProperty(COMMAND, "export diffexp");
-//			props.setProperty(COMMAND_DESCRIPTION, "Export a differential expression table");
-//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-//			scNVManager.registerService(expDE, TaskFactory.class, props);
-//		}
 
-		{
-			ExportExperimentTaskFactory expExp = new ExportExperimentTaskFactory(scNVManager);
-			Properties props = new Properties();
-			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
-			props.setProperty(COMMAND, "export experiment");
-			props.setProperty(COMMAND_DESCRIPTION, "Export a currently loaded experiment table");
-			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
-			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
-			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
-			scNVManager.registerService(expExp, TaskFactory.class, props);
-		}
+//
+
+//		
+//
+//
+
+//		
+//		
+//		{
+//			ExportExperimentTaskFactory expExp = new ExportExperimentTaskFactory(scNVManager);
+//			Properties props = new Properties();
+//			props.setProperty(COMMAND_NAMESPACE, "scnetviz");
+//			props.setProperty(COMMAND, "export experiment");
+//			props.setProperty(COMMAND_DESCRIPTION, "Export a currently loaded experiment table");
+//			props.setProperty(COMMAND_LONG_DESCRIPTION, "");
+//			props.setProperty(COMMAND_SUPPORTS_JSON, "true");
+//			props.setProperty(COMMAND_EXAMPLE_JSON, "{}");
+//			scNVManager.registerService(expExp, TaskFactory.class, props);
+//		}
 
 		// Start the thread the loads all of the species
 		//Species.loadSpecies(scNVManager);

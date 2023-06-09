@@ -32,7 +32,7 @@ import org.json.simple.parser.JSONParser;
 
 import uni.kul.rega.mgG.internal.api.Experiment;
 import uni.kul.rega.mgG.internal.api.Metadata;
-import uni.kul.rega.mgG.internal.model.ScNVManager;
+//import uni.kul.rega.mgG.internal.model.ScNVManager;
 
 import org.cytoscape.application.CyUserLog;
 import org.cytoscape.work.TaskMonitor;
@@ -195,13 +195,13 @@ public class HTTPUtils {
 		return url;
 	}
 
-	public static void showWebPage(ScNVManager manager, String uri, TaskMonitor monitor) {
-		Map<String, Object> args = new HashMap<>();
-		args.put("newTab", "true");
-		args.put("id", "GXA");
-		args.put("url", uri);
+	//public static void showWebPage(ScNVManager manager, String uri, TaskMonitor monitor) {
+		//Map<String, Object> args = new HashMap<>();
+		//args.put("newTab", "true");
+		//args.put("id", "GXA");
+		//args.put("url", uri);
 
-		manager.executeCommand("cybrowser", "dialog", args);
+		//manager.executeCommand("cybrowser", "dialog", args);
 
-	}
+	//}
 }

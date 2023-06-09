@@ -12,8 +12,7 @@ public interface Source {
 	public String getName();
 	public List<String> getAccessions();
 	public List<Metadata> getMetadata();
-	public Experiment getExperiment(String accession);
-	public Experiment loadExperimentFromSession(JSONObject jsonExperiment, Map<String,File> fileMap);
-	//public Category loadCategoryFromSession(JSONObject jsonCategory, Experiment experiment, Map<String,File> fileMap);
-	//public DifferentialExpression loadDiffExpFromSession(JSONObject jsonDiffExp, Experiment experiment, Map<String,File> fileMap);
+	//public Experiment getExperiment(String accession);
+	//public Experiment loadExperimentFromSession(JSONObject jsonExperiment, Map<String,File> fileMap);
+	
 }
