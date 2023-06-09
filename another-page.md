@@ -35,7 +35,8 @@
   <button onclick="showMicroBetaGUIImportAction()">MicroBetaGUIImportAction</button>
   <div class="panel" id="MicroBetaGUIImportAction">
     <pre>
-      /*
+ 
+ /*
  * 
  * The MicroBetaGUIImportAction represents an action in the mgG application + 
  * that allows users to import a CSV file ,process it, display the JSON data in a panel, +
