@@ -183,6 +183,11 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
     </pre>
   </div>
 
+
+
+
+
+
   <h2>Class 2</h2>
   <button onclick="showJSONDisplayPanel()">JSONDisplayPanel</button>
   <div class="panel" id="JSONDisplayPanel">
