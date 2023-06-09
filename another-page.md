@@ -13,16 +13,19 @@
   <style>
    .panel {
       display: none;
-      background-color: #f1f1f1;
+      background-color: black; /* Change the background color to black */
+      color: white; /* Change the text color to white */
       padding: 10px;
       margin-top: 10px;
-      font-size: 6px; /* Increase the font size as needed */
+      font-size: 10px; /* Increase the font size as needed */
       width: 800px; /* Increase the width as needed */
-	  }
-	   h2 {
-      font-size: 16px; /* Decrease the font size of the headers */
     }
-	.panel-button {
+
+    h2 {
+      font-size: 14px; /* Decrease the font size of the headers */
+    }
+
+    .panel-button {
       margin-bottom: 50px; /* Add space between each panel button */
     }
   </style>
