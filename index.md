@@ -40,10 +40,13 @@ In these GH-pages the progress of the development will be periodically updated.
 1.  Forked scNetViz 
              - Renamed to MGG
 2.  Created new Github pages to keep track of progress
-3.  Refactor the app      
-4.  Load and read an abudance table in the app
+3.  Refactored the app
+4. Created 2 classes in the app      
+  - Load and read a csv/tsv in the app
+  - process it, display the JSON data in a panel 
+  - send the JSON data to a server
+  - [More Info](./another-page.html).
  
-[More Info](./another-page.html).
 
 ### Week 3 & 4
 
