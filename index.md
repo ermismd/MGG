@@ -43,6 +43,7 @@ In these GH-pages the progress of the development will be periodically updated.
 3.  Refactor the app      
 4.  Load and read an abudance table in the app
  
+[More Info](./another-page.html).
 
 ### Week 3 & 4
 
@@ -97,7 +98,7 @@ In these GH-pages the progress of the development will be periodically updated.
 |<img src="assets/img/triangle.png" width="50">|
 
 * * *
-[Link to another page](./another-page.html).
+
 
 ```
 End
