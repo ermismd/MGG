@@ -72,10 +72,10 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 	        JFileChooser fileChooser = new JFileChooser();
 	        int option = fileChooser.showOpenDialog(null);
 	        if (option == JFileChooser.APPROVE_OPTION) {
-	            //  user selects a file, perform the import  here
+	          
 	            File selectedFile = fileChooser.getSelectedFile();
 	            String filePath = selectedFile.getAbsolutePath();
-	            // Call the method to process the CSV 
+	           
 	            processCSVFile(null, filePath);
 	        }
 	    }
@@ -86,6 +86,7 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		       List<String[]> csvData = CSVReader.readCSV(monitor, filePath);
 
 		   // Find the headers(the first row that has more than 1 columns)
+     
 			     String[] headers = null;
 			      for (String[] row : csvData) {
 			         if (row.length > 1) {
@@ -94,17 +95,19 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 			            }
 			        }
 
-			        // Create JSONArray to hold the JSONObjects
-			        JSONArray jsonArray = new JSONArray();
+			        JSONArray jsonArray = new JSONArray();     // Create JSONArray to hold the JSONObjects
+
 
 			        // Iterate each row of CSV 
+	   
 			        for (String[] values : csvData) {
 			            // Skip rows with only one column
 			            if (values.length <= 1) {
 			                continue;
 			            }
 
-			            // Create a JSONObject for each row of CSV 
+			            // Create a JSONObject for each row  CSV 
+	       
 			            JSONObject jsonObject = new JSONObject();
 			            for (int j = 0; j < headers.length; j++) {
 			                if (j < values.length) {
@@ -149,11 +152,11 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		
 		  private void sendJSONDataToServer(JSONArray jsonArray) {
 		        try {
-		            // Convert the JSONArray to a JSON string
-		            String jsonQuery = jsonArray.toJSONString();
+		          
+		            String jsonQuery = jsonArray.toJSONString();   //  JSONArray to  JSON string
 
-		            // Set the server URL
-		            String serverURL = "https://example.com/api/endpoint"; 
+		          
+		            String serverURL = "https://SOON.com/api/endpoint";   // server URL
 
 		            // Create an instance of CloseableHttpClient
 		            CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -168,12 +171,12 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		                // Process the response here
 		            	
 		            	String response = jsonResponse.toJSONString();
-		                // Do something with the response
+		                // TODO complete somethign using the  response
 		            	
 		            }
 		            
 
-		            // Close the HttpClient
+		            // Close  HttpClient
 		            httpclient.close();
 		        } catch (Exception e) {
 		            e.printStackTrace();
