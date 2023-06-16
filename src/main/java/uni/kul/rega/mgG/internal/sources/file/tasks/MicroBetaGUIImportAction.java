@@ -79,7 +79,7 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 	        JFileChooser fileChooser = new JFileChooser();
 	        int option = fileChooser.showOpenDialog(null);
 	        if (option == JFileChooser.APPROVE_OPTION) {
-	            //  user selects a file, perform the import  here
+	            //   select csv, perform the import  here
 	            File selectedFile = fileChooser.getSelectedFile();
 	            String filePath = selectedFile.getAbsolutePath();
 	            // Call the method to process the CSV 
@@ -92,7 +92,7 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 		        // Call CSVReader from Utils to parse the TSV/CSV file with tab delimiter
 				 List<String[]> csvData = CSVReader.readCSV(monitor, filePath);
 
-				    // Find the headers(the first row that has more than 1 columns)
+				// Find the headers(the first row that has more than 1 columns)
 			        String[] headers = null;
 			        for (String[] row : csvData) {
 			            if (row.length > 1) {
@@ -122,6 +122,7 @@ public class MicroBetaGUIImportAction extends AbstractCyAction {
 			            // Add the JSONObject to the JSONArray
 			            jsonArray.add(jsonObject);
 			        }
+
 
 		        // Write  JSON data to a file
 		        String jsonFilePath = filePath + ".json";

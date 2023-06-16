@@ -21,7 +21,7 @@
 //    public void handleEvent(CytoPanelComponentSelectedEvent e) {
 //        if (cytoPanelWest.getSelectedComponent() instanceof MicroBetaGUIImportPanel) {
 //            // The MicroBetaGUI Import panel is selected
-//            // Perform any necessary actions or updates here
+//          
 //        }
 //    }
 //}

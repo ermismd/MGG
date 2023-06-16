@@ -119,27 +119,24 @@ public class CSVReader {
 
 
 	public static String[] smartSplit(String input) {
-	    String[] splitString;
-	    if (delimiter != null)
-	        splitString = input.split(delimiter, -1);
-	    else {
-	        delimiter = "\t";
-	        splitString = input.split(delimiter, -1);
-	        if (splitString.length == 1) {
-	            delimiter = ",";
-	            splitString = input.split(delimiter, -1);
-	            if (splitString.length == 1) {
-	                delimiter = ";";
-	                splitString = input.split(delimiter, -1);
-	                if (splitString.length == 1 && !input.contains(";")) {
-	                    delimiter = null;
-	                    return splitString;
-	                    // throw new RuntimeException("Only tabs, commas, and semicolons are supported delimiters");
-	                }
-	            }
-	        }
-	    }
-	    return splitString;
+		String[] splitString;
+		if (delimiter != null)
+			splitString = input.split(delimiter, -1);
+		else {
+			delimiter = "\t";
+			splitString = input.split(delimiter, -1);
+			if (splitString.length == 1) {
+				delimiter = ",";
+				splitString = input.split(delimiter, -1);
+				if (splitString.length == 1) {
+					delimiter = null;
+					return splitString;
+					// throw new RuntimeException("Only tabs and commas are supported delimiters");
+				}
+			}
+		}
+		return splitString;
 	
 	}
+
 }
