@@ -1,4 +1,4 @@
-package uni.kul.rega.mgG.internal.sources.file.tasks;
+package uni.kul.rega.mgG.internal.tasks;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;

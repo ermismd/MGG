@@ -1,3 +1,4 @@
+package uni.kul.rega.mgG.internal.tasks;
 //package uni.kul.rega.mgG.internal.sources.file.tasks;
 //
 //import org.cytoscape.application.swing.events.CytoPanelComponentSelectedEvent;

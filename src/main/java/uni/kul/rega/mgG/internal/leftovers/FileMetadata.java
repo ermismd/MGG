@@ -1,4 +1,4 @@
-package uni.kul.rega.mgG.internal.sources.file;
+package uni.kul.rega.mgG.internal.leftovers;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package uni.kul.rega.mgG.internal.view;
+package uni.kul.rega.mgG.internal.leftovers;
 
 import java.awt.Component;
 import java.text.DecimalFormat;

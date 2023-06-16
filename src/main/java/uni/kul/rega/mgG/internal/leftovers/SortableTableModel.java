@@ -1,4 +1,4 @@
-package uni.kul.rega.mgG.internal.view;
+package uni.kul.rega.mgG.internal.leftovers;
 
 import java.util.Arrays;
 import java.util.Comparator;

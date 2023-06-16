@@ -1,3 +1,4 @@
+package uni.kul.rega.mgG.internal.leftovers;
 //package uni.kul.rega.mgG.internal.view;
 //
 //import java.util.List;
