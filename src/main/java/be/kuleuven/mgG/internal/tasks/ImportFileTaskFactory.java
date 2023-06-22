@@ -9,16 +9,22 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
+import be.kuleuven.mgG.internal.model.MGGManager;
+
 public class ImportFileTaskFactory implements TaskFactory {
     private final CySwingApplication swingApplication;
     private final CyApplicationManager cyApplicationManager;
-
-    public ImportFileTaskFactory(CySwingApplication cytoscapeDesktopService, CyApplicationManager cyApplicationManager) {
+    private final MGGManager mggManager;
+    
+    
+    public ImportFileTaskFactory(CySwingApplication cytoscapeDesktopService, CyApplicationManager cyApplicationManager,MGGManager mggManager) {
         this.swingApplication = cytoscapeDesktopService;
         this.cyApplicationManager = cyApplicationManager;
+        this.mggManager=mggManager;
     }
 
-    @Override
+    
+	@Override
     public TaskIterator createTaskIterator() {
         // Use a JFileChooser to get the file path
         JFileChooser fileChooser = new JFileChooser();
@@ -27,7 +33,7 @@ public class ImportFileTaskFactory implements TaskFactory {
             File selectedFile = fileChooser.getSelectedFile();
             String filePath = selectedFile.getAbsolutePath();
 
-            return new TaskIterator(new ImportFileTask(swingApplication, cyApplicationManager, filePath));
+            return new TaskIterator(new ImportFileTask(swingApplication, cyApplicationManager, filePath, mggManager));
         } else {
             // If no file was selected, return an empty TaskIterator
             return new TaskIterator();
@@ -35,8 +41,7 @@ public class ImportFileTaskFactory implements TaskFactory {
     }
 
     @Override
-    public boolean isReady() {
-        // This task factory is always ready to run
+    public boolean isReady() {  
         return true;
     }
 }

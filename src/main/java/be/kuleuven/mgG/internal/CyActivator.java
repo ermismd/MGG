@@ -49,7 +49,7 @@ import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.model.MGGManager;
 
 
-//import uni.kul.rega.mgG.internal.model.ScNVManager;
+
 
 
 public class CyActivator extends AbstractCyActivator {
@@ -82,9 +82,9 @@ public class CyActivator extends AbstractCyActivator {
 		props.setProperty(COMMAND_NAMESPACE, "MGG");
 		props.setProperty(COMMAND_DESCRIPTION, "Load a file from csv");
 		props.setProperty(COMMAND, "load csv");
-        
+		
         // Register taskfactory
-        ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager);
+        ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager, MGGManager);
    
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
     }
@@ -95,10 +95,7 @@ public class CyActivator extends AbstractCyActivator {
   
 
         
-   
-
-		
-
+  
 		
 		
 		// Register our menu items
