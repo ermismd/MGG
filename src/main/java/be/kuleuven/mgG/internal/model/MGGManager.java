@@ -65,7 +65,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	final TaskManager taskManager;
 	final CyServiceRegistrar cyRegistrar; 
 	
-	private String serverResponse;
+	private JSONObject serverResponse;
 	
 	 AvailableCommands availableCommands=null;
 	 CommandExecutorTaskFactory ceTaskFactory=null;
@@ -94,17 +94,39 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	}
 	
 	
-	
 	// Method to set the server response
-    public void setServerResponse(String response) {
-        this.serverResponse = response;
+    public void setServerResponse(JSONObject jsonResponse) {
+        this.serverResponse = jsonResponse;
     }
 	
 
     // Method to get the server response
-    public String getServerResponse() {
+    public JSONObject getServerResponse() {
         return this.serverResponse;
     }
+	
+    
+    
+    
+    
+    
+	
+    public void executeTasks(TaskIterator tasks) {
+		taskManager.execute(tasks);
+	}
+
+	public void executeTasks(TaskIterator tasks, TaskObserver observer) {
+		taskManager.execute(tasks, observer);
+	}
+
+	public void executeTasks(TaskFactory factory) {
+		taskManager.execute(factory.createTaskIterator());
+	}
+
+	public void executeTasks(TaskFactory factory, TaskObserver observer) {
+		taskManager.execute(factory.createTaskIterator(), observer);
+	}
+	
 	
 	
 	
@@ -115,26 +137,63 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		 return cyRegistrar.getService(serviceClass);
 		 }
 		
+	public <S> S getService(Class<S> serviceClass, String filter) {
+		return cyRegistrar.getService(serviceClass, filter);
+	}
+
+	public void registerService(Object service, Class<?> serviceClass, Properties props) {
+		cyRegistrar.registerService(service, serviceClass, props);
+	}
+
+	public void unregisterService(Object service, Class<?> serviceClass) {
+		cyRegistrar.unregisterService(service, serviceClass);
+	}
 	
-	public void executeCommand(String namespace, String command,Map<String, Object> args, TaskObserver observer) {
-			 if (ceTaskFactory == null)
-				 ceTaskFactory = getService(CommandExecutorTaskFactory.class);
-			 if (availableCommands == null)
-			 availableCommands= getService(AvailableCommands.class);
-			 if (syncTaskManager == null)
-				 syncTaskManager = getService(SynchronousTaskManager.class);
-			 if (availableCommands.getNamespaces() == null ||
-			 !availableCommands.getCommands(namespace).contains(command))
-			 throw new RuntimeException("Can’t find command" +namespace+ "+command");
-			 TaskIterator ti = ceTaskFactory.createTaskIterator(namespace, command, args, observer);
-			 syncTaskManager.execute(ti);
-			 } 	
+	
+	
+	
+	/*
+	 * public void executeCommand(String namespace, String command,Map<String,
+	 * Object> args, TaskObserver observer) { if (ceTaskFactory == null)
+	 * ceTaskFactory = getService(CommandExecutorTaskFactory.class); if
+	 * (availableCommands == null) availableCommands=
+	 * getService(AvailableCommands.class); if (syncTaskManager == null)
+	 * syncTaskManager = getService(SynchronousTaskManager.class); if
+	 * (availableCommands.getNamespaces() == null ||
+	 * !availableCommands.getCommands(namespace).contains(command)) throw new
+	 * RuntimeException("Can’t find command" +namespace+ "+command"); TaskIterator
+	 * ti = ceTaskFactory.createTaskIterator(namespace, command, args, observer);
+	 * syncTaskManager.execute(ti); }
+	 */
 	
 
 	
+	
+	
 	@Override
-	public void handleEvent(SessionLoadedEvent e) {
-		// TODO Auto-generated method stub
+	// See if we have data in the session, and load it if we do
+		public void handleEvent(SessionLoadedEvent e) {
+			System.out.println("SessionLoaded");
+			
+			Map<String,List<File>> appFiles = e.getLoadedSession().getAppFileListMap();
+			if (!appFiles.containsKey(APP_NAME)) {
+				System.out.println("Don't see "+APP_NAME+"!");
+				return;
+			}
+
+			List<File> mggFiles = appFiles.get(APP_NAME);
+			Map<String, File> fileMap = new HashMap<>();
+			for (File f: mggFiles) {
+				System.out.println("File map has file: "+f.getName());
+				fileMap.put(f.getName(),f);
+			}
+
+			if (!fileMap.containsKey(SERVER_RESPONSE_FILE)) {
+				System.out.println("Don't see "+SERVER_RESPONSE_FILE+"!");
+				return;
+			}
+			
+			
 		
 	}
 	@Override
@@ -147,7 +206,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	        OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
 	        BufferedWriter writer = new BufferedWriter(osw);
 
-	        writer.write(serverResponse);
+	        writer.write(serverResponse.toJSONString());
 	        writer.close();
 	        osw.close();
 	        fos.close();
@@ -165,6 +224,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	    }
 		
 	}
+
 
 
 

@@ -79,7 +79,7 @@ public class ImportFileTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) {
     	taskMonitor.setTitle("Import CSV File");
-        taskMonitor.setStatusMessage("Reading CSV file...");
+        taskMonitor.setStatusMessage("Reading CSV file");
 
         try {
         	
@@ -97,7 +97,7 @@ public class ImportFileTask extends AbstractTask {
 		            }
 		        }
 		        
-            taskMonitor.setStatusMessage("Processing CSV data...");
+            taskMonitor.setStatusMessage("Processing CSV data");
 
 
             // Create JSONArray to hold the JSONObjects
@@ -123,7 +123,7 @@ public class ImportFileTask extends AbstractTask {
 	            jsonArray.add(jsonObject);
 	        }
 
-            taskMonitor.setStatusMessage("Displaying data in panel...");
+            taskMonitor.setStatusMessage("Displaying data in panel");
 
             
 			/*
@@ -155,7 +155,7 @@ public class ImportFileTask extends AbstractTask {
 	       
 	        
 	        if (sendToServer) {
-	            taskMonitor.setStatusMessage("Sending data to server...");
+	            taskMonitor.setStatusMessage("Sending data to server");
 	            // Send JSON data to server
 	            sendJSONDataToServer(jsonArray, taskMonitor);
 	        }
@@ -196,23 +196,24 @@ public class ImportFileTask extends AbstractTask {
         	        // Create an instance of CloseableHttpClient
         	        CloseableHttpClient httpclient = HttpClients.createDefault();
 
-        	        taskMonitor.setStatusMessage("Sending data to server...");
+        	        taskMonitor.setStatusMessage("Sending data to server");
 
         	        // Send the JSON data to the server
         	        JSONObject jsonResponse = HTTPUtils.postJSON(serverURL, httpclient, jsonQuery, taskMonitor);
 
         	        // Process the server response if needed
         	        if (jsonResponse != null) {
-        	            taskMonitor.setStatusMessage("Processing server response...");
+        	            taskMonitor.setStatusMessage("Processing server response");
         	            
         	            // Process the response here
         	            String response = jsonResponse.toJSONString();
+        	            //i didn't use the response , i sent the json object setServerResponse. Before it was mggManager.setServerResponse(response);
         	            // Set the server response in the MGGManager
-        	            mggManager.setServerResponse(response);
+        	            mggManager.setServerResponse(jsonResponse);
         	            // Do something with the response
         	        }
         	        
-        	        taskMonitor.setStatusMessage("Closing connection...");
+        	        taskMonitor.setStatusMessage("Closing connection");
         	        
         	        // Close the HttpClient
         	        httpclient.close();
