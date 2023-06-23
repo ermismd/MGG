@@ -37,7 +37,7 @@ public class ImportFileTest {
 	            }
 	        }
 
-	        String filePath = "C:\\Users\\herme\\git\\MGG\\src\\main\\java\\uni\\kul\\rega\\mgG\\internal\\tasks\\qiime2_use_case.tsv";
+	        String filePath = "C:\\Users\\herme\\git\\MGG\\src\\main\\java\\be\\kuleuven\\mgG\\internal\\tasks\\qiime2_use_case.tsv";
 
 	        // Mock TaskMonitor (you might want to use a real one or a mock framework like Mockito)
 	        TaskMonitor taskMonitor = null;
