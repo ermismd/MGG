@@ -104,25 +104,34 @@ public class ImportFileTask extends AbstractTask {
             
 	        JSONArray jsonArray = new JSONArray();
 	        
+	        
+	        JSONArray header = new JSONArray();
+	        
+	        for (String hdr:headers) {
+	        	header.add(hdr);
+	        }
+	        
+	        jsonArray.add(header);
+	        
+	        
 	        // Iterate each row of CSV 
 	        for (String[] values : csvData) {
 	            // Skip rows with only one column
 	            if (values.length <= 1) {
 	                continue;
 	            }
-
-	            // Create a JSONObject for each row of CSV 
-	            JSONObject jsonObject = new JSONObject();
-	            for (int j = 0; j < headers.length; j++) {
-	                if (j < values.length) {
-	                    jsonObject.put(headers[j], values[j]);
-	                }
+	            
+	            JSONArray row=new JSONArray();
+	            	
+	            for (String value:values) {
+	            	row.add(value);
 	            }
 
-	            // Add the JSONObject to the JSONArray
-	            jsonArray.add(jsonObject);
+	            jsonArray.add(row);
+	            
 	        }
-
+	           
+	        System.out.println(jsonArray.toString());
             taskMonitor.setStatusMessage("Displaying data in panel");
 
             
