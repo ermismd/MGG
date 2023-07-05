@@ -32,6 +32,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
+import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
+import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
@@ -56,6 +58,11 @@ import org.cytoscape.work.TaskObserver;
 
 
 
+
+
+
+
+
 public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedListener {
 	
 	
@@ -65,16 +72,15 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	final TaskManager taskManager;
 	final CyServiceRegistrar cyRegistrar; 
 	
-	private JSONObject serverResponse;
 	
 	 AvailableCommands availableCommands=null;
 	 CommandExecutorTaskFactory ceTaskFactory=null;
-	 SynchronousTaskManager syncTaskManager=null;
+	
 
-	
-	
+	private JSONArray jsonArray;
+	private JSONArray serverResponse;
+		
 	//private Icon MGGicon;
-
 
 
 
@@ -88,86 +94,43 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		cyRegistrar.registerService(this, SessionAboutToBeSavedListener.class, new Properties());
 		cyRegistrar.registerService(this, SessionLoadedListener.class, new Properties());
 		
-		
-	
-		
+			
 	}
 	
+
 	
+    public void setJsonArray(JSONArray jsonArray) {
+        this.jsonArray = jsonArray;
+    }
+
+    public JSONArray getJsonArray() {
+        return jsonArray;
+    }
+	
+   
+    // From SendDataToServerTask
 	// Method to set the server response
-    public void setServerResponse(JSONObject jsonResponse) {
-        this.serverResponse = jsonResponse;
+    public void setServerResponse(JSONArray jsonresponse) {
+        this.serverResponse = jsonresponse;
     }
 	
 
     // Method to get the server response
-    public JSONObject getServerResponse() {
+    public JSONArray getServerResponse() {
         return this.serverResponse;
     }
 	
+ 
     
-    
-    
-    
-    
-	
     public void executeTasks(TaskIterator tasks) {
-		taskManager.execute(tasks);
-	}
+        taskManager.execute(tasks);
+    } 
 
-	public void executeTasks(TaskIterator tasks, TaskObserver observer) {
-		taskManager.execute(tasks, observer);
-	}
+    
 
-	public void executeTasks(TaskFactory factory) {
-		taskManager.execute(factory.createTaskIterator());
-	}
+    
+    
 
-	public void executeTasks(TaskFactory factory, TaskObserver observer) {
-		taskManager.execute(factory.createTaskIterator(), observer);
-	}
-	
-	
-	
-	
-	
-	
-	
-	public <S> S getService(Class<S> serviceClass) {
-		 return cyRegistrar.getService(serviceClass);
-		 }
-		
-	public <S> S getService(Class<S> serviceClass, String filter) {
-		return cyRegistrar.getService(serviceClass, filter);
-	}
-
-	public void registerService(Object service, Class<?> serviceClass, Properties props) {
-		cyRegistrar.registerService(service, serviceClass, props);
-	}
-
-	public void unregisterService(Object service, Class<?> serviceClass) {
-		cyRegistrar.unregisterService(service, serviceClass);
-	}
-	
-	
-	
-	
-	/*
-	 * public void executeCommand(String namespace, String command,Map<String,
-	 * Object> args, TaskObserver observer) { if (ceTaskFactory == null)
-	 * ceTaskFactory = getService(CommandExecutorTaskFactory.class); if
-	 * (availableCommands == null) availableCommands=
-	 * getService(AvailableCommands.class); if (syncTaskManager == null)
-	 * syncTaskManager = getService(SynchronousTaskManager.class); if
-	 * (availableCommands.getNamespaces() == null ||
-	 * !availableCommands.getCommands(namespace).contains(command)) throw new
-	 * RuntimeException("Can’t find command" +namespace+ "+command"); TaskIterator
-	 * ti = ceTaskFactory.createTaskIterator(namespace, command, args, observer);
-	 * syncTaskManager.execute(ti); }
-	 */
-	
-
-	
 	
 	
 	@Override
@@ -224,6 +187,59 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	    }
 		
 	}
+
+
+
+
+
+
+	/*
+	 * public void executeTasks(TaskIterator tasks) { taskManager.execute(tasks); }
+	 * 
+	 * public void executeTasks(TaskIterator tasks, TaskObserver observer) {
+	 * taskManager.execute(tasks, observer); }
+	 * 
+	 * public void executeTasks(TaskFactory factory) {
+	 * taskManager.execute(factory.createTaskIterator()); }
+	 * 
+	 * public void executeTasks(TaskFactory factory, TaskObserver observer) {
+	 * taskManager.execute(factory.createTaskIterator(), observer); }
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * public <S> S getService(Class<S> serviceClass) { return
+	 * cyRegistrar.getService(serviceClass); }
+	 * 
+	 * public <S> S getService(Class<S> serviceClass, String filter) { return
+	 * cyRegistrar.getService(serviceClass, filter); }
+	 * 
+	 * public void registerService(Object service, Class<?> serviceClass, Properties
+	 * props) { cyRegistrar.registerService(service, serviceClass, props); }
+	 * 
+	 * public void unregisterService(Object service, Class<?> serviceClass) {
+	 * cyRegistrar.unregisterService(service, serviceClass); }
+	 */
+	
+	
+	/*
+	 * public void executeCommand(String namespace, String command,Map<String,
+	 * Object> args, TaskObserver observer) { if (ceTaskFactory == null)
+	 * ceTaskFactory = getService(CommandExecutorTaskFactory.class); if
+	 * (availableCommands == null) availableCommands=
+	 * getService(AvailableCommands.class); if (syncTaskManager == null)
+	 * syncTaskManager = getService(SynchronousTaskManager.class); if
+	 * (availableCommands.getNamespaces() == null ||
+	 * !availableCommands.getCommands(namespace).contains(command)) throw new
+	 * RuntimeException("Can’t find command" +namespace+ "+command"); TaskIterator
+	 * ti = ceTaskFactory.createTaskIterator(namespace, command, args, observer);
+	 * syncTaskManager.execute(ti); }
+	 */
+
+	
 
 
 

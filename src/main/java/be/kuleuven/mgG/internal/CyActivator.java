@@ -36,7 +36,7 @@ import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskFactory;
-
+import org.json.simple.JSONArray;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
+import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 import be.kuleuven.mgG.internal.model.MGGManager;
 
 
@@ -71,6 +72,8 @@ public class CyActivator extends AbstractCyActivator {
 		CyApplicationManager appManager = getService(bc, CyApplicationManager.class);
         CySwingApplication swingApplication = getService(bc, CySwingApplication.class);
 
+        CyNetworkFactory networkFactory =getService(bc, CyNetworkFactory.class);
+        CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
         
         
         Properties props = new Properties();
@@ -87,14 +90,27 @@ public class CyActivator extends AbstractCyActivator {
         ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager, MGGManager);
    
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
     }
 	
 	
-		
-		
-  
-
-        
+	    
+    
+//  MGGManager mggManager = getService(bc, MGGManager.class);
+//	JSONDisplayPanel displayPanel = new JSONDisplayPanel(mggManager, mggManager.getJsonArray());
+//
+//  // Register the JSONDisplayPanel as a service
+//  registerService(bc, displayPanel, CytoPanelComponent.class);
+//  
   
 		
 		
