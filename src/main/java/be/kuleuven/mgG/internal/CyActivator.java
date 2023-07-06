@@ -45,6 +45,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 import be.kuleuven.mgG.internal.model.MGGManager;
@@ -94,10 +95,7 @@ public class CyActivator extends AbstractCyActivator {
 
         
         
-        
-        
-        
-        
+     
         
         
     }

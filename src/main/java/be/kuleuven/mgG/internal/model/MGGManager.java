@@ -72,13 +72,17 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	final TaskManager taskManager;
 	final CyServiceRegistrar cyRegistrar; 
 	
+	final AvailableCommands availableCommands;
+	final CommandExecutorTaskFactory ceTaskFactory;
 	
-	 AvailableCommands availableCommands=null;
-	 CommandExecutorTaskFactory ceTaskFactory=null;
+	final SynchronousTaskManager syncTaskManager;
+	
+	
+	 
 	
 
 	private JSONArray jsonArray;
-	private JSONArray serverResponse;
+	private JSONObject serverResponse;
 		
 	//private Icon MGGicon;
 
@@ -88,6 +92,9 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		
 		this.cyRegistrar = cyRegistrar;
 		this.taskManager = cyRegistrar.getService(TaskManager.class);
+		this.availableCommands = cyRegistrar.getService(AvailableCommands.class);
+		this.ceTaskFactory = cyRegistrar.getService(CommandExecutorTaskFactory.class);
+		this.syncTaskManager = cyRegistrar.getService(SynchronousTaskManager.class);
 		
 		//MGGicon = new ImageIcon(getClass().getResource("/images/scNetViz.png"));
 
@@ -110,13 +117,13 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
    
     // From SendDataToServerTask
 	// Method to set the server response
-    public void setServerResponse(JSONArray jsonresponse) {
-        this.serverResponse = jsonresponse;
+    public void setServerResponse(JSONObject jsonResponse) {
+        this.serverResponse = jsonResponse;
     }
 	
 
     // Method to get the server response
-    public JSONArray getServerResponse() {
+    public JSONObject getServerResponse() {
         return this.serverResponse;
     }
 	
@@ -132,6 +139,18 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     
 
 	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	
 	@Override
 	// See if we have data in the session, and load it if we do
@@ -187,6 +206,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	    }
 		
 	}
+
 
 
 

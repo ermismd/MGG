@@ -11,6 +11,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
@@ -21,7 +24,9 @@ import org.json.simple.parser.JSONParser;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.HTTPUtils;
+
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+import be.kuleuven.mgG.internal.view.JSONViewerPanel;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,7 +54,7 @@ public class SendDataToServerTask extends AbstractTask {
 	private  String serverResponse; // Stores the server response
 	private final JSONArray jsonArray; // The JSON array to send to the server
     private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
-
+    
     
     
     /**
@@ -62,6 +67,7 @@ public class SendDataToServerTask extends AbstractTask {
     public SendDataToServerTask(JSONArray jsonArray,MGGManager mggManager) {
     	this.mggManager=mggManager;
     	 this.jsonArray = mggManager.getJsonArray();
+    	
     }
 
     /**
@@ -99,40 +105,56 @@ public class SendDataToServerTask extends AbstractTask {
           
               
            // Execute the HTTP request and obtain the response
-              try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+              CloseableHttpResponse response = httpClient.execute(httpPost) ;
                   int statusCode = response.getStatusLine().getStatusCode();
 
                   if (statusCode != 200 && statusCode != 202) {
                       taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Got " + statusCode + " code from server");
-                      return;
+                      return ;
                   }
 
                   // Get the response content
                   HttpEntity responseEntity = response.getEntity();
-                  String responseString = EntityUtils.toString(responseEntity);
+                  //String responseString = EntityUtils.toString(responseEntity);
                   
+                 JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
+          		
+          			
                   // Set the server response as the status message
-                  taskMonitor.setStatusMessage("Server Response: " + responseString);
+                  //taskMonitor.setStatusMessage("Server Response: " + responseString );
 
                   // Parse the response as a JSONObject and JSONArray
-                  JSONParser parser = new JSONParser();
-                  JSONObject jsonResponse = (JSONObject) parser.parse(new InputStreamReader(responseEntity.getContent()));
-                  JSONArray jsonResponse2 = (JSONArray) parser.parse(responseString);
+                 // JSONParser parser = new JSONParser();
+                 // JSONObject jsonResponse = (JSONObject) parser.parse(new InputStreamReader(responseEntity.getContent()));
+                 // JSONArray jsonResponse2 = (JSONArray) parser.parse(responseString );
 
+                  
+               
+                  
+                  
                   taskMonitor.setStatusMessage("Processing server response");
 
                   taskMonitor.setStatusMessage("Data sent to server and retrieved successfully!");
                   
                   
+             
+                  
+                  
                   // Display the server response in the panel using SwingUtilities.invokeLater
-                  SwingUtilities.invokeLater(() -> showDataInPanel(jsonResponse2));
+                  //SwingUtilities.invokeLater(() -> showDataInPanel(jsonResponse));
                   
+                 
+
+              	SwingUtilities.invokeLater(() ->viewData(jsonResponse)); 
                   
+                 
                   // Set the JSON array in the MGGManager
-                  mggManager.setServerResponse(jsonResponse2);
+                  mggManager.setServerResponse(jsonResponse);
                   
+             
+              
                   
-              } // The response  closes here
+              // The response  closes here
 
               httpClient.close();
           } catch (Exception e) {
@@ -143,17 +165,20 @@ public class SendDataToServerTask extends AbstractTask {
 
           taskMonitor.setStatusMessage("Data sent to server successfully!");
       }
+    
+    
+    
 	
-    
-    
-    private void showDataInPanel(JSONArray jsonResponse) {
-    	  JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonResponse);
-
-          JFrame frame = new JFrame("Abundance Data");
-          frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-          frame.getContentPane().add(panel);
-          frame.pack();
-          frame.setVisible(true);
+    private void viewData(JSONObject jsonResponse) {
+    	  JSONViewerPanel viewerPanel = new JSONViewerPanel(jsonResponse);
+	  
+	    
+	    JFrame frame = new JFrame("JSON Viewer");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.getContentPane().add(viewerPanel);
+        frame.pack();
+        frame.setVisible(true);
+  
     
     }
     
