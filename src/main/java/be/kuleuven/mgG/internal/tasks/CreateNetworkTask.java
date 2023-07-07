@@ -73,6 +73,10 @@ import org.json.simple.JSONArray;
                 nodeTable.createColumn("selected", Boolean.class, false);
             }
             
+            if (!nodeTable.getColumns().contains("annotation_Taxon")) {
+                nodeTable.createColumn("annotation_Taxon", String.class, false);
+            }
+          
             
             
             // Add nodes
@@ -86,6 +90,8 @@ import org.json.simple.JSONArray;
                 network.getRow(node).set("SUID", (Long) nodeData.get("SUID"));
                 network.getRow(node).set("shared_name", (String) nodeData.get("shared_name"));
                 network.getRow(node).set("selected", (Boolean) nodeData.get("selected"));
+                network.getRow(node).set("annotation_Taxon", (String) nodeData.get("annotation_Taxon"));
+                
             }
 
             
