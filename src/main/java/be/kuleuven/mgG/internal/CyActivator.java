@@ -77,6 +77,8 @@ public class CyActivator extends AbstractCyActivator {
         CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
         
         
+        // Register taskfactory
+        ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager, MGGManager);
         Properties props = new Properties();
 		props.setProperty(TITLE, "Import from file...");
 		props.setProperty(PREFERRED_MENU, "Apps.MGG.Load TSV/CSV[10.1]");
@@ -86,16 +88,28 @@ public class CyActivator extends AbstractCyActivator {
 		props.setProperty(COMMAND_NAMESPACE, "MGG");
 		props.setProperty(COMMAND_DESCRIPTION, "Load a file from csv");
 		props.setProperty(COMMAND, "load csv");
-		
-        // Register taskfactory
-        ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager, MGGManager);
-   
+	     
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
         
 
         
         
-     
+        //createnetworktaskfactory
+        TaskFactory createNetworkTaskFactory = new CreateNetworkTaskFactory(MGGManager, networkFactory, networkManager);
+        
+        Properties propsNetwork = new Properties();
+        propsNetwork.setProperty(TITLE, "Create Network");
+        propsNetwork.setProperty(PREFERRED_MENU, "Apps.MGG");
+        propsNetwork.setProperty(IN_TOOL_BAR, "FALSE");
+        propsNetwork.setProperty(IN_MENU_BAR, "TRUE");
+        propsNetwork.setProperty(MENU_GRAVITY, "10.0");
+        propsNetwork.setProperty(COMMAND_NAMESPACE, "MGG");
+        propsNetwork.setProperty(COMMAND_DESCRIPTION, "Create a network from server response");
+        propsNetwork.setProperty(COMMAND, "create network");
+        
+
+        // Register the task factory
+        registerService(bc, createNetworkTaskFactory, TaskFactory.class,propsNetwork );
         
         
     }

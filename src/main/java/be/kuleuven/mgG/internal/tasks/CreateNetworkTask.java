@@ -53,7 +53,28 @@ import org.json.simple.JSONArray;
             CyNetwork network = networkFactory.createNetwork();
          // Add the network to the network manager
             networkManager.addNetwork(network);
+            
+            
+         // Get the default node table
+            CyTable nodeTable = network.getDefaultNodeTable();
 
+            
+         // Create columns if they don't exist
+            if (nodeTable.getColumn("alias") == null) {
+                nodeTable.createListColumn("alias", String.class, false);
+            }
+            if (nodeTable.getColumn("SUID") == null) {
+                nodeTable.createColumn("SUID", Long.class, false);
+            }
+            if (nodeTable.getColumn("shared_name") == null) {
+                nodeTable.createColumn("shared_name", String.class, false);
+            }
+            if (nodeTable.getColumn("selected") == null) {
+                nodeTable.createColumn("selected", Boolean.class, false);
+            }
+            
+            
+            
             // Add nodes
             JSONArray nodes = (JSONArray) elements.get("nodes");
             for (Object nodeObj : nodes) {
@@ -67,6 +88,34 @@ import org.json.simple.JSONArray;
                 network.getRow(node).set("selected", (Boolean) nodeData.get("selected"));
             }
 
+            
+         // Get the default edge table
+            CyTable edgeTable = network.getDefaultEdgeTable();
+
+            // Create columns if they don't exist
+            if (edgeTable.getColumn("shared_interaction") == null) {
+                edgeTable.createColumn("shared_interaction", String.class, false);
+            }
+            if (edgeTable.getColumn("interaction") == null) {
+                edgeTable.createColumn("interaction", String.class, false);
+            }
+            if (edgeTable.getColumn("shared_name") == null) {
+                edgeTable.createColumn("shared_name", String.class, false);
+            }
+            if (edgeTable.getColumn("source") == null) {
+                edgeTable.createColumn("source", String.class, false);
+            }
+            if (edgeTable.getColumn("target") == null) {
+                edgeTable.createColumn("target", String.class, false);
+            }
+            if (edgeTable.getColumn("selected") == null) {
+                edgeTable.createColumn("selected", Boolean.class, false);
+            }
+
+
+            
+            
+            
             // Add edges
             JSONArray edges = (JSONArray) elements.get("edges");
             for (Object edgeObj : edges) {

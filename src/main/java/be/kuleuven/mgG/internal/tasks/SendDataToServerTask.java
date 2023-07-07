@@ -150,8 +150,7 @@ public class SendDataToServerTask extends AbstractTask {
                  
                   // Set the JSON array in the MGGManager
                   mggManager.setServerResponse(jsonResponse);
-                  
-             
+               
               
                   
               // The response  closes here
