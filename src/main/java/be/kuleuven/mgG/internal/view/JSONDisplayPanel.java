@@ -22,8 +22,12 @@ public class JSONDisplayPanel extends JPanel  {
  
     
     
-    public JSONDisplayPanel(final MGGManager manager,JSONArray jsonArray) {
+    public JSONDisplayPanel(final MGGManager manager,JSONObject jsonObject) {
         super(new BorderLayout());
+        
+        // Extract the JSONArray from the JSONObject
+        JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+        
         createTable(jsonArray);
         JScrollPane scrollPane = new JScrollPane(table);
       
@@ -41,11 +45,11 @@ public class JSONDisplayPanel extends JPanel  {
         
         
         // Add the button that will execute the SendDataToServerTask when clicked
-        JButton sendButton = new JButton("Get Network from Server");
+        JButton sendButton = new JButton("Get Network ");
         sendButton.addActionListener(new ActionListener() {  
             public void actionPerformed(ActionEvent e) {
               
-            	 TaskIterator taskIterator = new SendDataToServerTaskFactory(jsonArray, manager).createTaskIterator();
+            	 TaskIterator taskIterator = new SendDataToServerTaskFactory(jsonObject, manager).createTaskIterator();
                  manager.executeTasks(taskIterator);
             }
 

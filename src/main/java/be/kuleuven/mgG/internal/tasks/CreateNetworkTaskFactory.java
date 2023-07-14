@@ -9,18 +9,16 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 
 public class CreateNetworkTaskFactory implements TaskFactory {
     private final MGGManager mggManager;
-    private final CyNetworkFactory networkFactory;
-    private final CyNetworkManager networkManager;
+  
 
-    public CreateNetworkTaskFactory(MGGManager mggManager, CyNetworkFactory networkFactory, CyNetworkManager networkManager) {
+    public CreateNetworkTaskFactory(MGGManager mggManager) {
         this.mggManager = mggManager;
-        this.networkFactory = networkFactory;
-        this.networkManager = networkManager;
+    
     }
-
+    
     @Override
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new CreateNetworkTask(mggManager, networkFactory, networkManager));
+        return new TaskIterator(new CreateNetworkTask(mggManager));
     }
 
     @Override

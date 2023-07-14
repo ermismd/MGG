@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
+import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 import be.kuleuven.mgG.internal.model.MGGManager;
 
@@ -78,31 +79,52 @@ public class CyActivator extends AbstractCyActivator {
         
         
         // Register taskfactory
+        
         ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager, MGGManager);
         Properties props = new Properties();
-		props.setProperty(TITLE, "Import from file...");
-		props.setProperty(PREFERRED_MENU, "Apps.MGG.Load TSV/CSV[10.1]");
+		props.setProperty(TITLE, "Import Abundance Table/Network");
+		props.setProperty(PREFERRED_MENU, "Apps.MGG.Import Experiment");
 		props.setProperty(IN_TOOL_BAR, "FALSE");
 		props.setProperty(IN_MENU_BAR, "TRUE");
-		props.setProperty(MENU_GRAVITY, "30.0");
+		props.setProperty(MENU_GRAVITY, "1");
 		props.setProperty(COMMAND_NAMESPACE, "MGG");
-		props.setProperty(COMMAND_DESCRIPTION, "Load a file from csv");
-		props.setProperty(COMMAND, "load csv");
+		props.setProperty(COMMAND_DESCRIPTION, "Load abudance table(TSV/CSV) or network");
+		props.setProperty(COMMAND, "Load_File");
 	     
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
         
 
         
         
+        // Register taskfactory
+        
+        SendDataToServerTaskFactory sendDataToServerTaskFactory = new SendDataToServerTaskFactory(MGGManager.getJsonObject(), MGGManager);
+        Properties Sendprops = new Properties();
+		Sendprops.setProperty(TITLE, "Get Network");
+		Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Experiment");
+		Sendprops.setProperty(IN_TOOL_BAR, "FALSE");
+		Sendprops.setProperty(IN_MENU_BAR, "TRUE");
+		Sendprops.setProperty(MENU_GRAVITY, "2");
+		Sendprops.setProperty(COMMAND_NAMESPACE, "MGG");
+		Sendprops.setProperty(COMMAND_DESCRIPTION, "Upload data to Microbetag Server and Get the Network");
+		Sendprops.setProperty(COMMAND, "Get_Network");
+	     
+        registerService(bc,sendDataToServerTaskFactory, TaskFactory.class, Sendprops);
+        
+        
+        
+        
+        
         //createnetworktaskfactory
-        TaskFactory createNetworkTaskFactory = new CreateNetworkTaskFactory(MGGManager, networkFactory, networkManager);
+        
+        TaskFactory createNetworkTaskFactory = new CreateNetworkTaskFactory(MGGManager);
         
         Properties propsNetwork = new Properties();
-        propsNetwork.setProperty(TITLE, "Create Network");
-        propsNetwork.setProperty(PREFERRED_MENU, "Apps.MGG");
+        propsNetwork.setProperty(TITLE, "Visualize Network");
+        propsNetwork.setProperty(PREFERRED_MENU, "Apps.MGG.Import Experiment");
         propsNetwork.setProperty(IN_TOOL_BAR, "FALSE");
         propsNetwork.setProperty(IN_MENU_BAR, "TRUE");
-        propsNetwork.setProperty(MENU_GRAVITY, "10.0");
+        propsNetwork.setProperty(MENU_GRAVITY, "3");
         propsNetwork.setProperty(COMMAND_NAMESPACE, "MGG");
         propsNetwork.setProperty(COMMAND_DESCRIPTION, "Create a network from server response");
         propsNetwork.setProperty(COMMAND, "create network");

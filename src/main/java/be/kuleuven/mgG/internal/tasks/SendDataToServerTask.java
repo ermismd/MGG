@@ -18,6 +18,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -52,11 +53,14 @@ import javax.swing.SwingUtilities;
 public class SendDataToServerTask extends AbstractTask {
  
 	private  String serverResponse; // Stores the server response
-	private final JSONArray jsonArray; // The JSON array to send to the server
+	private final JSONObject jsonObject; // The JSON array to send to the server
     private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
     
+   
+
+    				
     
-    
+   
     /**
      * Constructs a new SendDataToServerTask object.
      *
@@ -64,9 +68,9 @@ public class SendDataToServerTask extends AbstractTask {
      * @param mggManager  The MGGManager instance for retrieving the JSON array.
      */
     
-    public SendDataToServerTask(JSONArray jsonArray,MGGManager mggManager) {
+    public SendDataToServerTask(JSONObject jsonObject,MGGManager mggManager) {
     	this.mggManager=mggManager;
-    	 this.jsonArray = mggManager.getJsonArray();
+    	this.jsonObject = mggManager.getJsonObject();
     	
     }
 
@@ -83,12 +87,12 @@ public class SendDataToServerTask extends AbstractTask {
         
     
         try {
-        	
+        	if(jsonObject!=null) {
         	// Create an HttpClient
         	  CloseableHttpClient httpClient = HttpClients.createDefault();
         	  
         	  
-              String jsonQuery = jsonArray.toJSONString();
+              String jsonQuery = jsonObject.toJSONString();
 
               String serverURL = "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table";
 
@@ -145,7 +149,7 @@ public class SendDataToServerTask extends AbstractTask {
                   
                  
 
-              	SwingUtilities.invokeLater(() ->viewData(jsonResponse)); 
+              	//SwingUtilities.invokeLater(() ->viewData(jsonResponse)); 
                   
                  
                   // Set the JSON array in the MGGManager
@@ -156,6 +160,17 @@ public class SendDataToServerTask extends AbstractTask {
               // The response  closes here
 
               httpClient.close();
+              
+             // CreateNetworkTask networktask= new  CreateNetworkTask(mggManager);
+             // networktask.run(taskMonitor);
+              
+        	}
+        	
+        	else {
+        		taskMonitor.setTitle("There is no data to send");
+        		taskMonitor.setStatusMessage("There is no data to send");
+        	}
+        	
           } catch (Exception e) {
         	  	// Handle and display error messages
               taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Error while sending JSON data to server: " + e.getMessage());

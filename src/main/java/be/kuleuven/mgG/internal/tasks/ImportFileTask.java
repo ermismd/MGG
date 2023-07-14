@@ -30,6 +30,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -38,6 +39,24 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.CSVReader;
 import be.kuleuven.mgG.internal.utils.HTTPUtils;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+
+
+
+
+/**
+ * This class represents a task for importing a CSV file and processing it into a JSON array.
+ * 
+ * The CSV file is read and parsed into a list of string arrays, where each array represents a row in the CSV file.
+ * The task then creates a JSON array where each JSON object corresponds to a row in the CSV file.
+ * The JSON array is then set in the MGGManager
+ *
+ * The task also provides options to display the JSON data in a panel and to write the JSON data to a file.
+ * 
+ */
+
+
+
+
 
 public class ImportFileTask extends AbstractTask {
    
@@ -69,13 +88,43 @@ public class ImportFileTask extends AbstractTask {
             exampleStringValue="true")
    public boolean writeToFile = true;  
     
+    @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
+    public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
+
+    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=2.0, required=true)
+    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "qiime2");
+    
+    @Tunable(description="PhenDB", longDescription="Choose whether to use PhenDB.", groups={"Input Settings"}, gravity=3.0, exampleStringValue="True, False", required=true)
+    public boolean phenDB;
+
+    @Tunable(description="FAPROTAX", longDescription="Choose whether to use FAPROTAX.", groups={"Input Settings"}, gravity=4.0, exampleStringValue="True, False", required=true)
+    public boolean faproTax;
+
+    @Tunable(description="NetCooperate", longDescription="Choose whether to use NetCooperate.", groups={"Input Settings"}, gravity=5.0, exampleStringValue="True, False", required=true)
+    public boolean netCooperate;
+
+    @Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
+    public boolean netCmpt;
+
+    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to use pathway complementarity.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
+    public boolean pathwayComplementarity;
     
     
     
     
-    public ImportFileTask(CySwingApplication cytoscapeDesktopService, CyApplicationManager cyApplicationManager2, String filePath,MGGManager mggManager) {
+    
+    /**
+     * Constructor for the ImportFileTask class.
+     * 
+     * @param cytoscapeDesktopService The CySwingApplication service, which provides access to Cytoscape desktop components.
+     * @param cyApplicationManager2 The CyApplicationManager service, which provides access to the current network and view.
+     * @param filePath The path of the CSV file to import.
+     * 
+     */
+    
+    public ImportFileTask(CySwingApplication cytoscapeDesktopService, CyApplicationManager cyApplicationManager, String filePath,MGGManager mggManager) {
         this.swingApplication = cytoscapeDesktopService;
-        this.cyApplicationManager = cyApplicationManager2;
+        this.cyApplicationManager = cyApplicationManager;
         this.filePath = filePath;
         this.mggManager = mggManager;
                
@@ -84,8 +133,8 @@ public class ImportFileTask extends AbstractTask {
   
     @Override
     public void run(TaskMonitor taskMonitor) {
-    	taskMonitor.setTitle("Import CSV File");
-        taskMonitor.setStatusMessage("Reading CSV file");
+    	taskMonitor.setTitle("Importing File");
+        taskMonitor.setStatusMessage("Reading file");
 
         try {
         	
@@ -103,7 +152,7 @@ public class ImportFileTask extends AbstractTask {
 		            }
 		        }
 		        
-            taskMonitor.setStatusMessage("Processing CSV data");
+            taskMonitor.setStatusMessage("Processing data");
 
 
             // Create JSONArray to hold the JSONObjects
@@ -137,9 +186,29 @@ public class ImportFileTask extends AbstractTask {
 	            
 	        }
 	         
-	     
+	     // Create a new JSONObject
+	        JSONObject jsonObject = new JSONObject();
+
+	        // Add the jsonArray to the jsonObject
+	        jsonObject.put("data", jsonArray);
+
+	        // Create a new JSONArray for the input parameters
+	        JSONArray inputParameters = new JSONArray();
+	        inputParameters.add(input.getSelectedValue());
+	        inputParameters.add(taxonomy.getSelectedValue());
+	        inputParameters.add(phenDB);
+	        inputParameters.add(faproTax);
+	        inputParameters.add(netCooperate);
+	        inputParameters.add(netCmpt);
+	        inputParameters.add(pathwayComplementarity);
+
+	        // Add the input parameters to the jsonObject
+	        jsonObject.put("inputParameters", inputParameters);
+	        
+	  
+	        
 	        // Set the JSON array in the MGGManager
-            mggManager.setJsonArray(jsonArray);
+            mggManager.setJsonObject(jsonObject);
             
           
             taskMonitor.setStatusMessage("Displaying data in panel");
@@ -159,12 +228,12 @@ public class ImportFileTask extends AbstractTask {
             
             
 			  // Show the JSON data in a panel if showJSONInPanel 
-            	SwingUtilities.invokeLater(() ->showDataInPanel(jsonArray)); 
+            	SwingUtilities.invokeLater(() ->showDataInPanel(jsonObject)); 
                
 			 
 	        
             taskMonitor.setProgress(1.0);
-            taskMonitor.setStatusMessage("Finished processing CSV file.");
+            taskMonitor.setStatusMessage("Finished processing  file.");
             
                                    
             
@@ -178,8 +247,8 @@ public class ImportFileTask extends AbstractTask {
     
    
         
-        private void showDataInPanel(JSONArray jsonArray) {
-		    JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonArray);
+        private void showDataInPanel(JSONObject jsonObject) {
+		    JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonObject);
 		  
 		    
 		    JFrame frame = new JFrame("OTU/ASV Data");

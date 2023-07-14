@@ -10,6 +10,8 @@ import org.cytoscape.model.CyNetwork;
   import org.cytoscape.model.CyNode;
   import org.cytoscape.model.CyTable;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
@@ -20,22 +22,41 @@ import org.json.simple.JSONArray;
   import be.kuleuven.mgG.internal.model.MGGManager;
   
   
-  
+  /**
+   * This class represents a task for creating a network in Cytoscape based on a JSON response from a server.
+   * 
+   * The JSON response  contain information about the nodes and edges of the network.
+   * For each node and edge, the task creates a corresponding node or edge in the Cytoscape network.
+   * The task also sets various attributes for the nodes and edges based on the JSON data.
+   * 
+   * The task uses the CyNetworkFactory service to create a new network, and the CyNetworkManager service to add the network to Cytoscape through the MGGmanager class
+   * 
+   */
   
  public class CreateNetworkTask extends AbstractTask {
   
  
   		
   	final MGGManager mggManager;
+  	
+    // Cytoscape services used by the task
     final CyNetworkFactory networkFactory;
     final CyNetworkManager networkManager;
-  	
+    final CyNetworkViewFactory networkViewFactory;
+    final CyNetworkViewManager networkViewManager;
+    
+    
 
-  public CreateNetworkTask(MGGManager mggManager ,CyNetworkFactory networkFactory, CyNetworkManager networkManager){ 
+  public CreateNetworkTask(MGGManager mggManager ){ 
 	  
-	  this.networkFactory = networkFactory;
-      this.networkManager = networkManager;
+	  
 	  this.mggManager=mggManager; 
+	  
+	  this.networkFactory = mggManager.getService(CyNetworkFactory.class);
+      this.networkManager = mggManager.getService(CyNetworkManager.class);
+      this.networkViewFactory = mggManager.getService(CyNetworkViewFactory.class);
+      this.networkViewManager = mggManager.getService(CyNetworkViewManager.class);
+	  
   }
   
   
@@ -143,6 +164,11 @@ import org.json.simple.JSONArray;
             }
 
         
+         //  create a network view
+            CyNetworkView networkView = networkViewFactory.createNetworkView(network);
+            networkViewManager.addNetworkView(networkView);  
+            
+            
     	 }
 
         private CyNode getNodeById(CyNetwork network, String id) {
