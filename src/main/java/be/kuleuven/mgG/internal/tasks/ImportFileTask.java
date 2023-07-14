@@ -60,32 +60,27 @@ import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 
 public class ImportFileTask extends AbstractTask {
    
-	private final CySwingApplication swingApplication;
-    private final CyApplicationManager cyApplicationManager;
+	final CySwingApplication swingApplication;
+    final CyApplicationManager cyApplicationManager;
+    
     private final MGGManager mggManager;
     
     private String filePath;
     
-    private JSONArray jsonArray;
+    private JSONObject jsonObject;
     
     
-
-	/*
-	 * @Tunable(description="Show JSON in panel",
-	 * longDescription="Choose if you want to visualize the JSON array.",
-	 * tooltip="If checked, the JSON will be displayed in a panel", gravity=1.0)
-	 * public boolean showJSONInPanel = true;
-	 * 
+    /*
 	 * @Tunable(description="Take back the network from Microbetag",
 	 * longDescription="Send the JSON array that was created by the imported CSV to the microbetag server to get back the network."
 	 * , tooltip="If checked, the JSON will be sent to the server", gravity=3.0)
 	 * public boolean sendToServer = true;
 	 */
-
-    @Tunable(description="Write JSON to file", 
-            longDescription="Choose whether to write the JSON data to a file in the sanme path as the original file.",
-            tooltip="If checked, a new JSON file will be created in the same path as the original file",
-            exampleStringValue="true")
+    
+    @Tunable(description = "Display Data", groups = { "Display Settings" }, tooltip="If checked, the Data will be displayed in a panel")
+    public boolean showJSONInPanel = true;
+    
+    @Tunable(description="Write JSON to file",groups = { "Create File Settings" },tooltip="If checked, a new JSON file will be created in the same path as the original file",exampleStringValue="true")
    public boolean writeToFile = true;  
     
     @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
@@ -122,9 +117,10 @@ public class ImportFileTask extends AbstractTask {
      * 
      */
     
-    public ImportFileTask(CySwingApplication cytoscapeDesktopService, CyApplicationManager cyApplicationManager, String filePath,MGGManager mggManager) {
-        this.swingApplication = cytoscapeDesktopService;
-        this.cyApplicationManager = cyApplicationManager;
+    public ImportFileTask(String filePath,MGGManager mggManager) {
+    	
+    	this.swingApplication = mggManager.getService(CySwingApplication.class);
+        this.cyApplicationManager = mggManager.getService(CyApplicationManager.class);
         this.filePath = filePath;
         this.mggManager = mggManager;
                
@@ -228,8 +224,9 @@ public class ImportFileTask extends AbstractTask {
             
             
 			  // Show the JSON data in a panel if showJSONInPanel 
-            	SwingUtilities.invokeLater(() ->showDataInPanel(jsonObject)); 
-               
+            if (showJSONInPanel) {
+                SwingUtilities.invokeLater(() -> showDataInPanel(jsonObject));
+            }
 			 
 	        
             taskMonitor.setProgress(1.0);

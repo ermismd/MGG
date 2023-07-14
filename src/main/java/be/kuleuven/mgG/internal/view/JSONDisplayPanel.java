@@ -25,10 +25,12 @@ public class JSONDisplayPanel extends JPanel  {
     public JSONDisplayPanel(final MGGManager manager,JSONObject jsonObject) {
         super(new BorderLayout());
         
+        
         // Extract the JSONArray from the JSONObject
         JSONArray jsonArray = (JSONArray) jsonObject.get("data");
         
         createTable(jsonArray);
+        
         JScrollPane scrollPane = new JScrollPane(table);
       
         this.manager = manager;
@@ -45,7 +47,7 @@ public class JSONDisplayPanel extends JPanel  {
         
         
         // Add the button that will execute the SendDataToServerTask when clicked
-        JButton sendButton = new JButton("Get Network ");
+        JButton sendButton = new JButton("Get Annotated Network ");
         sendButton.addActionListener(new ActionListener() {  
             public void actionPerformed(ActionEvent e) {
               
@@ -57,10 +59,29 @@ public class JSONDisplayPanel extends JPanel  {
     });
      // Set button appearance
         sendButton.setForeground(Color.BLACK); // Set the text color of the button
-        sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 16f)); // Set the font style and size of the button text
-        sendButton.setBackground(new Color(0, 176, 80)); // Set the background color of the button
+        sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 14f)); // Set the font style and size of the button text
+        sendButton.setBackground(new Color(144, 238, 144)); // Set the background color of the button
         sendButton.setFocusPainted(false); // Remove the focus border around the button
+        sendButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Add padding to the button
 
+        // Create a rounded border for the button
+        int borderRadius = 20;
+        int borderThickness = 2;
+        sendButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.WHITE, borderThickness),
+                BorderFactory.createEmptyBorder(borderRadius, borderRadius, borderRadius, borderRadius)));
+
+        // Add hover effect for the button
+        sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                sendButton.setBackground(Color.GREEN); // Set the background color when mouse enters the button
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                sendButton.setBackground(new Color(144, 238, 144)); // Set the background color when mouse exits the button
+            }
+        });
+        
         // Add the button to the JSONDisplayPanel
         add(sendButton, BorderLayout.NORTH);
     

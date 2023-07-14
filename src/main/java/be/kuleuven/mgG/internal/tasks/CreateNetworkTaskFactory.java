@@ -23,8 +23,8 @@ public class CreateNetworkTaskFactory implements TaskFactory {
 
     @Override
     public boolean isReady() {
-        // You can add any conditions that need to be met before the task can be executed.
-        // For example, you might want to check if the JSON response is not null.
+        // add any conditions that need to be met before the task can be executed.
+        // For example,  check the JSON response is not null.
         return mggManager.getServerResponse() != null;
     }
 }

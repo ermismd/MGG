@@ -71,19 +71,19 @@ public class CyActivator extends AbstractCyActivator {
 		
 		
 		// Get services
-		CyApplicationManager appManager = getService(bc, CyApplicationManager.class);
-        CySwingApplication swingApplication = getService(bc, CySwingApplication.class);
+		//CyApplicationManager appManager = getService(bc, CyApplicationManager.class);
+       // CySwingApplication swingApplication = getService(bc, CySwingApplication.class);
 
-        CyNetworkFactory networkFactory =getService(bc, CyNetworkFactory.class);
-        CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
+        //CyNetworkFactory networkFactory =getService(bc, CyNetworkFactory.class);
+       // CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
         
         
         // Register taskfactory
         
-        ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(swingApplication, appManager, MGGManager);
+        ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(MGGManager);
         Properties props = new Properties();
-		props.setProperty(TITLE, "Import Abundance Table/Network");
-		props.setProperty(PREFERRED_MENU, "Apps.MGG.Import Experiment");
+		props.setProperty(TITLE, "Import Abundance Data");
+		props.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
 		props.setProperty(IN_TOOL_BAR, "FALSE");
 		props.setProperty(IN_MENU_BAR, "TRUE");
 		props.setProperty(MENU_GRAVITY, "1");
@@ -100,8 +100,8 @@ public class CyActivator extends AbstractCyActivator {
         
         SendDataToServerTaskFactory sendDataToServerTaskFactory = new SendDataToServerTaskFactory(MGGManager.getJsonObject(), MGGManager);
         Properties Sendprops = new Properties();
-		Sendprops.setProperty(TITLE, "Get Network");
-		Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Experiment");
+		Sendprops.setProperty(TITLE, "Get Annotated Network");
+		Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
 		Sendprops.setProperty(IN_TOOL_BAR, "FALSE");
 		Sendprops.setProperty(IN_MENU_BAR, "TRUE");
 		Sendprops.setProperty(MENU_GRAVITY, "2");
@@ -117,22 +117,24 @@ public class CyActivator extends AbstractCyActivator {
         
         //createnetworktaskfactory
         
-        TaskFactory createNetworkTaskFactory = new CreateNetworkTaskFactory(MGGManager);
-        
-        Properties propsNetwork = new Properties();
-        propsNetwork.setProperty(TITLE, "Visualize Network");
-        propsNetwork.setProperty(PREFERRED_MENU, "Apps.MGG.Import Experiment");
-        propsNetwork.setProperty(IN_TOOL_BAR, "FALSE");
-        propsNetwork.setProperty(IN_MENU_BAR, "TRUE");
-        propsNetwork.setProperty(MENU_GRAVITY, "3");
-        propsNetwork.setProperty(COMMAND_NAMESPACE, "MGG");
-        propsNetwork.setProperty(COMMAND_DESCRIPTION, "Create a network from server response");
-        propsNetwork.setProperty(COMMAND, "create network");
-        
-
-        // Register the task factory
-        registerService(bc, createNetworkTaskFactory, TaskFactory.class,propsNetwork );
-        
+		/*
+		 * TaskFactory createNetworkTaskFactory = new
+		 * CreateNetworkTaskFactory(MGGManager);
+		 * 
+		 * Properties propsNetwork = new Properties(); propsNetwork.setProperty(TITLE,
+		 * "Visualize Network"); propsNetwork.setProperty(PREFERRED_MENU,
+		 * "Apps.MGG.Import Experiment"); propsNetwork.setProperty(IN_TOOL_BAR,
+		 * "FALSE"); propsNetwork.setProperty(IN_MENU_BAR, "TRUE");
+		 * propsNetwork.setProperty(MENU_GRAVITY, "3");
+		 * propsNetwork.setProperty(COMMAND_NAMESPACE, "MGG");
+		 * propsNetwork.setProperty(COMMAND_DESCRIPTION,
+		 * "Create a network from server response"); propsNetwork.setProperty(COMMAND,
+		 * "create network");
+		 * 
+		 * 
+		 * // Register the task factory registerService(bc, createNetworkTaskFactory,
+		 * TaskFactory.class,propsNetwork );
+		 */
         
     }
 	

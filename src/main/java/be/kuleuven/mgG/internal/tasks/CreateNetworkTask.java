@@ -72,10 +72,11 @@ import org.json.simple.JSONArray;
 
             // Create a new network
             CyNetwork network = networkFactory.createNetwork();
-         // Add the network to the network manager
+            
+        	// Add the network to the network manager
             networkManager.addNetwork(network);
             
-            
+      
          // Get the default node table
             CyTable nodeTable = network.getDefaultNodeTable();
 

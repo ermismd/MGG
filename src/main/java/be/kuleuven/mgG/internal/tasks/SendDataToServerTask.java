@@ -94,7 +94,7 @@ public class SendDataToServerTask extends AbstractTask {
         	  
               String jsonQuery = jsonObject.toJSONString();
 
-              String serverURL = "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table";
+              String serverURL = "https://msysbio.gbiomed.kuleuven.be/complements/1281578/146891";
 
               HttpPost httpPost = new HttpPost(serverURL);
               

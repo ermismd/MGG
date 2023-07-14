@@ -7,20 +7,19 @@ import javax.swing.JOptionPane;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 
 public class ImportFileTaskFactory implements TaskFactory {
-    private final CySwingApplication swingApplication;
-    private final CyApplicationManager cyApplicationManager;
+    
     private final MGGManager mggManager;
     
     
-    public ImportFileTaskFactory(CySwingApplication cytoscapeDesktopService, CyApplicationManager cyApplicationManager,MGGManager mggManager) {
-        this.swingApplication = cytoscapeDesktopService;
-        this.cyApplicationManager = cyApplicationManager;
+    public ImportFileTaskFactory(MGGManager mggManager) {
+      
         this.mggManager=mggManager;
     }
 
@@ -34,12 +33,12 @@ public class ImportFileTaskFactory implements TaskFactory {
 	        File selectedFile = fileChooser.getSelectedFile();
 	        String filePath = selectedFile.getAbsolutePath();
 
-	        return new TaskIterator(new ImportFileTask(swingApplication, cyApplicationManager, filePath, mggManager));
+	        return new TaskIterator(new ImportFileTask(filePath, mggManager));
 	    } else if (option == JFileChooser.CANCEL_OPTION) {
 	        // User cancelled the file selection, return an empty TaskIterator
 	        return new TaskIterator();
 	    } else {
-	        // An error occurred or no file was selected, handle the error
+	        // An error occurred or no file was selected
 	        String errorMessage = "Error selecting file";
 	        // You can display an error message or handle the error in any other way appropriate for your application
 	        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
