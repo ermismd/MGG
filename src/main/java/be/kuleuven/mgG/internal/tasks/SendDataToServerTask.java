@@ -94,13 +94,16 @@ public class SendDataToServerTask extends AbstractTask {
         	  
               String jsonQuery = jsonObject.toJSONString();
 
-              String serverURL = "https://msysbio.gbiomed.kuleuven.be/complements/1281578/146891";
+              String serverURL = "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table";
 
               HttpPost httpPost = new HttpPost(serverURL);
               
               // Set the JSON payload as a StringEntity
               StringEntity entity = new StringEntity(jsonQuery);
               httpPost.setEntity(entity);
+              
+              // Set the server response as the status message
+              taskMonitor.setStatusMessage("Sent: " + jsonQuery);
               
               // Set the request headers
               httpPost.setHeader("Accept", "application/json");
@@ -124,8 +127,7 @@ public class SendDataToServerTask extends AbstractTask {
                  JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
           		
           			
-                  // Set the server response as the status message
-                  //taskMonitor.setStatusMessage("Server Response: " + responseString );
+             
 
                   // Parse the response as a JSONObject and JSONArray
                  // JSONParser parser = new JSONParser();

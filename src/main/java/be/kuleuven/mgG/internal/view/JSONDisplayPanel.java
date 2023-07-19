@@ -62,7 +62,7 @@ public class JSONDisplayPanel extends JPanel  {
         sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 14f)); // Set the font style and size of the button text
         sendButton.setBackground(new Color(144, 238, 144)); // Set the background color of the button
         sendButton.setFocusPainted(false); // Remove the focus border around the button
-        sendButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Add padding to the button
+        sendButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Add padding to the button
 
         // Create a rounded border for the button
         int borderRadius = 20;
