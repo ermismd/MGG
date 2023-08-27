@@ -34,6 +34,8 @@ import org.json.simple.parser.JSONParser;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+import be.kuleuven.mgG.internal.view.MGGCytoPanel;
+
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
@@ -79,9 +81,11 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	
 	final AvailableCommands availableCommands;
 	final CommandExecutorTaskFactory ceTaskFactory;
+	//-----------------------------------------------------------
+	private MGGCytoPanel cytoPanel = null;
 	
-	
-	
+	  private CyNetwork newNetwork = null;
+	//----------------------------------------------------------
 	private JSONObject jsonObject;
 	private JSONObject serverResponse;
 		
@@ -157,6 +161,21 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
         return this.serverResponse;
     }
 	
+  //-----------------------------addition------------------------------for cytopanel------------------------------------------------------------------------------------------  
+    
+    public void setCytoPanel(MGGCytoPanel panel) {
+  		this.cytoPanel = panel;
+  	}
+      
+    public CyNetwork getCurrentNetwork() {
+		CyNetwork network = cyRegistrar.getService(CyApplicationManager.class).getCurrentNetwork();
+    if (network != null) return network;
+    return newNetwork;
+	}
+
+    
+    
+    //------------------------------------------------SErvice Register and execute Tasks-----------------------------------------------------------------------------------------------
     
     /**
      * Executes a set of tasks.
@@ -227,7 +246,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     
     
     
-    
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    
     
     
