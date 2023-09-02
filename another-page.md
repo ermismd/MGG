@@ -6,35 +6,26 @@
 
  * * *
 
-<html>
-<head>
-  <style>
-    .panel {
-      display: none;
-      background-color: #f1f1f1;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 10px;
-      width: 800px;
-    }
+<style>
+  details {
+    margin-bottom: 1em;
+  }
+  summary {
+    font-weight: bold;
+  }
+  pre {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding: 0.5em;
+    background-color: #f4f4f4;
+    border-radius: 3px;
+  }
+</style>
 
-    h2 {
-      font-size: 14px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
-
-    .panel-button {
-      margin-bottom: 20px;
-    }
-  </style>
-</head>
-<body>
-  <!-- Section for Class 1 -->
-  <h2>Class 1 - ImportFileTask</h2>
-  <button onclick="togglePanel('ImportFileTask')">Toggle ImportFileTask</button>
-  <div class="panel" id="ImportFileTask">
-    <pre>
+<details>
+  <summary> ImportFileTask </summary>
  
 		package be.kuleuven.mgG.internal.tasks;
 	
@@ -251,38 +242,18 @@
 						 */
 			    }
        
-    </pre>
-  </div> 
-  
- <!-- Section for Class 2 -->
-  <h2>Class 2 - ImportFileTaskFactory</h2>
-  <button onclick="togglePanel('ImportFileTaskFactory')">Toggle ImportFileTaskFactory</button>
-  <div class="panel" id="ImportFileTaskFactory">
-    <pre>
- 
-		package be.kuleuven.mgG.internal.tasks;
+   <details>
+  <summary> ImportFileTaskFactory</summary>
 		
-		import java.io.File;
 		
-		import javax.swing.JFileChooser;
-		import javax.swing.JOptionPane;
-		
-		import org.cytoscape.application.CyApplicationManager;
-		import org.cytoscape.application.swing.CySwingApplication;
-		import org.cytoscape.model.CyNetworkFactory;
-		import org.cytoscape.work.TaskFactory;
-		import org.cytoscape.work.TaskIterator;
-		
-		import be.kuleuven.mgG.internal.model.MGGManager;
-		
-		public class ImportFileTaskFactory implements TaskFactory {
+	public class ImportFileTaskFactory implements TaskFactory {
 		    
-		    private final MGGManager mggManager;
+		 private final MGGManager mggManager;
 		    
 		    
-		    public ImportFileTaskFactory(MGGManager mggManager) {
+		public ImportFileTaskFactory(MGGManager mggManager) {
 		      
-		        this.mggManager=mggManager;
+		this.mggManager=mggManager;
 		    }
 		
 		    
@@ -316,21 +287,9 @@
 		    }
 		}
 		}
-    </pre>
-  </div>
+
   
-<script>
-    function togglePanel(panelId) {
-      var panel = document.getElementById(panelId);
-      if (panel.style.display === "none" || panel.style.display === "") {
-        panel.style.display = "block";
-      } else {
-        panel.style.display = "none";
-      }
-    }
-  </script>
-</body>
-</html>
+</details>
 
 
 <br> <!-- Add an empty line -->
