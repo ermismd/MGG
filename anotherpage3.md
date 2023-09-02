@@ -1,8 +1,8 @@
 ## INFO WEEK5 AND WEEK6
 
 
-#####  SendDataToServerTask: Created class for the server interaction and data exchange.
-#####  SendDataToServerTaskFactory: A factory class  for  instantiation and management of SendDataToServerTask.
+1.  SendDataToServerTask: Created class for the server interaction and data exchange.
+2.  SendDataToServerTaskFactory: A factory class  for  instantiation and management of SendDataToServerTask.
 
  * * *
 
@@ -11,6 +11,12 @@
 <html>
 <head>
   <style>
+	  h1 {
+      font-size: 18px;  /* Adjust the font size for h1 as needed */
+    }
+    h2 {
+      font-size: 18px;  /* Adjust the font size for h2 as needed */
+    }
    .panel {
       display: none;
       background-color: #f1f1f1;
@@ -32,24 +38,23 @@
 			 * The task sends a JSON array as string to microbetag server URL and retrieves the server's response.
 			 */
 			
-			
 			public class SendDataToServerTask extends AbstractTask {
 		 
 			private  String serverResponse; // Stores the server response
 			private final JSONObject jsonObject; // The JSON array to send to the server
-		    private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
+		   	private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
 		    
 		      
-		    /**
-		     * Constructs a new SendDataToServerTask object.
-		     *
-		     * @param jsonArray   The JSON array to send to the server.
-		     * @param mggManager  The MGGManager instance for retrieving the JSON array.
-		     */
-		    
-		    public SendDataToServerTask( JSONObject jsonObject, MGGManager mggManager) {
-		    	this.mggManager=mggManager;
-		    	this.jsonObject = mggManager.getJsonObject();
+		    	    /**
+			     * Constructs a new SendDataToServerTask object.
+			     *
+			     * @param jsonArray   The JSON array to send to the server.
+			     * @param mggManager  The MGGManager instance for retrieving the JSON array.
+			     */
+			    
+			    public SendDataToServerTask( JSONObject jsonObject, MGGManager mggManager) {
+			    	this.mggManager=mggManager;
+			    	this.jsonObject = mggManager.getJsonObject();
 		    	
 		    }
 		
@@ -81,8 +86,7 @@
 		                      .build() ;
 		
 		              
-		              
-		              try {
+		               try {
 		                      String jsonQuery = jsonObject.toJSONString();
 		                      String serverURL = "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table-dev";
 		
@@ -169,9 +173,7 @@
 			    
 			    private final MGGManager mggManager;
 			    private JSONObject jsonObject;
-			    
-			    
-			    
+			       
 			    public SendDataToServerTaskFactory(JSONObject jsonObject,MGGManager mggManager) {
 			    	this.jsonObject = jsonObject;
 			        this.mggManager=mggManager;
@@ -180,8 +182,7 @@
 			    @Override
 			    public TaskIterator createTaskIterator() {
 			        return new TaskIterator(2,new SendDataToServerTask(jsonObject, mggManager),new CreateNetworkTask(mggManager));
-			        
-			        
+			               
 			    }
 			
 			    @Override
