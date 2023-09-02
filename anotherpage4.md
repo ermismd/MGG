@@ -297,39 +297,39 @@
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.DARK_GRAY);
 		
 				// VisualProperty for node shape
-				VisualProperty<NodeShape> nodeShapeVP = BasicVisualLexicon.NODE_SHAPE;
-		
-				// Create a discrete mapping function for node shape
-				DiscreteMapping<String, NodeShape> shapeMapping = (DiscreteMapping<String, NodeShape>) discreteMappingFactory
-						.createVisualMappingFunction(columnName, String.class, nodeShapeVP);
-		
-				// Map taxonomy-level to shapes
-				Map<String, NodeShape> taxonomyShapeMap = getTaxonomyShapeMap();
-		
-				// Set taxonomy-level to shape pairs
-				for (Map.Entry<String, NodeShape> entry : taxonomyShapeMap.entrySet()) {
-					shapeMapping.putMapValue(entry.getKey(), entry.getValue());
-				}
+					VisualProperty&lt;NodeShape&gt; nodeShapeVP = BasicVisualLexicon.NODE_SHAPE;
+					
+					// Create a discrete mapping function for node shape
+					DiscreteMapping&lt;String, NodeShape&gt; shapeMapping = (DiscreteMapping&lt;String, NodeShape&gt;) discreteMappingFactory
+					    .createVisualMappingFunction(columnName, String.class, nodeShapeVP);
+					
+					// Map taxonomy-level to shapes
+					Map&lt;String, NodeShape&gt; taxonomyShapeMap = getTaxonomyShapeMap();
+					
+					// Set taxonomy-level to shape pairs
+					for (Map.Entry&lt;String, NodeShape&gt; entry : taxonomyShapeMap.entrySet()) {
+					    shapeMapping.putMapValue(entry.getKey(), entry.getValue());
+					}
 		
 				// Add mapping function to the visual style
 				style.addVisualMappingFunction(shapeMapping);
 		
 				// Node Labels
 				style.setDefaultValue(BasicVisualLexicon.NODE_LABEL, "");
-				PassthroughMapping<String, String> labelMapping = (PassthroughMapping<String, String>) vmfFactoryP
-						.createVisualMappingFunction("name", String.class, BasicVisualLexicon.NODE_LABEL);
+				PassthroughMapping&lt;String, String&gt; labelMapping = (PassthroughMapping&lt;String, String&gt;) vmfFactoryP
+				    .createVisualMappingFunction("name", String.class, BasicVisualLexicon.NODE_LABEL);
 				style.addVisualMappingFunction(labelMapping);
-		
-				// discrete mapping function
-				DiscreteMapping<String, Paint> mapping = (DiscreteMapping<String, Paint>) discreteMappingFactory
-						.createVisualMappingFunction(columnName, String.class, vp);
-		
-				// map species to colors
-				Map<String, Paint> speciesColorMap = getSpeciesColorMap();
-		
+				
+				// Discrete mapping function
+				DiscreteMapping&lt;String, Paint&gt; mapping = (DiscreteMapping&lt;String, Paint&gt;) discreteMappingFactory
+				    .createVisualMappingFunction(columnName, String.class, vp);
+				
+				// Map species to colors
+				Map&lt;String, Paint&gt; speciesColorMap = getSpeciesColorMap();
+				
 				// Set the species-color pairs
-				for (Map.Entry<String, Paint> entry : speciesColorMap.entrySet()) {
-					mapping.putMapValue(entry.getKey(), entry.getValue());
+				for (Map.Entry&lt;String, Paint&gt; entry : speciesColorMap.entrySet()) {
+				    mapping.putMapValue(entry.getKey(), entry.getValue());
 				}
 		
 				// Add the mapping function to the visual style
@@ -375,20 +375,20 @@
 			
 			
 			
-			private Map<String, NodeShape> getTaxonomyShapeMap() {
-				Map<String, NodeShape> taxonomyShapeMap = new HashMap<>();
-				taxonomyShapeMap.put("genus", NodeShapeVisualProperty.DIAMOND);
-				taxonomyShapeMap.put("family", NodeShapeVisualProperty.ROUND_RECTANGLE);
-				taxonomyShapeMap.put("mspecies", NodeShapeVisualProperty.ELLIPSE);
-				taxonomyShapeMap.put("null", NodeShapeVisualProperty.OCTAGON);
-				taxonomyShapeMap.put("species", NodeShapeVisualProperty.HEXAGON);
-				// Add more taxonomy-level to shape mappings as needed
-				return taxonomyShapeMap;
+						private Map&lt;String, NodeShape&gt; getTaxonomyShapeMap() {
+			    Map&lt;String, NodeShape&gt; taxonomyShapeMap = new HashMap&lt;&gt;();
+			    taxonomyShapeMap.put("genus", NodeShapeVisualProperty.DIAMOND);
+			    taxonomyShapeMap.put("family", NodeShapeVisualProperty.ROUND_RECTANGLE);
+			    taxonomyShapeMap.put("mspecies", NodeShapeVisualProperty.ELLIPSE);
+			    taxonomyShapeMap.put("null", NodeShapeVisualProperty.OCTAGON);
+			    taxonomyShapeMap.put("species", NodeShapeVisualProperty.HEXAGON);
+			    // Add more taxonomy-level to shape mappings as needed
+			    return taxonomyShapeMap;
 			}
-		
-			private Map<String, Paint> getSpeciesColorMap() {
-		
-				Map<String, Paint> speciesColorMap = new HashMap<>();
+			
+			private Map&lt;String, Paint&gt; getSpeciesColorMap() {
+			    Map&lt;String, Paint&gt; speciesColorMap = new HashMap&lt;&gt;();
+			}
 		
 				PaletteProvider colorBrewerPaletteProvider = paletteManager.getPaletteProvider("ColorBrewer");
 				Palette set1 = colorBrewerPaletteProvider.getPalette("Set1 colors");
