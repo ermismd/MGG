@@ -2,7 +2,7 @@
 
 
 
-#### Created 2 classes that allows users to import a CSV/TSV file ,process it, display the JSON data in a panel and send the JSON data to a server.
+#### Created 2 classes ImportFileTask/ImportFileTaskFactory that allows users to import a CSV/TSV file and process it
 
  * * *
 
@@ -33,7 +33,7 @@
 </head>
 <body>
   <h2>Class 1</h2>
-  <button onclick="ImportFileTask ()">MicroBetaGUIImportAction</button>
+  <button onclick="ImportFileTask ()">ImportFileTask</button>
   <div class="panel" id="ImportFileTask ">
     <pre>
  
@@ -306,7 +306,7 @@ public class ImportFileTask extends AbstractTask {
 
 
   <h2>Class 2</h2>
-  <button onclick="ImportFileTaskFactory()">JSONDisplayPanel</button>
+  <button onclick="ImportFileTaskFactory()">ImportFileTaskFactory</button>
   <div class="panel" id="ImportFileTaskFactory">
     <pre>
  
