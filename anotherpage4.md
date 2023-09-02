@@ -2,14 +2,23 @@
 
 
 
-#### Created 2 classes CreateNetworkTaskTask/CreateNetworkTaskTaskFactory that  is responsible for parsing the table and constructing a network model based on it.
-#### Additionally, the class generates a visual style for the nodes and edges of the network
+1. CreateNetworkTaskTask
+2. CreateNetworkTaskTaskFactory
+   
+ They are responsible for parsing the table and constructing a network model based on it.
+ Additionally, the class generates a visual style for the nodes and edges of the network
 
  * * *
 
 <html>
 <head>
   <style>
+	  h1 {
+      font-size: 18px;  /* Adjust the font size for h1 as needed */
+    }
+    h2 {
+      font-size: 18px;  /* Adjust the font size for h2 as needed */
+    }
    .panel {
       display: none;
       background-color: #f1f1f1;
@@ -18,26 +27,13 @@
       font-size: 10px; /* Increase the font size as needed */
       width: 800px; /* Increase the width as needed */
     }
-
-    h2 {
-      font-size: 14px; /* Decrease the font size of the headers */
-	margin-top: 20px; /* Increase the margin-top for the header */
-	  margin-bottom: 20px; /* Add margin-bottom for spacing */
-    }
-
-    .panel-button {
-      margin-bottom: 20px; /* Add space between each panel button */
-	}
- 
   </style>
 </head>
 <body>
-  <h2>Class 1</h2>
-  <button onclick="CreateNetworkTask ()">CreateNetworkTask</button>
-  <div class="panel" id="CreateNetworkTask ">
-	<pre>
- 
-		package be.kuleuven.mgG.internal.tasks;
+  <h1>CreateNetworkTask</h1>
+  <button onclick="CreateNetworkTask()">Expand</button>
+  <div class="panel" id="CreateNetworkTask">
+    <pre>
 		
 		**
 		 * This class represents a task for creating a network in Cytoscape based on a
@@ -254,9 +250,6 @@
 				            network.getRow(edge).set("target-ncbi-tax-id", (String) edgeData.get("target-ncbi-tax-id"));
 				            network.getRow(edge).set("selected", (Boolean) edgeData.get("selected"));
 				        }
-				    
-					
-				
 					
 					/*
 					 * if (sourceNode != null && targetNode != null) { CyEdge edge
@@ -353,12 +346,12 @@
 					layout = layoutAlgorithmManager.getDefaultLayout();
 				}
 		
-				// ----------------------------------------------------------------------
+				
 		
 				// Create a task iterator for the layout
 				insertTasksAfterCurrentTask(layout.createTaskIterator(networkView, layout.getDefaultLayoutContext(),
 						CyLayoutAlgorithm.ALL_NODE_VIEWS, null));
-				// -----------------------------------------------------------------------------------
+				
 			}
 		
 			/*
@@ -411,24 +404,21 @@
 		
 		}
 		
-		    }
+	  }
 
     </pre>
   </div>
 
 
-  <h2>Class 2</h2>
-  <button onclick="CreateNetworkTaskFactory ()">CreateNetworkTaskFactory</button>
-  <div class="panel" id="CreateNetworkTaskFactory">
+   <h2>CreateNetworkTaskFactory </h2>
+  <button onclick="CreateNetworkTaskFactory ()">Expand</button>
+  <div class="panel" id="CreateNetworkTaskFactory ">
     <pre>
  
-
-
 
 		public class CreateNetworkTaskFactory implements TaskFactory {
 		    	private final MGGManager mggManager;
 		  
-		
 		    public CreateNetworkTaskFactory(MGGManager mggManager) {
 		        this.mggManager = mggManager;
 		    
@@ -451,7 +441,7 @@
   </div>
 
 <script>
-    function showCreateNetworkTask() {
+    function CreateNetworkTask() {
       var panel = document.getElementById("CreateNetworkTask");
       if (panel.style.display === "none") {
         panel.style.display = "block";
@@ -460,8 +450,8 @@
       }
     }
     
-    function showCreateNetworkTaskFactory () {
-      var panel = document.getElementById("CreateNetworkTaskFactory");
+    function CreateNetworkTaskFactory  () {
+      var panel = document.getElementById("CreateNetworkTaskFactory ");
       if (panel.style.display === "none") {
         panel.style.display = "block";
       } else {
