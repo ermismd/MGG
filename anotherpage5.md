@@ -156,15 +156,7 @@
 				    // Check for the existence of the "flashweave-score" attribute on edges
 				    boolean hasFlashweaveScore = network.getRow(network).get("flashweave-score",Double.class) != null;
 		
-					/*
-					 * // Further checks can be added to see if the flashweave-scores are unique,
-					 * different, etc. // For example: Set<Double> uniqueScores = new HashSet<>();
-					 * boolean hasDifferentScores = false; if (hasFlashweaveScore) { for (CyEdge
-					 * edge : network.getEdgeList()) { Double score =
-					 * network.getRow(edge).get("flashweave-score", Double.class); if (score !=
-					 * null) { if (uniqueScores.contains(score)) { hasDifferentScores = true; break;
-					 * } uniqueScores.add(score); } } }
-					 */
+					
 		
 				    // Based on the above checks, decide whether to show the CytoPanel
 				    if (hasFlashweaveScore) {
