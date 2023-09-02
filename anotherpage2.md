@@ -161,7 +161,7 @@
 			    
 			    
 			    public void executeCommand(String namespace, String command, 
-			            Map<String, Object> args, TaskObserver observer) {
+			            Map&lt;String, Object&gt; args, TaskObserver observer) {
 				TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
 				execute(ti, true);
 				}
@@ -200,7 +200,7 @@
 						     * @return The service of the specified class.
 						     */
 			    
-			    			public <S> S getService(Class<S> serviceClass) { 
+			    			public &lt;S&gt; S getService(Class&lt;S&gt; serviceClass) { 
 			    				return cyRegistrar.getService(serviceClass); 
 			    				
 			    			}
@@ -214,7 +214,7 @@
 						     * @return The service of the specified class and filter.
 						     */
 			    
-			    		  public <S> S getService(Class<S> serviceClass, String filter) { return
+			    		 public &lt;S&gt; S getService(Class&lt;S&gt; serviceClass, String filter) { return
 			    		  cyRegistrar.getService(serviceClass, filter); }
 			    		  
 			    		  
@@ -256,14 +256,14 @@
 			    		public void handleEvent(SessionLoadedEvent e) {
 						System.out.println("SessionLoaded");
 						
-						Map<String,List<File>> appFiles = e.getLoadedSession().getAppFileListMap();
+						Map&lt;String,List&lt;File&gt;&gt; appFiles = e.getLoadedSession().getAppFileListMap();
 						if (!appFiles.containsKey(APP_NAME)) {
 							System.out.println("Don't see "+APP_NAME+"!");
 							return;
 						}
 			
-						List<File> mggFiles = appFiles.get(APP_NAME);
-						Map<String, File> fileMap = new HashMap<>();
+						List&lt;File&gt; mggFiles = appFiles.get(APP_NAME);
+						Map&lt;String, File&gt; fileMap = new HashMap&lt;&gt;();
 						for (File f: mggFiles) {
 							System.out.println("File map has file: "+f.getName());
 							fileMap.put(f.getName(),f);
@@ -298,7 +298,7 @@
 				        osw.close();
 				        fos.close();
 			
-				        List<File> files = new ArrayList<File>();
+				        List&lt;File&gt; files = new ArrayList&lt;File&gt;();
 				        files.add(jsonFile);
 			
 				        try {
