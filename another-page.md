@@ -33,55 +33,11 @@
 </head>
 <body>
   <h2>Class 1</h2>
-  <button onclick="ImportFileTask ()">ImportFileTask</button>
-  <div class="panel" id="ImportFileTask ">
+   <button onclick="togglePanel('ImportFileTask')">ImportFileTask</button>
+ <div class="panel" id="ImportFileTask">
     <pre>
  
 package be.kuleuven.mgG.internal.tasks;
-
-import static org.cytoscape.work.ServiceProperties.COMMAND;
-import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
-import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
-import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
-import static org.cytoscape.work.ServiceProperties.IN_TOOL_BAR;
-import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
-import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
-import static org.cytoscape.work.ServiceProperties.TITLE;
-
-import java.awt.BorderLayout;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.application.swing.CytoPanel;
-import org.cytoscape.application.swing.CytoPanelComponent;
-import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskFactory;
-import org.cytoscape.work.TaskMonitor;
-import org.cytoscape.work.Tunable;
-import org.cytoscape.work.util.ListSingleSelection;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-
-import be.kuleuven.mgG.internal.model.MGGManager;
-import be.kuleuven.mgG.internal.utils.CSVReader;
-import be.kuleuven.mgG.internal.utils.HTTPUtils;
-import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
-import be.kuleuven.mgG.internal.view.JsonResultPanel;
-
-
-
 
 /**
  * This class represents a task for importing a CSV file and processing it into a JSON array.
@@ -297,6 +253,7 @@ public class ImportFileTask extends AbstractTask {
     }
                 
 }
+}
     </pre>
   </div>
 
@@ -304,11 +261,10 @@ public class ImportFileTask extends AbstractTask {
 
 
 
-
-  <h2>Class 2</h2>
-  <button onclick="ImportFileTaskFactory()">ImportFileTaskFactory</button>
+<h2>Class 2</h2>
+  <button onclick="togglePanel('ImportFileTaskFactory')">ImportFileTaskFactory</button>
   <div class="panel" id="ImportFileTaskFactory">
-    <pre>
+	<pre>
  
 package be.kuleuven.mgG.internal.tasks;
 
@@ -366,23 +322,13 @@ public class ImportFileTaskFactory implements TaskFactory {
     }
 }
 }
-      
-    </pre>
+      </pre>
   </div>
 
-  <script>
-    function showMicroBetaGUIImportAction() {
-      var panel = document.getElementById("ImportFileTask");
-      if (panel.style.display === "none") {
-        panel.style.display = "block";
-      } else {
-        panel.style.display = "none";
-      }
-    }
-    
-    function showJSONDisplayPanel() {
-      var panel = document.getElementById("ImportFileTaskFactory");
-      if (panel.style.display === "none") {
+<script>
+    function togglePanel(panelId) {
+      var panel = document.getElementById(panelId);
+      if (panel.style.display === "none" || panel.style.display === "") {
         panel.style.display = "block";
       } else {
         panel.style.display = "none";
@@ -390,12 +336,9 @@ public class ImportFileTaskFactory implements TaskFactory {
     }
   </script>
 </body>
-</html>
-
-	
-	
+</html>  
+		
 <br> <!-- Add an empty line -->
-
 
 
 [back](./)
