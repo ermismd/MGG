@@ -34,7 +34,7 @@
   <h1>MGGManager</h1>
   <button onclick="MGGManager()">Expand</button>
   <div class="panel" id="MGGManager">
-    <pre>
+    <pre><code class="language-java">
 	    
 			 /**
 				 * The MGGManager class is responsible for managing the state of the MGG application.
@@ -313,7 +313,7 @@
 				}
 		    
 		    	
-   </pre>
+   </code></pre>
   </div>
 
 
