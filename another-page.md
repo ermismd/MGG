@@ -1,38 +1,39 @@
-## INFO WEEK1 AND WEEK2
+## Week 1 and Week 2 Updates
 
+### Created two classes: ImportFileTask and ImportFileTaskFactory
 
-
-#### Created 2 classes ImportFileTask/ImportFileTaskFactory that allows users to import a CSV/TSV file and process it
+These classes enable users to import and process CSV/TSV files.
 
  * * *
 
+<!DOCTYPE html>
 <html>
 <head>
   <style>
-   .panel {
+    .panel {
       display: none;
       background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
-      font-size: 10px; /* Increase the font size as needed */
-      width: 800px; /* Increase the width as needed */
+      font-size: 14px;  <!-- Updated font-size -->
+      width: 800px;
     }
     h2 {
-      font-size: 14px; /* Decrease the font size of the headers */
-	margin-top: 20px; /* Increase the margin-top for the header */
-	  margin-bottom: 20px; /* Add margin-bottom for spacing */
+      font-size: 16px;
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
     .panel-button {
-      margin-bottom: 20px; /* Add space between each panel button */
+      margin-bottom: 20px;
     }
   </style>
-	
 </head>
 <body>
-	<h2>Class 1</h2>	
-	<button onclick="showImportFileTask ()">ImportFileTask</button>
- 	 <div class="panel" id="ImportFileTask ">
-  	  <pre>	
+  <h2>Class 1: ImportFileTask</h2>
+  <!-- Updated button label -->
+  <button onclick="togglePanel('ImportFileTask')">Show/Hide ImportFileTask Code</button> 
+  <div class="panel" id="ImportFileTask">
+    <pre>
 		  
 			/**
 			 * This class represents a task for importing a CSV file and processing it into a JSON array.
@@ -92,10 +93,7 @@
 			    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to use pathway complementarity.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
 			    public boolean pathwayComplementarity;
 			    
-			    
-			    
-			    
-			    
+			 
 			    /**
 			     * Constructor for the ImportFileTask class.
 			     * 
@@ -243,23 +241,20 @@
 						 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
 						 */
 			    }
-</pre>
+ </pre>
   </div>
   
-<h2>Class 2</h2>
-<button onclick="showImportFileTaskFactory()">ImportFileTaskFactory</button>
+ <h2>Class 2: ImportFileTaskFactory</h2>
+  <!-- Updated button label -->
+  <button onclick="togglePanel('ImportFileTaskFactory')">Show/Hide ImportFileTaskFactory Code</button>
   <div class="panel" id="ImportFileTaskFactory">
-    <pre>
+      <pre>
 
-		
-		
+			
 	public class ImportFileTaskFactory implements TaskFactory {
 		    
-		 private final MGGManager mggManager;
-		    
-		    
+		private final MGGManager mggManager;
 		public ImportFileTaskFactory(MGGManager mggManager) {
-		      
 		this.mggManager=mggManager;
 		    }
 		
@@ -299,22 +294,17 @@
    </pre>
   </div>
 
- <script>
-    function showImportFileTask() {
-      var panel = document.getElementById("ImportFileTask");
+  <script>
+    // Updated JS function to toggle the panel and update the button label
+    function togglePanel(panelId) {
+      var panel = document.getElementById(panelId);
+      var button = event.target;
       if (panel.style.display === "none") {
         panel.style.display = "block";
+        button.innerHTML = "Hide " + panelId + " Code";
       } else {
         panel.style.display = "none";
-      }
-    }
-
-    function showImportFileTaskFactory() {
-      var panel = document.getElementById("ImportFileTaskFactory");
-      if (panel.style.display === "none") {
-        panel.style.display = "block";
-      } else {
-        panel.style.display = "none";
+        button.innerHTML = "Show " + panelId + " Code";
       }
     }
   </script>
