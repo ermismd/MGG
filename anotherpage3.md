@@ -33,16 +33,16 @@
   <div class="panel" id="SendDataToServerTask">
     <pre>
 	 
-			 /**
-			 * This class represents a task for sending data to a server.
-			 * The task sends a JSON array as string to microbetag server URL and retrieves the server's response.
-			 */
+		/**
+		 * This class represents a task for sending data to a server.
+		 * The task sends a JSON array as string to microbetag server URL and retrieves the server's response.
+		 */
 			
-			public class SendDataToServerTask extends AbstractTask {
+		public class SendDataToServerTask extends AbstractTask {
 		 
-			private  String serverResponse; // Stores the server response
-			private final JSONObject jsonObject; // The JSON array to send to the server
-		   	private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
+		   private  String serverResponse; // Stores the server response
+		   private final JSONObject jsonObject; // The JSON array to send to the server
+		   private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
 		    
 		      
 		    	    /**
@@ -151,18 +151,13 @@
 		    frame.pack();
 		    frame.setVisible(true);
 		    */
-		    
-		    
-		    
-		    
-		    
-		
+		    		
 
    </pre>
   </div>
 
 
-  <h2>Class 2</h2>
+  <h2>SendDataToServerTaskFactory</h2>
   <button onclick="SendDataToServerTaskFactory()">Expand</button>
   <div class="panel" id="SendDataToServerTaskFactory">
     <pre>
