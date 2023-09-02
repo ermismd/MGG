@@ -111,13 +111,16 @@ Enhanced Task Monitoring and Feedback:
 
 ### Week 17 & 18
 
-- SOON tm
-  - SUB-SOON tm
-    - SUB-SUB-SOON tm
+1. MGGEdgePanel: The Hub for Edge-Related Data
+                  -The MGGEdgePanel serves as a dedicated sub-component within MGGCytoPanel to display edge-related information.  
+2. ShowResultsPanel and ShowResultsTaskFactory: Dynamic Data Presentation
+                   -The ShowResultsPanel and its corresponding ShowResultsTaskFactory work hand-in-hand to inspect the current network and dynamically supply data to both MGGEdgePanel and MGGCytoPanel. 
 
 
+    -- [More Info](./anotherpage6.html).
+
+   
 * * *
-
 
 
 
