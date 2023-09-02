@@ -1,4 +1,4 @@
-## INFO WEEK7 AND WEEK8
+##  WEEK7 AND WEEK8
 
 
 
