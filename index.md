@@ -98,9 +98,16 @@ Enhanced Task Monitoring and Feedback:
 
 ### Week 15 & 16
 
-- SOON tm
-  - SUB-SOON tm
-    - SUB-SUB-SOON tm
+1. Developed JsonResultPanel for Enhanced UI:
+                    -Created JsonResultPanel to wrap JsonDisplayPanel and integrate it into the Cytopanel component on the east side. 
+2. Structured the Cytopanel with MGGCytoPanel:
+                    -Introduced MGGCytoPanel, a new class designed to structure the Cytopanel component on the east side. This class includes two separate panels for nodes and edges.
+3. Implemented Data Filtering in AbstractMGGPanel:
+                    -Incorporated foundational code into AbstractMGGPanel for filters based on the "flashweave-score", supporting continuous value ranges. For data visualization and analysis.
+4. Enhanced Network Identification in MGGCytoPanel:
+                    -Added code to MGGCytoPanel that checks if a given network is an annotated microbetag network. Depending on the result, the panel is either displayed or hidden.
+
+   -- [More Info](./anotherpage5.html).
 
 ### Week 17 & 18
 
