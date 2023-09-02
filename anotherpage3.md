@@ -1,8 +1,8 @@
 ## INFO WEEK5 AND WEEK6
 
 
-####  SendDataToServerTask: Created class for the server interaction and data exchange.
-####  SendDataToServerTaskFactory: A factory class  for  instantiation and management of SendDataToServerTask.
+#####  SendDataToServerTask: Created class for the server interaction and data exchange.
+#####  SendDataToServerTaskFactory: A factory class  for  instantiation and management of SendDataToServerTask.
 
  * * *
 
@@ -22,8 +22,8 @@
   </style>
 </head>
 <body>
-  <h1>Class 1</h1>
-  <button onclick="SendDataToServerTask()">SendDataToServerTask</button>
+  <h1>SendDataToServerTask</h1>
+  <button onclick="SendDataToServerTask()">Expand</button>
   <div class="panel" id="SendDataToServerTask">
     <pre>
 	 
@@ -39,11 +39,7 @@
 			private final JSONObject jsonObject; // The JSON array to send to the server
 		    private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
 		    
-		   
-		
-		    				
-		    
-		   
+		      
 		    /**
 		     * Constructs a new SendDataToServerTask object.
 		     *
@@ -141,9 +137,6 @@
 		    }}
 		
 		    
-		    
-		    
-		
 				/*private void viewData(JSONObject jsonResponse) {
 					  JSONViewerPanel viewerPanel = new JSONViewerPanel(jsonResponse);
 				  
@@ -158,54 +151,6 @@
 		    
 		    
 		    
-		    /*
-			 * private void sendJSONDataToServer(JSONArray jsonArray, TaskMonitor
-			 * taskMonitor) { try {
-			 * 
-			 * 
-			 * // Convert the JSONArray to a JSON string String jsonQuery =
-			 * jsonArray.toJSONString();
-			 * 
-			 * System.out.println(jsonQuery);
-			 * 
-			 * // Set the server URL String serverURL =
-			 * "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table"; // Replace with
-			 * the actual server URL
-			 * 
-			 * 
-			 * // Create an instance of CloseableHttpClient CloseableHttpClient httpclient =
-			 * HttpClients.createDefault();
-			 * 
-			 * taskMonitor.setStatusMessage("Sending data to server");
-			 * 
-			 * // Send the JSON data to the server JSONObject jsonResponse =
-			 * HTTPUtils.postJSON(serverURL, httpclient, jsonQuery, taskMonitor);
-			 * 
-			 * // Process the server response if needed if (jsonResponse != null) {
-			 * taskMonitor.setStatusMessage("Processing server response");
-			 * 
-			 * // Process the response here serverResponse = jsonResponse.toJSONString();
-			 * mggManager.setServerResponse(jsonResponse);
-			 * 
-			 * }
-			 * 
-			 * 
-			 * 
-			 * taskMonitor.setStatusMessage("Closing connection");
-			 * 
-			 * // Close the HttpClient httpclient.close(); } catch (Exception e) {
-			 * taskMonitor.showMessage(TaskMonitor.Level.ERROR,
-			 * "Error while sending JSON data to server: " + e.getMessage());
-			 * e.printStackTrace();
-			 * 
-			 * // Show the JSON data in a panel if showJSONInPanel
-			 * 
-			 * SwingUtilities.invokeLater(() ->showDataInPanel(jsonArray));
-			 * 
-			 * 
-			 * 
-			 * } }
-			 */  
 		    
 		
 
@@ -214,7 +159,7 @@
 
 
   <h2>Class 2</h2>
-  <button onclick="SendDataToServerTaskFactory()">SendDataToServerTaskFactory</button>
+  <button onclick="SendDataToServerTaskFactory()">Expand</button>
   <div class="panel" id="SendDataToServerTaskFactory">
     <pre>
  
