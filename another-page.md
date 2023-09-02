@@ -67,10 +67,10 @@ These classes enable users to import and process CSV/TSV files.
 			    public boolean writeToFile = true;  
 			    
 			    @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
-			    public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
+			    public ListSingleSelection&lt;String&gt; input = new ListSingleSelection<>("abundance_table", "network");
 			
 			    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=2.0, required=true)
-			    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "qiime2");
+			    public ListSingleSelection&lt;String&gt;taxonomy = new ListSingleSelection<>("gtdb", "dada2", "qiime2");
 			    
 			    @Tunable(description="PhenDB", longDescription="Choose whether to use PhenDB.", groups={"Input Settings"},
 			    gravity=3.0, exampleStringValue="True, False", required=true)
@@ -119,7 +119,7 @@ These classes enable users to import and process CSV/TSV files.
 			        try {
 			        	
 			            // Call CSVReader from Utils to parse the TSV/CSV file with tab delimiter
-			            List<String[]> csvData = CSVReader.readCSV(taskMonitor, filePath);
+			            List&lt;String[]&gt; csvData = CSVReader.readCSV(taskMonitor, filePath);
 			            
 			            // Find the headers(the first row that has more than 1 columns)
 			            String[] headers = null;
