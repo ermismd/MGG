@@ -1,4 +1,4 @@
-## WEEK 1 and WEEK 2 
+## WEEK 1 & WEEK 2 
 
 1. ImportFileTask 
 2. ImportFileTaskFactory
