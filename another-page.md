@@ -5,36 +5,35 @@
 #### Created 2 classes ImportFileTask/ImportFileTaskFactory that allows users to import a CSV/TSV file and process it
 
  * * *
- * * *
 
- 
 <html>
 <head>
   <style>
-   .panel {
+    .panel {
       display: none;
       background-color: #f1f1f1;
       padding: 10px;
       margin-top: 10px;
-      font-size: 10px; /* Increase the font size as needed */
-      width: 800px; /* Increase the width as needed */
+      font-size: 10px;
+      width: 800px;
     }
 
-h2 {
-      font-size: 14px; /* Decrease the font size of the headers */
-	margin-top: 20px; /* Increase the margin-top for the header */
-	margin-bottom: 20px; /* Add margin-bottom for spacing */
+    h2 {
+      font-size: 14px;
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
 
-.panel-button {
-      margin-bottom: 20px; /* Add space between each panel button */
+    .panel-button {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <h2>Class 1</h2>
-   <button onclick="togglePanel('ImportFileTask')">ImportFileTask</button>
- <div class="panel" id="ImportFileTask">
+  <!-- Section for Class 1 -->
+  <h2>Class 1 - ImportFileTask</h2>
+  <button onclick="togglePanel('ImportFileTask')">Toggle ImportFileTask</button>
+  <div class="panel" id="ImportFileTask">
     <pre>
  
 		package be.kuleuven.mgG.internal.tasks;
@@ -251,11 +250,13 @@ h2 {
 						 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
 						 */
 			    }
-</pre>
-  </div>           
-
-<h2>Class 2</h2>
-  <button onclick="togglePanel('ImportFileTaskFactory')">ImportFileTaskFactory</button>
+       
+    </pre>
+  </div> 
+  
+ <!-- Section for Class 2 -->
+  <h2>Class 2 - ImportFileTaskFactory</h2>
+  <button onclick="togglePanel('ImportFileTaskFactory')">Toggle ImportFileTaskFactory</button>
   <div class="panel" id="ImportFileTaskFactory">
     <pre>
  
@@ -315,10 +316,10 @@ h2 {
 		    }
 		}
 		}
-  </pre>
+    </pre>
   </div>
   
- <script>
+<script>
     function togglePanel(panelId) {
       var panel = document.getElementById(panelId);
       if (panel.style.display === "none" || panel.style.display === "") {
@@ -329,9 +330,9 @@ h2 {
     }
   </script>
 </body>
-</html>	
+</html>
+
 
 <br> <!-- Add an empty line -->
-
 
 [back](./)
