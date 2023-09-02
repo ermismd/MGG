@@ -6,28 +6,12 @@
 
  * * *
 
-<style>
-  details {
-    margin-bottom: 1em;
-  }
-  summary {
-    font-weight: bold;
-  }
-  pre {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: 1em;
-    margin-right: 1em;
-    padding: 0.5em;
-    background-color: #f4f4f4;
-    border-radius: 3px;
-  }
-</style>
-
 <details>
-  <summary> ImportFileTask </summary>
+  <summary>Class 1: ImportFileTask</summary>
+
+  <pre style="white-space: pre; overflow-x: auto;"><code>
  
-		package be.kuleuven.mgG.internal.tasks;
+	
 	
 			/**
 			 * This class represents a task for importing a CSV file and processing it into a JSON array.
@@ -39,9 +23,6 @@
 			 * The task also provides options to display the JSON data in a panel and to write the JSON data to a file.
 			 * 
 			 */
-			
-			
-			
 			
 			
 			public class ImportFileTask extends AbstractTask {
@@ -241,11 +222,12 @@
 						 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
 						 */
 			    }
-
+ </code></pre>
 </details>
 
-<details>
-<summary> ImportFileTaskFactory</summary>
+<summary>Class 2: ImportFileTaskFactory</summary>
+
+  <pre style="white-space: pre; overflow-x: auto;"><code>
 		
 		
 	public class ImportFileTaskFactory implements TaskFactory {
@@ -289,10 +271,9 @@
 		    }
 		}
 		}
+	</code></pre>
 
-  
 </details>
-
 
 <br> <!-- Add an empty line -->
 
