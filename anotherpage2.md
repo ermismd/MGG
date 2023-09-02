@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-  <h1>SendDataToServerTask</h1>
+  <h1>MGGManager</h1>
   <button onclick="MGGManager()">Expand</button>
   <div class="panel" id="MGGManager">
     <pre>
@@ -332,7 +332,7 @@
   </div>
 
 
-  <h2>Class 2</h2>
+  <h2>JSONDisplayPanel</h2>
   <button onclick="JSONDisplayPanel()">Expand</button>
   <div class="panel" id="JSONDisplayPanel">
     <pre>
