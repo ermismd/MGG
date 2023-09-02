@@ -6,13 +6,34 @@
 
  * * *
 
-<details>
-  <summary>Class 1: ImportFileTask</summary>
-
-  <pre style="white-space: pre; overflow-x: auto;"><code>
- 
+<html>
+<head>
+  <style>
+   .panel {
+      display: none;
+      background-color: #f1f1f1;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 10px; /* Increase the font size as needed */
+      width: 800px; /* Increase the width as needed */
+    }
+    h2 {
+      font-size: 14px; /* Decrease the font size of the headers */
+	margin-top: 20px; /* Increase the margin-top for the header */
+	  margin-bottom: 20px; /* Add margin-bottom for spacing */
+    }
+    .panel-button {
+      margin-bottom: 20px; /* Add space between each panel button */
+    }
+  </style>
 	
-	
+</head>
+<body>
+	<h2>Class 1</h2>	
+	<button onclick="showImportFileTask ()">ImportFileTask</button>
+ 	 <div class="panel" id="ImportFileTask ">
+  	  <pre>	
+		  
 			/**
 			 * This class represents a task for importing a CSV file and processing it into a JSON array.
 			 * 
@@ -222,12 +243,14 @@
 						 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
 						 */
 			    }
- </code></pre>
-</details>
+</pre>
+  </div>
+  
+<h2>Class 2</h2>
+<button onclick="showImportFileTaskFactory()">ImportFileTaskFactory</button>
+  <div class="panel" id="ImportFileTaskFactory">
+    <pre>
 
-<summary>Class 2: ImportFileTaskFactory</summary>
-
-  <pre style="white-space: pre; overflow-x: auto;"><code>
 		
 		
 	public class ImportFileTaskFactory implements TaskFactory {
@@ -271,10 +294,34 @@
 		    }
 		}
 		}
-	</code></pre>
+	
 
-</details>
+   </pre>
+  </div>
 
+ <script>
+    function showImportFileTask() {
+      var panel = document.getElementById("ImportFileTask");
+      if (panel.style.display === "none") {
+        panel.style.display = "block";
+      } else {
+        panel.style.display = "none";
+      }
+    }
+
+    function showImportFileTaskFactory() {
+      var panel = document.getElementById("ImportFileTaskFactory");
+      if (panel.style.display === "none") {
+        panel.style.display = "block";
+      } else {
+        panel.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
+
+	    
 <br> <!-- Add an empty line -->
 
 [back](./)
