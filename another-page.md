@@ -241,9 +241,11 @@
 						 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
 						 */
 			    }
-       
-   <details>
-  <summary> ImportFileTaskFactory</summary>
+
+</details>
+
+<details>
+<summary> ImportFileTaskFactory</summary>
 		
 		
 	public class ImportFileTaskFactory implements TaskFactory {
