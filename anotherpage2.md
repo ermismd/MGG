@@ -1,4 +1,4 @@
-## INFO WEEK3 AND WEEK4
+## WEEK 3 AND WEEK 4
 
 
 
@@ -47,12 +47,12 @@
 	public final static String APP_NAME = "be.kuleuven.mgG";
 	public final static String SERVER_RESPONSE_FILE = "Response.json";
 	
-	//-----------------------------------------------------------
+	
 	final CommandExecutorTaskFactory commandExecutorTaskFactory;
 	final SynchronousTaskManager<?> synchronousTaskManager;
 	final TaskManager<?,?> dialogTaskManager;
 	
-	//----------------------------------------------------------------
+	
 	final TaskManager taskManager;
 	final SynchronousTaskManager syncTaskManager;
 	
@@ -60,11 +60,11 @@
 	
 	final AvailableCommands availableCommands;
 	final CommandExecutorTaskFactory ceTaskFactory;
-	//-----------------------------------------------------------
+	
 	private MGGCytoPanel cytoPanel = null;
 	
 	  private CyNetwork newNetwork = null;
-	//----------------------------------------------------------
+	
 	private JSONObject jsonObject;
 	private JSONObject serverResponse;
 		
@@ -143,7 +143,7 @@
         return this.serverResponse;
     }
 	
-  	//-----------------------------addition------------------------------for cytopanel------------------------------------------------------------------------------------------  
+  	
     
     public void setCytoPanel(MGGCytoPanel panel) {
   		this.cytoPanel = panel;
@@ -155,11 +155,6 @@
     return newNetwork;
 	}
 
-    
-    
-    //------------------------------------------------SErvice Register and execute Tasks-----------------------------------------------------------------------------------------------
-    
-    
     
     
     public void executeCommand(String namespace, String command, 
@@ -243,16 +238,7 @@
     		  
     		  public void unregisterService(Object service, Class<?> serviceClass) {
     		  cyRegistrar.unregisterService(service, serviceClass); }
-	
-    
-    
-    
-    
-    
-    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   
-    
-    
+
     
     	/**
     	 * Handles the SessionLoadedEvent.
@@ -322,12 +308,8 @@
 	    }
 		
 	}
-
-
-		 
 		    
-		    		
-
+		    	
    </pre>
   </div>
 
