@@ -20,12 +20,15 @@
       font-size: 18px;  /* Adjust the font size for h2 as needed */
     }
    .panel {
-      display: none;
-      background-color: #f1f1f1;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 10px; /* Increase the font size as needed */
-      width: 800px; /* Increase the width as needed */
+     display: none;
+     background-color: #f1f1f1;
+     padding: 10px;
+     margin-top: 10px;
+     font-size: 10px;
+     width: 800px;
+     overflow-x: auto; /* Adds a horizontal scrollbar if text overflows */
+     overflow-y: auto; /* Adds a vertical scrollbar if text overflows */
+     max-height: 400px; /* Optional: Set a max height */
     }
   </style>
 </head>
