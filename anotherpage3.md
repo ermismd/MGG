@@ -1,4 +1,4 @@
-## WEEK 11 AND WEEK 12
+## WEEK 11 & WEEK 12
 
 
 1.  SendDataToServerTask: Created class for the server interaction and data exchange.
