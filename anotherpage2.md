@@ -2,16 +2,21 @@
 
 
 
-####  Implemented a mock manager class(MGGManajer.java) that will be used to activate future functions 
-####  Implemented a new Class, JsonDisplayPanel that shows the imported file data-OTU/ASV tables)
+ 1. Implemented a mock manager class(MGGManajer.java) that will be used to activate future functions 
+
+ 2. Implemented a new Class, JsonDisplayPanel that shows the imported file data-OTU/ASV tables)
 
  * * *
 
- 
- 
 <html>
 <head>
   <style>
+	  h1 {
+      font-size: 18px;  /* Adjust the font size for h1 as needed */
+    }
+    h2 {
+      font-size: 18px;  /* Adjust the font size for h2 as needed */
+    }
    .panel {
       display: none;
       background-color: #f1f1f1;
@@ -20,181 +25,23 @@
       font-size: 10px; /* Increase the font size as needed */
       width: 800px; /* Increase the width as needed */
     }
-
-    h2 {
-      font-size: 14px; /* Decrease the font size of the headers */
-	margin-top: 20px; /* Increase the margin-top for the header */
-	  margin-bottom: 20px; /* Add margin-bottom for spacing */
-    }
-
-    .panel-button {
-      margin-bottom: 20px; /* Add space between each panel button */
-    }
   </style>
 </head>
 <body>
-  <h2>Class 1</h2>
-  <button onclick="JSONDisplayPanel()">JSONDisplayPanel</button>
-  <div class="panel" id="JSONDisplayPanel">
-    <pre>
- 
- package be.kuleuven.mgG.internal.view;
-
-
-
-public class JSONDisplayPanel extends JPanel  {
-    private JTable table;
-    final MGGManager manager;
- 
-    
-    
-    public JSONDisplayPanel(final MGGManager manager,JSONObject jsonObject) {
-        super(new BorderLayout());
-        
-        
-        // Extract the JSONArray from the JSONObject
-        JSONArray jsonArray = (JSONArray) jsonObject.get("data");
-        
-        createTable(jsonArray);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-      
-        this.manager = manager;
-	
-        // Set the scroll bar policies
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
-        // Set the preferred size of the scroll pane
-        scrollPane.setPreferredSize(new Dimension(800, 600));
-        
-        // Add the scroll pane to the center of the JSONDisplayPanel
-        add(scrollPane, BorderLayout.CENTER);
-        
-        
-        // Add the button that will execute the SendDataToServerTask when clicked
-        JButton sendButton = new JButton("Get Annotated Network ");
-        sendButton.addActionListener(new ActionListener() {  
-            public void actionPerformed(ActionEvent e) {
-              
-            	 TaskIterator taskIterator = new SendDataToServerTaskFactory(jsonObject, manager).createTaskIterator();
-                 manager.executeTasks(taskIterator);
-            }
-
-        
-    });
-     // Set button appearance
-        sendButton.setForeground(Color.BLACK); // Set the text color of the button
-        sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 14f)); // Set the font style and size of the button text
-        sendButton.setBackground(new Color(144, 238, 144)); // Set the background color of the button
-        sendButton.setFocusPainted(false); // Remove the focus border around the button
-        sendButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Add padding to the button
-
-        // Create a rounded border for the button
-        int borderRadius = 20;
-        int borderThickness = 2;
-        sendButton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.WHITE, borderThickness),
-                BorderFactory.createEmptyBorder(borderRadius, borderRadius, borderRadius, borderRadius)));
-
-        // Add hover effect for the button
-        sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                sendButton.setBackground(Color.GREEN); // Set the background color when mouse enters the button
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                sendButton.setBackground(new Color(144, 238, 144)); // Set the background color when mouse exits the button
-            }
-        });
-        
-        // Add the button to the JSONDisplayPanel
-        add(sendButton, BorderLayout.NORTH);
-    
-    }
-    
-    private void createTable(JSONArray jsonArray) {
-        DefaultTableModel tableModel = new DefaultTableModel();
-        table = new JTable(tableModel);
-
-        // Set the column names
-        JSONArray headers = (JSONArray) jsonArray.get(0);
-        for (Object header : headers) {
-            tableModel.addColumn(header.toString());
-        }
-
-        // Add the data to the table model
-        for (int i = 1; i < jsonArray.size(); i++) {
-            JSONArray row = (JSONArray) jsonArray.get(i);
-            Object[] rowData = new Object[row.size()];
-            for (int j = 0; j < row.size(); j++) {
-                rowData[j] = row.get(j);
-            }
-            tableModel.addRow(rowData);
-        }
-    }
-
-
-	
-}
-
-
-/*	@Override
-public Component getComponent() {
-	// TODO Auto-generated method stub
-	return this;
-}
-
-@Override
-public CytoPanelName getCytoPanelName() {
-	// TODO Auto-generated method stub
-	return  CytoPanelName.SOUTH;
-}
-
-@Override
-public String getTitle() {
-	// TODO Auto-generated method stub
-	return "OTU/ASV Data";
-}
-
-@Override
-public Icon getIcon() {
-	// TODO Auto-generated method stub
-	return null;*/
-
-
-
-
-		
-
-		
-}
-    </pre>
-  </div>
-
-
-
-
-
-
-  <h2>Class 2</h2>
-  <button onclick="MGGManager()">MGGManager</button>
+  <h1>SendDataToServerTask</h1>
+  <button onclick="MGGManager()">Expand</button>
   <div class="panel" id="MGGManager">
     <pre>
- 
-package be.kuleuven.mgG.internal.model;
+	 
+	/**
+	 * The MGGManager class is responsible for managing the state of the MGG application.
+	 * It provides methods to store and retrieve data, execute tasks, and register services for the tasks and taskfactories to use instead of cyactivator
+	 * 
+	 */
 
 
 
-/**
- * The MGGManager class is responsible for managing the state of the MGG application.
- * It provides methods to store and retrieve data, execute tasks, and register services for the tasks and taskfactories to use instead of cyactivator
- * 
- */
-
-
-
-public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedListener {
+	public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedListener {
 	
 	
 	public final static String APP_NAME = "be.kuleuven.mgG";
@@ -296,7 +143,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
         return this.serverResponse;
     }
 	
-  //-----------------------------addition------------------------------for cytopanel------------------------------------------------------------------------------------------  
+  	//-----------------------------addition------------------------------for cytopanel------------------------------------------------------------------------------------------  
     
     public void setCytoPanel(MGGCytoPanel panel) {
   		this.cytoPanel = panel;
@@ -317,9 +164,9 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     
     public void executeCommand(String namespace, String command, 
             Map<String, Object> args, TaskObserver observer) {
-TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
-execute(ti, true);
-}
+	TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+	execute(ti, true);
+	}
     
     public void execute(TaskIterator iterator, boolean synchronous) {
 		if (synchronous) {
@@ -477,51 +324,118 @@ execute(ti, true);
 	}
 
 
-	
-	/*
-	 * public void executeTasks(TaskIterator tasks) { taskManager.execute(tasks); }
-	 * 
-	 * public void executeTasks(TaskIterator tasks, TaskObserver observer) {
-	 * taskManager.execute(tasks, observer); }
-	 * 
-	 * public void executeTasks(TaskFactory factory) {
-	 * taskManager.execute(factory.createTaskIterator()); }
-	 * 
-	 * public void executeTasks(TaskFactory factory, TaskObserver observer) {
-	 * taskManager.execute(factory.createTaskIterator(), observer); }
-	 */
-	  
-	
-	
-	/*
-	 * public void executeCommand(String namespace, String command,Map<String,
-	 * Object> args, TaskObserver observer) { if (ceTaskFactory == null)
-	 * ceTaskFactory = getService(CommandExecutorTaskFactory.class); if
-	 * (availableCommands == null) availableCommands=
-	 * getService(AvailableCommands.class); if (syncTaskManager == null)
-	 * syncTaskManager = getService(SynchronousTaskManager.class); if
-	 * (availableCommands.getNamespaces() == null ||
-	 * !availableCommands.getCommands(namespace).contains(command)) throw new
-	 * RuntimeException("Can’t find command" +namespace+ "+command"); TaskIterator
-	 * ti = ceTaskFactory.createTaskIterator(namespace, command, args, observer);
-	 * syncTaskManager.execute(ti); }
-	 /
+		 
+		    
+		    		
 
-      
-    </pre>
+   </pre>
+  </div>
+
+
+  <h2>Class 2</h2>
+  <button onclick="JSONDisplayPanel()">Expand</button>
+  <div class="panel" id="JSONDisplayPanel">
+    <pre>
+
+     
+ 	public class JSONDisplayPanel extends JPanel  {
+   		 private JTable table;
+    		final MGGManager manager;
+ 
+    	public JSONDisplayPanel(final MGGManager manager,JSONObject jsonObject) {
+        	super(new BorderLayout());
+        
+        
+	        // Extract the JSONArray from the JSONObject
+	        JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+	        
+	        createTable(jsonArray);
+	        
+	        JScrollPane scrollPane = new JScrollPane(table);
+	      
+	        this.manager = manager;
+		
+	        // Set the scroll bar policies
+	        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+	        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	        
+	        // Set the preferred size of the scroll pane
+	        scrollPane.setPreferredSize(new Dimension(800, 600));
+	        
+	        // Add the scroll pane to the center of the JSONDisplayPanel
+	        add(scrollPane, BorderLayout.CENTER);
+	        
+	        
+	        // Add the button that will execute the SendDataToServerTask when clicked
+	        JButton sendButton = new JButton("Get Annotated Network ");
+	        sendButton.addActionListener(new ActionListener() {  
+	            public void actionPerformed(ActionEvent e) {
+	              
+	            	 TaskIterator taskIterator = new SendDataToServerTaskFactory(jsonObject, manager).createTaskIterator();
+	                 manager.executeTasks(taskIterator);
+	            }
+	
+	        
+	    });
+	     // Set button appearance
+	        sendButton.setForeground(Color.BLACK); // Set the text color of the button
+	        sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 14f)); // Set the font style and size of the button text
+	        sendButton.setBackground(new Color(144, 238, 144)); // Set the background color of the button
+	        sendButton.setFocusPainted(false); // Remove the focus border around the button
+	        sendButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Add padding to the button
+	
+	        // Create a rounded border for the button
+	        int borderRadius = 20;
+	        int borderThickness = 2;
+	        sendButton.setBorder(BorderFactory.createCompoundBorder(
+	                BorderFactory.createLineBorder(Color.WHITE, borderThickness),
+	                BorderFactory.createEmptyBorder(borderRadius, borderRadius, borderRadius, borderRadius)));
+	
+	        // Add hover effect for the button
+	        sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+	            public void mouseEntered(java.awt.event.MouseEvent evt) {
+	                sendButton.setBackground(Color.GREEN); // Set the background color when mouse enters the button
+	            }
+	
+	            public void mouseExited(java.awt.event.MouseEvent evt) {
+	                sendButton.setBackground(new Color(144, 238, 144)); // Set the background color when mouse exits the button
+	            }
+	        });
+	        
+	        // Add the button to the JSONDisplayPanel
+	        add(sendButton, BorderLayout.NORTH);
+	    
+	    }
+	    
+	    private void createTable(JSONArray jsonArray) {
+	        DefaultTableModel tableModel = new DefaultTableModel();
+	        table = new JTable(tableModel);
+	
+	        // Set the column names
+	        JSONArray headers = (JSONArray) jsonArray.get(0);
+	        for (Object header : headers) {
+	            tableModel.addColumn(header.toString());
+	        }
+	
+	        // Add the data to the table model
+	        for (int i = 1; i < jsonArray.size(); i++) {
+	            JSONArray row = (JSONArray) jsonArray.get(i);
+	            Object[] rowData = new Object[row.size()];
+	            for (int j = 0; j < row.size(); j++) {
+	                rowData[j] = row.get(j);
+	            }
+	            tableModel.addRow(rowData);
+	        }
+	    }
+		
+	}
+		
+	
+     </pre>
   </div>
 
   <script>
-    function showJSONDisplayPanel() {
-      var panel = document.getElementById("JSONDisplayPanel");
-      if (panel.style.display === "none") {
-        panel.style.display = "block";
-      } else {
-        panel.style.display = "none";
-      }
-    }
-    
-    function showMGGManager() {
+    function MGGManager() {
       var panel = document.getElementById("MGGManager");
       if (panel.style.display === "none") {
         panel.style.display = "block";
@@ -529,6 +443,16 @@ execute(ti, true);
         panel.style.display = "none";
       }
     }
+    
+    function JSONDisplayPanel() {
+      var panel = document.getElementById("JSONDisplayPanel");
+      if (panel.style.display === "none") {
+        panel.style.display = "block";
+      } else {
+        panel.style.display = "none";
+      }
+    }
+	  
   </script>
 </body>
 </html>
