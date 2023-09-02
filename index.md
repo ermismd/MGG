@@ -25,11 +25,10 @@ In these GH-pages the progress of the development will be periodically updated.
 * Finalized GitHub pages for the GSoC project
 * Set Up the Environment
 * Created mock apps for training using OSGI services and Maven
-
+* Communication with the Mentors
 
 
 * * *
-
 
 
 ## Coding Period
@@ -41,34 +40,34 @@ In these GH-pages the progress of the development will be periodically updated.
              - Renamed to MGG
 2.  Created new Github pages to keep track of progress
 3.  Refactored the app
-4. Created 2 classes in the app      
+4. Created 2 classes in the app (ImportFileTask.java and ImportFileTaskFactory)     
   - Load and read a csv/tsv in the app
-  - process it, display the JSON data in a panel 
-  - send the JSON data to a server
   - [More Info](./another-page.html).
  
 
 ### Week 3 & 4
 
-1.  SOON tm
-2.  SOON tm
-3.  SOON tm
-
+1. MGGManager.java: implemented a mock manager class. MGGManager will be a central hub that registers task factories and acts as an intermediary for variable passing.
+2. ImportFileTask: Enhancements were made by adding annotations for tunable and incorporating menu actions.
+3. JsonDisplayPanel: A new class was developed to display imported data tables like OTU/ASV.
+   -- [More Info](./anotherpage2.html).
 
 ### Week 5 & 6
 
-1.  SOON tm
-2.  SOON tm
-3.  SOON tm
-4.  SOON tm
-
+1. ImportFileTask: Further updated.
+2. SendDataToServerTask: Created  class for the server interaction and data exchange.
+3. SendDataToServerTaskFactory: A factory class  for  instantiation and management of SendDataToServerTask.
+4. MGGManager: The class was updated to activate the task factory for SendDataToServerTask.
+      -- [More Info](./anotherpage3.html).
 
 ### Week 7 & 8
 
-1.  SOON tm
-2.  SOON tm
-3.  SOON tm
-4.  SOON tm
+1.  CreateNetworkTask: Created class that accepts the response table from the SendDataToServerTask and is responsible for parsing the table and constructing a network model based on it.
+                       Additionally, the class generates a visual style for the nodes and edges of the network.    
+2. CreateNetworkTaskFactory: A factory class for instantiation of the the CreateNetworkTask.
+3. Code Refinement: All previously implemented classes have undergone revisions to improve their coherence and streamline their functionalities, thus enhancing the overall codebase quality.
+
+    -- [More Info](./anotherpage4.html).
 
 
 ### Week 9 & 10
