@@ -39,6 +39,7 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.CSVReader;
 import be.kuleuven.mgG.internal.utils.HTTPUtils;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+import be.kuleuven.mgG.internal.view.JsonResultPanel;
 
 
 
@@ -245,14 +246,15 @@ public class ImportFileTask extends AbstractTask {
    
         
         private void showDataInPanel(JSONObject jsonObject) {
-		    JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonObject);
-		  
+		    //JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonObject);
+		    JsonResultPanel panel = new JsonResultPanel(mggManager, jsonObject);
+		    mggManager.registerService(panel, CytoPanelComponent.class, new Properties());
 		    
-		    JFrame frame = new JFrame("OTU/ASV Data");
-		    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		    frame.getContentPane().add(panel);
-		    frame.pack();
-		    frame.setVisible(true);
+			/*
+			 * JFrame frame = new JFrame("OTU/ASV Data");
+			 * frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
+			 */
     }
         
 

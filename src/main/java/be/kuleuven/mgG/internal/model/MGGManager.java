@@ -50,6 +50,7 @@ import org.cytoscape.session.events.SessionAboutToBeSavedEvent;
 import org.cytoscape.session.events.SessionAboutToBeSavedListener;
 import org.cytoscape.session.events.SessionLoadedEvent;
 import org.cytoscape.session.events.SessionLoadedListener;
+import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskFactory;
@@ -74,6 +75,12 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	public final static String APP_NAME = "be.kuleuven.mgG";
 	public final static String SERVER_RESPONSE_FILE = "Response.json";
 	
+	//-----------------------------------------------------------
+	final CommandExecutorTaskFactory commandExecutorTaskFactory;
+	final SynchronousTaskManager<?> synchronousTaskManager;
+	final TaskManager<?,?> dialogTaskManager;
+	
+	//----------------------------------------------------------------
 	final TaskManager taskManager;
 	final SynchronousTaskManager syncTaskManager;
 	
@@ -114,6 +121,9 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		cyRegistrar.registerService(this, SessionAboutToBeSavedListener.class, new Properties());
 		cyRegistrar.registerService(this, SessionLoadedListener.class, new Properties());
 		
+		synchronousTaskManager = cyRegistrar.getService(SynchronousTaskManager.class);
+		commandExecutorTaskFactory = cyRegistrar.getService(CommandExecutorTaskFactory.class);
+		dialogTaskManager = cyRegistrar.getService(TaskManager.class);
 		//MGGicon = new ImageIcon(getClass().getResource("/images/scNetViz.png"));
 					
 	}
@@ -176,6 +186,27 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     
     
     //------------------------------------------------SErvice Register and execute Tasks-----------------------------------------------------------------------------------------------
+    
+    
+    
+    
+    public void executeCommand(String namespace, String command, 
+            Map<String, Object> args, TaskObserver observer) {
+TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+execute(ti, true);
+}
+    
+    public void execute(TaskIterator iterator, boolean synchronous) {
+		if (synchronous) {
+			synchronousTaskManager.execute(iterator);
+		} else {
+			dialogTaskManager.execute(iterator);
+		}
+	}
+    
+    public CyNetworkView getCurrentNetworkView() {
+		return cyRegistrar.getService(CyApplicationManager.class).getCurrentNetworkView();
+	}
     
     /**
      * Executes a set of tasks.
