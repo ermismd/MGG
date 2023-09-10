@@ -34,6 +34,7 @@ In these GH pages, the progress of the development will be periodically updated.
 
 ## Coding Period
 
+### [Commits](https://github.com/RBVI/scNetViz/compare/master...ermismd:MGG:MGG)
 
 ### Week 1 & 2
 
@@ -43,7 +44,8 @@ In these GH pages, the progress of the development will be periodically updated.
                          -Capable of loading and reading data in CSV/TSV formats directly into Cytoscape.
    
   - [More Info](./another-page.html).
- 
+
+ [Related Commits](https://github.com/RBVI/scNetViz/commit/db42c09453aa27b292f00e7c54070fe8d5332d59)
 
 ### Week 3 & 4
 
@@ -68,7 +70,7 @@ In these GH pages, the progress of the development will be periodically updated.
 4. Introduced JsonDisplayPanel for Data Visualization:
           -Developed a new class, JsonDisplayPanel, specifically designed to display imported data tables such as OTU and ASV in a user-friendly manner.
    
-   -- [More Info](./anotherpage2.html).
+   -[More Info](./anotherpage2.html).
 
 ### Week 9 & 10
 
@@ -77,7 +79,7 @@ In these GH pages, the progress of the development will be periodically updated.
 3. SendDataToServerTaskFactory: A factory class  for  instantiation and management of SendDataToServerTask.
 4. MGGManager: The class was updated to activate the task factory for SendDataToServerTask.
    
-      -- [More Info](./anotherpage3.html).
+   - [More Info](./anotherpage3.html).
 
 ### Week 11 & 12
 
@@ -95,7 +97,10 @@ Enhanced Task Monitoring and Feedback:
 2. CreateNetworkTaskFactory: A factory class for instantiation of the the CreateNetworkTask.
 3. Code Refinement: All previously implemented classes have undergone revisions to improve their coherence and streamline their functionalities, thus enhancing the overall codebase quality.
 
-    -- [More Info](./anotherpage4.html).
+
+  -[More Info](./anotherpage4.html).
+
+[Related Commits](https://github.com/RBVI/scNetViz/commit/1e06678e46d6dedec223a5714d533d5770ba5ab8#diff-9491bb1e545b78a6eda3250e035a553530373b639abf4da66afefe5def3c25d9L15)
 
 
 ### Week 15 & 16
@@ -119,12 +124,13 @@ Enhanced Task Monitoring and Feedback:
                    -The ShowResultsPanel and its corresponding ShowResultsTaskFactory work hand-in-hand to inspect the current network and dynamically supply data to both MGGEdgePanel and MGGCytoPanel. 
 
 
-    -- [More Info](./anotherpage6.html).
+ -[More Info](./anotherpage6.html).
+
+
+[Related Commits](https://github.com/RBVI/scNetViz/commit/2fd07e680db477e9c6fc8d7348ee29aeb6937e48)
 
    
 * * *
-
-
 
 |<img src="assets/img/triangle.png" width="50">|
 
