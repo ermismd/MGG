@@ -43,9 +43,9 @@ In these GH pages, the progress of the development will be periodically updated.
 3. Created two foundational classes: ImportFileTask and ImportFileTaskFactory.
                          -Capable of loading and reading data in CSV/TSV formats directly into Cytoscape.
    
-  - [More Info](./another-page.html).
+  -[More Info](./another-page.html).
 
- [Related Commits](https://github.com/RBVI/scNetViz/commit/db42c09453aa27b292f00e7c54070fe8d5332d59)
+  -[Related Commits](https://github.com/RBVI/scNetViz/commit/db42c09453aa27b292f00e7c54070fe8d5332d59)
 
 ### Week 3 & 4
 
@@ -100,7 +100,7 @@ Enhanced Task Monitoring and Feedback:
 
   -[More Info](./anotherpage4.html).
 
-[Related Commits](https://github.com/RBVI/scNetViz/commit/1e06678e46d6dedec223a5714d533d5770ba5ab8#diff-9491bb1e545b78a6eda3250e035a553530373b639abf4da66afefe5def3c25d9L15)
+  -[Related Commits](https://github.com/RBVI/scNetViz/commit/1e06678e46d6dedec223a5714d533d5770ba5ab8#diff-9491bb1e545b78a6eda3250e035a553530373b639abf4da66afefe5def3c25d9L15)
 
 
 ### Week 15 & 16
@@ -114,7 +114,7 @@ Enhanced Task Monitoring and Feedback:
 4. Enhanced Network Identification in MGGCytoPanel:
                     -Added code to MGGCytoPanel that checks if a given network is an annotated microbetag network. Depending on the result, the panel is either displayed or hidden.
 
-   -- [More Info](./anotherpage5.html).
+   - [More Info](./anotherpage5.html).
 
 ### Week 17 & 18
 
@@ -126,8 +126,7 @@ Enhanced Task Monitoring and Feedback:
 
  -[More Info](./anotherpage6.html).
 
-
-[Related Commits](https://github.com/RBVI/scNetViz/commit/2fd07e680db477e9c6fc8d7348ee29aeb6937e48)
+ -[Related Commits](https://github.com/RBVI/scNetViz/commit/2fd07e680db477e9c6fc8d7348ee29aeb6937e48)
 
    
 * * *
