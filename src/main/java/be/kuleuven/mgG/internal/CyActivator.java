@@ -20,6 +20,7 @@ import static org.cytoscape.work.ServiceProperties.TOOLTIP;
 import java.util.Properties;
 
 import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -31,13 +32,17 @@ import org.cytoscape.io.BasicCyFileFilter;
 import org.cytoscape.io.DataCategory;
 import org.cytoscape.io.read.InputStreamTaskFactory;
 import org.cytoscape.io.util.StreamUtil;
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
+import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskFactory;
 import org.json.simple.JSONArray;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.osgi.framework.BundleContext;
@@ -45,10 +50,16 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyle;
+import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyleTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
+import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
+import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
+import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+
 import be.kuleuven.mgG.internal.model.MGGManager;
 
 
@@ -77,6 +88,8 @@ public class CyActivator extends AbstractCyActivator {
         //CyNetworkFactory networkFactory =getService(bc, CyNetworkFactory.class);
        // CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
         
+	
+		
         
         // Register taskfactory
         
@@ -114,7 +127,55 @@ public class CyActivator extends AbstractCyActivator {
         
         
         
+//        CreateMGGVisualStyleTaskFactory mggVisualStyleTaskFactory=new  CreateMGGVisualStyleTaskFactory(MGGManager);
+//        
+//        Properties Visualprops = new Properties();
+//        Visualprops.setProperty(TITLE, "Apply MGG Visual Style");
+//        Visualprops.setProperty(PREFERRED_MENU, "Apps.MGG.Visual Style");
+//        Visualprops.setProperty(IN_TOOL_BAR, "FALSE");
+//        Visualprops.setProperty(IN_MENU_BAR, "TRUE");
+//        Visualprops.setProperty(MENU_GRAVITY, "1");
+//        Visualprops.setProperty(COMMAND_NAMESPACE, "MGG");
+//        Visualprops.setProperty(COMMAND_DESCRIPTION, "Get MGG visual Style");
+//        Visualprops.setProperty(COMMAND, "Get_Style");
+//	     
+//        registerService(bc,mggVisualStyleTaskFactory, TaskFactory.class, Visualprops);
+//        
         
+        
+        
+        
+        CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager );
+		
+		registerService(bc,createVisualStyleAction,CyAction.class, new Properties());
+        
+        {
+			ShowResultsPanelAction sra = new ShowResultsPanelAction("Show results panel", MGGManager);
+			registerService(bc, sra, CyAction.class);
+
+			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(MGGManager);				
+			//showResults.reregister();
+			MGGManager.setShowResultsPanelTaskFactory(showResults);
+			
+			// Now bring up the side panel if the current network is a STRING network
+			CyNetwork current = MGGManager.getCurrentNetwork();
+			if (Mutils.ifHaveMGG(current)) {
+				// It's the current network.  Bring up the results panel
+				MGGManager.execute(showResults.createTaskIterator(), true);
+			}
+		}	
+	
+       
+        
+        
+    	
+        
+    	
+    	
+    	
+    	
+    	
+    	
         //createnetworktaskfactory
         
 		/*

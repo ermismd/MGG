@@ -77,14 +77,16 @@ public abstract class AbstractMggPanel extends JPanel {
 			box.add(label);
 			box.add(Box.createHorizontalGlue());
 		}
-		JSlider slider;
-		slider = new JSlider(0,(int)max,(int)(value*100));
-		slider.setToolTipText("Filter ranges between 0.0 and " + max/100);
-		slider.setPreferredSize(new Dimension(150,20));
-		box.add(slider);
-		// box.add(Box.createHorizontalGlue());
-		JTextField textField;
-		textField = new JTextField(String.format("%.2f",value),4);
+		 // Assume max is positive and represents the maximum value for the slider.
+	    // Slider's range is from -100 to max * 100, assuming max is also a double.
+	    int sliderMax = (int)(max );
+	    JSlider slider = new JSlider(-100, sliderMax, (int)(value * 100)); // value should be between -1 and max
+	    slider.setToolTipText("Filter ranges between -1.0 and " + max);
+	    slider.setPreferredSize(new Dimension(150, 20));
+	    box.add(slider);
+	    
+	 // Adjust the displayed value in the text field
+	    JTextField textField = new JTextField(String.format("%.2f", value), 4); // value is between -1 and max
 		textField.setPreferredSize(new Dimension(30,20));
 		textField.setMaximumSize(new Dimension(30,20));
 		textField.setFont(textFont);
@@ -97,17 +99,29 @@ public abstract class AbstractMggPanel extends JPanel {
 
 	protected void addChangeListeners(String type, String label, JSlider slider, 
 	                                  JTextField textField, double max) {
+//		slider.addChangeListener(new ChangeListener() {
+//			public void stateChanged(ChangeEvent e) {
+//				JSlider sl = (JSlider)e.getSource();
+//				int value = sl.getValue();
+//				double v = ((double)value)/100.0;
+//				textField.setText(String.format("%.2f",v));
+//				addFilter(type, label, v);
+//				doFilter(type);
+//			}
+//		});
 		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSlider sl = (JSlider)e.getSource();
-				int value = sl.getValue();
-				double v = ((double)value)/100.0;
-				textField.setText(String.format("%.2f",v));
-				addFilter(type, label, v);
-				doFilter(type);
-			}
+		   
+		    public void stateChanged(ChangeEvent e) {
+		        JSlider source = (JSlider) e.getSource();
+		            int weightThreshold = source.getValue();
+		            double v=((double)weightThreshold)/100.0;
+		            textField.setText(String.format("%.2f",v));
+		            addFilter(type, label, v);
+		            doFilter(type); // Assuming "weight" is the type you're interested in.
+		        }
+		    
 		});
-
+	
 		textField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField field = (JTextField)e.getSource();
@@ -115,6 +129,8 @@ public abstract class AbstractMggPanel extends JPanel {
 				slider.setValue((int)(Double.parseDouble(text)*100.0));
 			}
 		});
+		
+		
 	}
 
 	protected void addFilter(String type, String label, double value) {

@@ -35,7 +35,7 @@ import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 import be.kuleuven.mgG.internal.view.MGGCytoPanel;
-
+import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory ;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkListener;
@@ -88,6 +88,8 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	
 	final AvailableCommands availableCommands;
 	final CommandExecutorTaskFactory ceTaskFactory;
+	
+	private ShowResultsPanelTaskFactory resultsPanelTaskFactory;
 	//-----------------------------------------------------------
 	private MGGCytoPanel cytoPanel = null;
 	
@@ -95,6 +97,9 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	//----------------------------------------------------------
 	private JSONObject jsonObject;
 	private JSONObject serverResponse;
+	
+	
+	private boolean highlightNeighbors = false;
 		
 	//private Icon MGGicon;
 
@@ -183,7 +188,27 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     return newNetwork;
 	}
 
-    
+	public void setShowResultsPanelTaskFactory(ShowResultsPanelTaskFactory factory) {
+		resultsPanelTaskFactory = factory;		
+	}
+
+	public ShowResultsPanelTaskFactory getShowResultsPanelTaskFactory() {
+		return resultsPanelTaskFactory;		
+	}
+
+	
+	
+	public boolean highlightNeighbors() { return highlightNeighbors; }
+
+	public void setHighlightNeighbors(boolean set) { 
+		highlightNeighbors = set; 
+	}
+
+	
+	
+	
+	
+	
     
     //------------------------------------------------SErvice Register and execute Tasks-----------------------------------------------------------------------------------------------
     
@@ -195,6 +220,12 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
 execute(ti, true);
 }
+    
+    public TaskIterator getCommandTaskIterator(String namespace, String command, 
+            Map<String, Object> args, TaskObserver observer) {
+return commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+}
+    
     
     public void execute(TaskIterator iterator, boolean synchronous) {
 		if (synchronous) {
@@ -278,9 +309,32 @@ execute(ti, true);
     
     
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   
+    		  public void showResultsPanel() {
+    				if (cytoPanel == null) {
+    					execute(resultsPanelTaskFactory.createTaskIterator(), true);
+    				} else {
+    					// Make sure we show it
+    					cytoPanel.showCytoPanel();
+    				}
+    			}
+
+    			public void hideResultsPanel() {
+    				if (cytoPanel != null) {
+    					cytoPanel.hideCytoPanel();
+    				}
+    			}
+
+    			public void reinitResultsPanel(CyNetwork network) {
+    				if (cytoPanel == null) {
+    					execute(resultsPanelTaskFactory.createTaskIterator(), true);
+    				} else {
+    					// Make sure we show it
+    					cytoPanel.reinitCytoPanel();
+    				}
+    			}
+
     
-    
+    //------------------------------------------------------------------------------------------------------------------------
     
     	/**
     	 * Handles the SessionLoadedEvent.

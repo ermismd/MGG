@@ -1,7 +1,5 @@
 package be.kuleuven.mgG.internal.view;
 
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -29,32 +27,31 @@ import org.cytoscape.model.events.SelectedNodesAndEdgesListener;
 import org.cytoscape.util.swing.TextIcon;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
+import be.kuleuven.mgG.internal.utils.Mutils;
 
 
-
-
-
-public class MGGCytoPanel extends  JPanel implements  CytoPanelComponent2, SetCurrentNetworkListener, SelectedNodesAndEdgesListener  {
+public class MGGCytoPanel extends JPanel
+		implements CytoPanelComponent2, SetCurrentNetworkListener, SelectedNodesAndEdgesListener {
 
 	final MGGManager manager;
 
 	// Define new colors
-	 public static final Color[] MY_COLORS = new Color[] { Color.BLACK, Color.RED, Color.BLUE, Color.YELLOW };
-	 // Create a Font object
-	 private static final  Font myFont = new Font("Arial", Font.PLAIN, 16);
-	 
+	public static final Color[] MY_COLORS = new Color[] { Color.BLACK, Color.RED, Color.BLUE, Color.YELLOW };
+	// Create a Font object
+	private static final Font myFont = new Font("Arial", Font.PLAIN, 16);
+
 	private JTabbedPane tabs;
-	//private StringNodePanel nodePanel;
+	private MGGNodePanel  nodePanel;
 	private MGGEdgePanel edgePanel;
 	private boolean registered = false;
-	 private static final Icon icon = new TextIcon(new String[] { "MGG" }, new Font[] { myFont }, MY_COLORS, 16, 16);
-	
+	private static final Icon icon = new TextIcon(new String[] { "MGG" }, new Font[] { myFont }, MY_COLORS, 16, 16);
+
 	public MGGCytoPanel(final MGGManager manager) {
 		this.manager = manager;
 		this.setLayout(new BorderLayout());
 		tabs = new JTabbedPane(JTabbedPane.BOTTOM);
-		//nodePanel = new StringNodePanel(manager);
-		//tabs.add("Nodes", nodePanel);
+		nodePanel = new MGGNodePanel(manager);
+		tabs.add("Nodes", nodePanel);
 		edgePanel = new MGGEdgePanel(manager);
 		tabs.add("Edges", edgePanel);
 		this.add(tabs, BorderLayout.CENTER);
@@ -65,8 +62,7 @@ public class MGGCytoPanel extends  JPanel implements  CytoPanelComponent2, SetCu
 		revalidate();
 		repaint();
 	}
-	
-	
+
 	public void showCytoPanel() {
 		// System.out.println("show panel");
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
@@ -79,10 +75,10 @@ public class MGGCytoPanel extends  JPanel implements  CytoPanelComponent2, SetCu
 			cytoPanel.setState(CytoPanelState.DOCK);
 
 		// Tell tabs
-		//nodePanel.networkChanged(manager.getCurrentNetwork());
+		 nodePanel.networkChanged(manager.getCurrentNetwork());
 		edgePanel.networkChanged(manager.getCurrentNetwork());
 	}
-	
+
 	public void reinitCytoPanel() {
 		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
 		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
@@ -95,9 +91,9 @@ public class MGGCytoPanel extends  JPanel implements  CytoPanelComponent2, SetCu
 
 		// Tell tabs & remove/undo filters
 		CyNetwork current = manager.getCurrentNetwork();
-		//nodePanel.removeFilters(current);
-		//nodePanel.undoFilters();
-		//nodePanel.networkChanged(current);
+		nodePanel.removeFilters(current);
+		nodePanel.undoFilters();
+		nodePanel.networkChanged(current);
 		edgePanel.removeFilters(current);
 		edgePanel.undoFilters();
 		edgePanel.networkChanged(current);
@@ -131,54 +127,62 @@ public class MGGCytoPanel extends  JPanel implements  CytoPanelComponent2, SetCu
 	}
 
 	public void updateControls() {
-		//nodePanel.updateControls();
+		 nodePanel.updateControls();
 		edgePanel.updateScore();
-		//edgePanel.updateSubPanel();
+		// edgePanel.updateSubPanel();
 	}
 
 	@Override
 	public void handleEvent(SelectedNodesAndEdgesEvent event) {
-		if (!registered) return;
+		if (!registered)
+			return;
 		// Pass selected nodes to nodeTab
-		//nodePanel.selectedNodes(event.getSelectedNodes());
+		 nodePanel.selectedNodes(event.getSelectedNodes());
 		// Pass selected edges to edgeTab
 		edgePanel.selectedEdges(event.getSelectedEdges());
 	}
 
 	@Override
 	public void handleEvent(SetCurrentNetworkEvent event) {
-		  CyNetwork network = event.getNetwork();
+		CyNetwork network = event.getNetwork();
 
-		    if (network == null) {
-		        hideCytoPanel();
-		        return;
-		    }
+		
+		if (Mutils.isMGGNetwork(network)) {
+			if (!registered) {
+				showCytoPanel();
+			}
 
-		    // Check for the existence of the "flashweave-score" attribute on edges
-		    boolean hasFlashweaveScore = network.getRow(network).get("flashweave-score",Double.class) != null;
+			// Tell tabs
+		   nodePanel.networkChanged(network);
+			edgePanel.networkChanged(network);
+		} else {
+			hideCytoPanel();
+		}
+	}
+		
+		/*
+		 * if (network == null) { hideCytoPanel(); return; }
+		 * 
+		 * // Check for the existence of the "flashweave-score" attribute on edges
+		 * boolean hasFlashweaveScore =
+		 * network.getRow(network).get("flashweave-score",Double.class) != null;
+		 * 
+		 * 
+		 * // Further checks can be added to see if the flashweave-scores are unique,
+		 * different, etc. // For example: Set<Double> uniqueScores = new HashSet<>();
+		 * boolean hasDifferentScores = false; if (hasFlashweaveScore) { for (CyEdge
+		 * edge : network.getEdgeList()) { Double score =
+		 * network.getRow(edge).get("flashweave-score", Double.class); if (score !=
+		 * null) { if (uniqueScores.contains(score)) { hasDifferentScores = true; break;
+		 * } uniqueScores.add(score); } } }
+		 * 
+		 * 
+		 * // Based on the above checks, decide whether to show the CytoPanel if
+		 * (hasFlashweaveScore) { if (!registered) { showCytoPanel(); }
+		 * 
+		 * // Inform the tabs // nodePanel.networkChanged(network);
+		 * edgePanel.networkChanged(network); } else { hideCytoPanel(); }
+		 */
 
-			/*
-			 * // Further checks can be added to see if the flashweave-scores are unique,
-			 * different, etc. // For example: Set<Double> uniqueScores = new HashSet<>();
-			 * boolean hasDifferentScores = false; if (hasFlashweaveScore) { for (CyEdge
-			 * edge : network.getEdgeList()) { Double score =
-			 * network.getRow(edge).get("flashweave-score", Double.class); if (score !=
-			 * null) { if (uniqueScores.contains(score)) { hasDifferentScores = true; break;
-			 * } uniqueScores.add(score); } } }
-			 */
+	}
 
-		    // Based on the above checks, decide whether to show the CytoPanel
-		    if (hasFlashweaveScore) {
-		        if (!registered) {
-		            showCytoPanel();
-		        }
-
-		        // Inform the tabs
-		       // nodePanel.networkChanged(network);
-		        edgePanel.networkChanged(network);
-		    } else {
-		        hideCytoPanel();
-		    }
-	
-	
-}}

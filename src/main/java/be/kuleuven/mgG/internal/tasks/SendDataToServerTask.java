@@ -93,7 +93,8 @@ public class SendDataToServerTask extends AbstractTask {
     		
         taskMonitor.setTitle("Sending Data to Server");
         taskMonitor.setStatusMessage("Processing Data on Server( May take some time... )");
-        
+          
+        taskMonitor.setStatusMessage("Server Send " + jsonObject.toJSONString());
        
         	
         RequestConfig config = RequestConfig.custom()
@@ -133,6 +134,7 @@ public class SendDataToServerTask extends AbstractTask {
                           HttpEntity responseEntity = response.getEntity();
                           JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
                           
+                          taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
                           taskMonitor.setStatusMessage("Processing server response");
                           taskMonitor.setStatusMessage("Data sent to server and retrieved successfully!");
                        // Here's the new line where you set the JSON response as a status message

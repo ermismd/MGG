@@ -42,7 +42,7 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 	    if (net == null) return false;
 
 	    //* Check for the existence of the 'flashweave-score' column in the edge table
-	   boolean hasFlashweaveScore = net.getRow(net).get("flashweave-score",Double.class) != null; 
+	   boolean hasFlashweaveScore = net.getRow(net).get("weight",Double.class) != null; 
 
 	    // Implement other checks if necessary
 	    // boolean hasIdColumn = net.getDefaultNodeTable().getColumn("@id") != null;

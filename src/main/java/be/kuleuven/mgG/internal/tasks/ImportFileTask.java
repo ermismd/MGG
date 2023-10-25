@@ -12,7 +12,9 @@ import static org.cytoscape.work.ServiceProperties.TITLE;
 import java.awt.BorderLayout;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -82,30 +84,48 @@ public class ImportFileTask extends AbstractTask {
     public boolean showJSONInPanel = true;
     
     @Tunable(description="Write JSON to file",groups = { "Create File Settings" },tooltip="If checked, a new JSON file will be created in the same path as the original file",exampleStringValue="true")
-   public boolean writeToFile = true;  
+   public boolean writeToFile = false;  
     
     @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
     public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
-
-    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=2.0, required=true)
-    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "qiime2");
     
-    @Tunable(description="PhenDB", longDescription="Choose whether to use PhenDB.", groups={"Input Settings"}, gravity=3.0, exampleStringValue="True, False", required=true)
-    public boolean phenDB;
-
-    @Tunable(description="FAPROTAX", longDescription="Choose whether to use FAPROTAX.", groups={"Input Settings"}, gravity=4.0, exampleStringValue="True, False", required=true)
-    public boolean faproTax;
-
-    @Tunable(description="NetCooperate", longDescription="Choose whether to use NetCooperate.", groups={"Input Settings"}, gravity=5.0, exampleStringValue="True, False", required=true)
-    public boolean netCooperate;
-
-    @Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
-    public boolean netCmpt;
-
-    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to use pathway complementarity.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
-    public boolean pathwayComplementarity;
+    @Tunable(description="Choose if heterogeneous", groups={"Additional Input if chosen abudance_table"}, gravity=10.0, required=true)
+    public boolean heterogeneous=false;
     
+    @Tunable(description="Choose if sensitive", groups={"Additional Input if chosen abudance_table"}, gravity=11.0, required=true)
+    public boolean sensitive=false;
+ 
+    @Tunable(description="Choose delimiter", groups={"Input Settings"}, gravity=2.0, required=true)
+    public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
+
+    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=3.0, required=true)
+    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "other");
     
+    @Tunable(description="PhenDB", longDescription="Choose whether to get PhenDB.", groups={"Input Settings"}, 
+    		tooltip="Choose whether to get PhenDB values annotations" ,gravity=4.0, exampleStringValue="True, False", required=true)
+    public boolean phenDB=true;
+
+    @Tunable(description="FAPROTAX", longDescription="Choose whether to get FAPROTAX.", groups={"Input Settings"}, 
+    		tooltip="Choose whether to get FAPROTAX values annotations" , gravity=5.0, exampleStringValue="True, False", required=true)
+    public boolean faproTax=true; 
+
+    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to get the pathway complementarity.", 
+    		 tooltip="Choose whether to get Pathway Complementarity annotations" ,groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
+    public boolean pathway_complement=true;
+    
+    @Tunable(description="Seed Scores", longDescription="Choose whether to get the Seed Scores.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
+    public boolean seed_scores= false;
+    
+    @Tunable(description="Get_Children", longDescription="Choose whether to get Children(different strains).", groups={"Input Settings"}, 
+    		tooltip="Choose whether to get strains from the same species" , gravity=8.0, exampleStringValue="True, False", required=true)
+    public boolean get_children=false; 
+    
+    @Tunable(description="Manta", longDescription="Choose whether to get Manta annotations.", groups={"Input Settings"}, 
+    		tooltip="Choose whether to get Manta annotations" , gravity=9.0, exampleStringValue="True, False", required=true)
+    public boolean manta=false; 
+    
+    //@Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
+    //public boolean netCmpt= true;
     
     
     
@@ -183,26 +203,61 @@ public class ImportFileTask extends AbstractTask {
 	            
 	        }
 	         
-	     // Create a new JSONObject
+	        
+	        
+	        // Create a new JSONObject
 	        JSONObject jsonObject = new JSONObject();
 
 	        // Add the jsonArray to the jsonObject
 	        jsonObject.put("data", jsonArray);
-
+	        
+	        
+	        
+	        
+//     // Mapping the arguments from the list to their respective values
+//	        Map<String, Object> argumentsMap = new HashMap<>();
+//	        argumentsMap.put("input_category", input.getSelectedValue());
+//            argumentsMap.put("taxonomy", taxonomy.getSelectedValue());
+//            argumentsMap.put("delimiter", delimiter.getSelectedValue());
+//	        argumentsMap.put("get_children", get_children); // Assuming get_children is a predefined variable
+//	        argumentsMap.put("sensitive", sensitive);       // Assuming sensitive is a predefined variable
+//	        argumentsMap.put("heterogeneous", heterogeneous); // Assuming heterogeneous is a predefined variable
+//	        argumentsMap.put("phenDB", phenDB);             // Assuming phenDB is a predefined variable
+//	        argumentsMap.put("faprotax", faproTax);         // Assuming faproTax is a predefined variable
+//	        argumentsMap.put("pathway_complement", pathway_complement); // Assuming pathway_complement is a predefined variable
+//	        argumentsMap.put("seed_scores", seed_scores);   // Assuming seed_scores is a predefined variable
+//	        argumentsMap.put("manta", manta);               // Assuming manta is a predefined variable
+//
+//	        // Add the argumentsMap directly to the jsonObject as a JSONObject
+//	        jsonObject.put("inputParameters", new JSONObject(argumentsMap));
+	        
+	        
+	        
+	     
 	        // Create a new JSONArray for the input parameters
-	        JSONArray inputParameters = new JSONArray();
+	       JSONArray inputParameters = new JSONArray();
+	        
+	 
 	        inputParameters.add(input.getSelectedValue());
 	        inputParameters.add(taxonomy.getSelectedValue());
+	        inputParameters.add(delimiter.getSelectedValue()); 
+       // inputParameters.add(sensitive);
+	      //  inputParameters.add(heterogeneous);
 	        inputParameters.add(phenDB);
 	        inputParameters.add(faproTax);
-	        inputParameters.add(netCooperate);
-	        inputParameters.add(netCmpt);
-	        inputParameters.add(pathwayComplementarity);
-
+	        inputParameters.add(pathway_complement);
+	        inputParameters.add(seed_scores);
+	        inputParameters.add(manta);
+	        	
+	 
+	        
 	        // Add the input parameters to the jsonObject
 	        jsonObject.put("inputParameters", inputParameters);
 	        
 	  
+	       
+	        
+	        
 	        
 	        // Set the JSON array in the MGGManager
             mggManager.setJsonObject(jsonObject);
@@ -246,15 +301,15 @@ public class ImportFileTask extends AbstractTask {
    
         
         private void showDataInPanel(JSONObject jsonObject) {
-		    //JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonObject);
-		    JsonResultPanel panel = new JsonResultPanel(mggManager, jsonObject);
-		    mggManager.registerService(panel, CytoPanelComponent.class, new Properties());
+		    JSONDisplayPanel panel = new JSONDisplayPanel(mggManager, jsonObject);
+		   // JsonResultPanel panel = new JsonResultPanel(mggManager, jsonObject);
+		   // mggManager.registerService(panel, CytoPanelComponent.class, new Properties());
 		    
-			/*
-			 * JFrame frame = new JFrame("OTU/ASV Data");
-			 * frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			 * frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
-			 */
+			
+			 JFrame frame = new JFrame("Imported OTU/ASV");
+			 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			 frame.getContentPane().add(panel); frame.pack(); frame.setVisible(true);
+			 
     }
         
 
