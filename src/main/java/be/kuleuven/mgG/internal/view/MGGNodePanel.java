@@ -250,30 +250,39 @@ public class MGGNodePanel extends AbstractMggPanel {
 
 		// Get the node table for the current network
 		CyTable nodeTable = currentNetwork.getDefaultNodeTable();
-		String name = null;
+		//String name = null;
 
-		if (nodeTable.getColumn("taxonomy") != null && nodeTable.getColumn("id") != null) {
-		    Object taxonomyValue = nodeTable.getRow(node.getSUID()).get("taxonomy", nodeTable.getColumn("taxonomy").getType());
-		    Object idValue = nodeTable.getRow(node.getSUID()).get("id", nodeTable.getColumn("id").getType());
-		    if (idValue != null) {
-		        name = idValue.toString();
-		    }
-		    JTextArea taxonomyArea = new JTextArea("Taxonomy: " + taxonomyValue);
-		    setJTextAreaAttributes(taxonomyArea);
-		    panel.add(taxonomyArea, gbc);
-		    gbc.gridy++;
 
-		    JTextArea idArea = new JTextArea("ID: " + idValue);
-		    setJTextAreaAttributes(idArea);
-		    panel.add(idArea, gbc);
-		    gbc.gridy++;
-		}
+		
+		Object idValue = (nodeTable.getColumn("@id") != null) ? nodeTable.getRow(node.getSUID()).get("@id", nodeTable.getColumn("@id").getType()) : null;
+		JTextArea idArea = new JTextArea("ID: " + (idValue != null ? idValue.toString() : "null"));
+		setJTextAreaAttributes(idArea);
+		panel.add(idArea, gbc);
+		gbc.gridy++;
 
-		String[] attributes = {"GTDB-representative", "NCBI-Tax-Id", "taxonomy-level"};
+		Object taxonValue = (nodeTable.getColumn("microbetag::taxon name") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxon name", nodeTable.getColumn("microbetag::taxon name").getType()) : null;
+		JTextArea taxonArea = new JTextArea("Taxon Name: " + (taxonValue != null ? taxonValue.toString() : "null"));
+		setJTextAreaAttributes(taxonArea);
+		panel.add(taxonArea, gbc);
+		gbc.gridy++;
+
+		Object taxonomyValue = (nodeTable.getColumn("microbetag::ncbi-tax-level") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxonomy", nodeTable.getColumn("microbetag::taxonomy").getType()) : null;
+		JTextArea taxonomyArea = new JTextArea("Ncbi-tax-level: " + (taxonomyValue != null ? taxonomyValue.toString() : "null"));
+		setJTextAreaAttributes(taxonomyArea);
+		panel.add(taxonomyArea, gbc);
+		gbc.gridy++;
+		
+		
+
+		String[] attributes = {"microbetag::gtdb-genomes", "microbetag::ncbi-tax-id", "microbetag:: ncbi-tax-level"};
 		for (String attribute : attributes) {
 		    if (nodeTable.getColumn(attribute) != null) {
 		        Object attrValue = nodeTable.getRow(node.getSUID()).get(attribute, nodeTable.getColumn(attribute).getType());
-		        JTextArea attributeArea = new JTextArea(attribute + ": " + attrValue);
+		        
+		        // Extract the attribute name without the namespace
+		        String attributeName = attribute.split("::")[1];
+		        
+		        JTextArea attributeArea = new JTextArea(attributeName + ": " + attrValue);
 		        setJTextAreaAttributes(attributeArea);
 		        panel.add(attributeArea, gbc);
 		        gbc.gridy++;
@@ -312,23 +321,31 @@ public class MGGNodePanel extends AbstractMggPanel {
 		for (CyColumn column : nodeTable.getColumns()) {
 		    String columnName = column.getName();
 		    
-		    // Check if column starts with "phenDB." and does NOT end with "Score"
-		    if (columnName.startsWith("phenDB.") && !columnName.endsWith("Score")) {
+		    // Check if column starts with "phendb::" and does NOT have "Score" as its namespace
+		    if (columnName.startsWith("phendb::") && !columnName.contains("phendbScore::")) {
 		        
 		        // Extract feature name
-		        String feature = columnName.replace("phenDB.", "");
+		        String feature = columnName.replace("phendb::", "");
 		        
-		        // Check if corresponding "Score" column exists
-		        CyColumn scoreColumn = nodeTable.getColumn("phenDB." + feature + "Score");
+		        // Check if corresponding "Score" column exists under "phendbScore::" namespace
+		        CyColumn scoreColumn = nodeTable.getColumn("phendbScore::" + feature + "Score");
 		        if (scoreColumn != null) {
 		            
-		            // Get "YES/NO" value
+		            // Get "true/false" value
 		            Object presentObj = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
 		            String presentValue = (presentObj == null) ? "null" : presentObj.toString();
 		            
 		            // Get score value
 		            Object scoreObj = nodeTable.getRow(node.getSUID()).get(scoreColumn.getName(), scoreColumn.getType());
 		            String scoreValue = (scoreObj == null) ? "null" : scoreObj.toString();
+		            
+		            // Format the score value if it's a float/double to reduce the precision for better display
+		            try {
+		                double scoreAsDouble = Double.parseDouble(scoreValue);
+		                scoreValue = String.format("%.2f", scoreAsDouble);  // 2 decimal places
+		            } catch(NumberFormatException e) {
+		                // If scoreValue is not a number, leave it as is
+		            }
 		            
 		            // Add values to the table model
 		            model.addRow(new Object[]{feature, presentValue, scoreValue});
@@ -361,6 +378,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 	//--------------------------------------------------------------------------------------------------------------------------------------------
 		
 //-----------------------------------------------------------------------panelforfaprotax--------------------------------------------------------
+		
 		// Create a new JPanel for the faprotax. attributes
 		JPanel faprotaxPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints fapGBC = new GridBagConstraints();
@@ -371,16 +389,16 @@ public class MGGNodePanel extends AbstractMggPanel {
 		fapGBC.anchor = GridBagConstraints.WEST;
 		fapGBC.insets = new Insets(5, 5, 5, 5);
 
-		// Loop through the nodeTable columns and find the ones starting with faprotax.
+		// Loop through the nodeTable columns and find the ones starting with faprotax::
 		for (CyColumn column : nodeTable.getColumns()) {
-			String columnName = column.getName();
-		    if (column.getName().startsWith("faprotax.")) {
-		        Object attrValue = nodeTable.getRow(node.getSUID()).get(column.getName(), column.getType());
+		    String columnName = column.getName();
+		    if (columnName.startsWith("faprotax::")) {
+		        Object attrValue = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
 		        if (attrValue != null && attrValue instanceof Boolean) { // Ensure the value is Boolean
-		        	 // Extract the part after "faprotax."
-		            String displayName = columnName.replace("faprotax.", "");
+		            // Split the column name at "::" and take the second part as the display name
+		            String displayName = columnName.split("::")[1];
 		            
-		            JCheckBox checkBox = new JCheckBox(displayName);  // corrected here
+		            JCheckBox checkBox = new JCheckBox(displayName);  
 		            checkBox.setSelected((Boolean) attrValue);
 		            checkBox.setEnabled(false);  // Make it non-clickable
 		            faprotaxPanel.add(checkBox, fapGBC);
@@ -399,11 +417,15 @@ public class MGGNodePanel extends AbstractMggPanel {
 		
 		//--------------------------------------------------------------------------------------------------------------------------------
 		
-		if (name == null) {
-		    name = "Selected Nodes";
-		}
+//		if (name == null) {
+//		    name = "Selected Nodes";
+//		}
+		
+		// Ensure the idValue is appropriately set to a string
+		String nodeId = (idValue != null) ? idValue.toString() : "Selected Nodes";
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, name, panel, false, 10);
+
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, nodeId, panel, false, 10);
 		//Border etchedBorder = BorderFactory.createEtchedBorder();
 		//Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
 		collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));

@@ -126,7 +126,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				style.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, 2.0); // Set default edge width
 				
 				// Node shape mapping based on "taxonomy-level"
-		        String columnName = "taxonomy-level";
+		        String columnName = "microbetag::ncbi-tax-level";
 		        VisualProperty<NodeShape> nodeShapeVP = BasicVisualLexicon.NODE_SHAPE;
 		        DiscreteMapping<String, NodeShape> shapeMapping = (DiscreteMapping<String, NodeShape>) discreteMappingFactory
 						.createVisualMappingFunction(columnName, String.class, nodeShapeVP);
@@ -146,11 +146,11 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 
 				
 				// discrete mapping function(species-colors)
-				DiscreteMapping<String, Paint> colorMapping= (DiscreteMapping<String, Paint>) discreteMappingFactory
-																			.createVisualMappingFunction(columnName, String.class, vp);
+				DiscreteMapping<String, Paint> colorMapping = (DiscreteMapping<String, Paint>) discreteMappingFactory
+				                    .createVisualMappingFunction(columnName, String.class, vp);
 				Map<String, Paint> speciesColorMap = getSpeciesColorMap();
 				for (Map.Entry<String, Paint> entry : speciesColorMap.entrySet()) {
-					colorMapping.putMapValue(entry.getKey(), entry.getValue());
+				    colorMapping.putMapValue(entry.getKey(), entry.getValue());
 				}
 				style.addVisualMappingFunction(colorMapping); // Add the mapping function to the visual style
 				

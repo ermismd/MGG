@@ -3,6 +3,9 @@ package be.kuleuven.mgG.internal.tasks;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyEdge;
@@ -123,9 +133,7 @@ public class CreateNetworkTask extends AbstractTask {
         JSONArray edgesArray = (JSONArray) elements.get("edges");
         
         
-
-  
-        
+ 
         
         
         

@@ -43,6 +43,8 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 import javax.swing.JFrame;
@@ -96,7 +98,9 @@ public class SendDataToServerTask extends AbstractTask {
           
         taskMonitor.setStatusMessage("Server Send " + jsonObject.toJSONString());
        
+
         	
+        
         RequestConfig config = RequestConfig.custom()
         	    .setConnectTimeout(600 * 1000)  // time to establish the connection with the remote host
         	    .setSocketTimeout(600 * 1000)  // time waiting for data – after the connection was established; maximum time of inactivity between two data packets

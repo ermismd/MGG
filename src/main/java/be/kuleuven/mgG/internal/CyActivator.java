@@ -57,6 +57,7 @@ import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
+import be.kuleuven.mgG.internal.tasks.examoleFactory;
 import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 
@@ -106,7 +107,20 @@ public class CyActivator extends AbstractCyActivator {
 	     
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
         
-
+        
+        //---------------------
+        examoleFactory examole = new examoleFactory(MGGManager);
+        Properties exaprops1 = new Properties();
+        exaprops1.setProperty(TITLE, "examole");
+        exaprops1.setProperty(PREFERRED_MENU, "Apps.MGG.examole");
+        exaprops1.setProperty(IN_TOOL_BAR, "FALSE");
+        exaprops1.setProperty(IN_MENU_BAR, "TRUE");
+        exaprops1.setProperty(MENU_GRAVITY, "3");
+        exaprops1.setProperty(COMMAND_NAMESPACE, "MGG");
+        exaprops1.setProperty(COMMAND_DESCRIPTION, "examole");
+        exaprops1.setProperty(COMMAND, "examole");
+	     
+        registerService(bc, examole, TaskFactory.class, exaprops1);
         
         
         // Register taskfactory

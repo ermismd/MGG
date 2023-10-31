@@ -32,7 +32,7 @@ public class Mutils {
 		
 	public static boolean isMGGNetwork(CyNetwork network) {
 		CyTable nodeTable = network.getDefaultNodeTable();
-		if (nodeTable.getColumn("id") == null)
+		if (nodeTable.getColumn("@id") == null)
 			return false;
 		// Enough to check for id in the node columns and score in the edge columns
 		//if (nodeTable.getColumn(SPECIES) == null)
@@ -49,7 +49,7 @@ public class Mutils {
 		public static boolean ifHaveMGG(CyNetwork network) {
 			if (network == null) return false;
 			CyRow netRow = network.getRow(network);
-			Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns("id");
+			Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns("@id");
 			if ( columns != null && columns.size() > 0)
 				return true;
 			return false;
