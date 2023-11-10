@@ -128,8 +128,8 @@ public class MGGCytoPanel extends JPanel
 
 	public void updateControls() {
 		 nodePanel.updateControls();
-		edgePanel.updateScore();
-		// edgePanel.updateSubPanel();
+		edgePanel.updateWeightPanelPanel();
+		nodePanel.updateSubPanel();
 	}
 
 	@Override

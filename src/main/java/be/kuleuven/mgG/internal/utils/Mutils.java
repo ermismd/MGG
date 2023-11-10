@@ -29,6 +29,9 @@ public class Mutils {
 	// Namespaces
 		public static String  MY_NAMESPACE = "MGGid";
 		public static String MY_ATTRIBUTE = "id";
+		public static String PhenDbSc_NAMESPACE = "phendbScore";
+		public static String PhenDb_NAMESPACE = "phendb";
+		public static String Weight_NAMESPACE = "weight";
 		
 	public static boolean isMGGNetwork(CyNetwork network) {
 		CyTable nodeTable = network.getDefaultNodeTable();
@@ -40,7 +43,7 @@ public class Mutils {
 		//if (nodeTable.getColumn(CANONICAL) == null)
 		//	return false;
 		CyTable edgeTable = network.getDefaultEdgeTable();
-		if (edgeTable.getColumn("weight") == null )
+		if (edgeTable.getColumn("weight::weight") == null )
 			return false;
 		return true;
 	}
@@ -129,6 +132,49 @@ public class Mutils {
 			return null;
 		}
 		
+		public static List<String> getPhenDbScList(CyNetwork network) {
+			List<String> phendb = new ArrayList<>();
+			if (network == null) {
+				// System.out.println("network is null");
+				return phendb;
+			}
+			Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns(PhenDbSc_NAMESPACE);
+			if (columns == null || columns.size() == 0) return phendb;
+			for (CyColumn col: columns) {
+				phendb.add(col.getNameOnly());
+			}
+			return phendb;
+		}
+		
+		public static List<String> getWeightList(CyNetwork network) {
+			List<String> weight = new ArrayList<>();
+			if (network == null) {
+				// System.out.println("network is null");
+				return weight;
+			}
+			Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(Weight_NAMESPACE);
+			if (columns == null || columns.size() == 0) return weight;
+			for (CyColumn col: columns) {
+				weight.add(col.getNameOnly());
+			}
+			return weight;
+		}
+		
+		
+		
+		public static List<String> getphenDbList(CyNetwork network) {
+			List<String> phenDb = new ArrayList<>();
+			if (network == null) return phenDb ;
+			Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(PhenDb_NAMESPACE);
+			if (columns == null || columns.size() == 0) return phenDb ;
+			for (CyColumn col: columns) {
+				if ( !col.getType().equals(Boolean.class))
+					continue;
+				phenDb .add(col.getNameOnly());
+			}
+			return phenDb ;
+		}
+
 		
 //	public static boolean isMGGNetwork(CyNetwork network) {
 //		// This is a string network only if we have a confidence score in the network table,

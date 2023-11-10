@@ -15,10 +15,12 @@ import java.awt.event.ItemListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,8 +31,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import org.cytoscape.model.CyColumn;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
@@ -51,18 +55,26 @@ public class MGGNodePanel extends AbstractMggPanel {
 	private boolean updating = false;
 	private JPanel nodesPanel = null;
 	private Color defaultBackground;
+	private JPanel PhendbScPanel = null;
+	
+	private JPanel subScorePanel=null;
+	
+	private Map<CyNetwork, Map<String, Boolean>> phn;
 	
 	
 	public MGGNodePanel(final MGGManager manager) {
 		
 		super(manager);
-		filters.get(currentNetwork).put("tissue", new HashMap<>());
-		filters.get(currentNetwork).put("compartment", new HashMap<>());
+		filters.get(currentNetwork).put("phendbScore", new HashMap<>());
+		
+		phn = new HashMap<>();
+		phn.put(currentNetwork, new HashMap<>());
+		
+		
 		init();
 		revalidate();
 		repaint();
-		
-		
+			
 	}
 	
 	
@@ -93,8 +105,11 @@ public class MGGNodePanel extends AbstractMggPanel {
 			mainPanel.setLayout(new GridBagLayout());
 			mainPanel.setBackground(defaultBackground);
 			EasyGBC d = new EasyGBC();
-			
 			mainPanel.add(createNodesPanel(), d.down().anchor("west").expandHoriz());
+			mainPanel.add(createPhenDbScoresPanel(), d.down().anchor("west").expandHoriz());
+			
+			mainPanel.add(createSubScorePanel(), d.down().anchor("west").expandHoriz());
+			
 			mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
 		}
 		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -103,6 +118,8 @@ public class MGGNodePanel extends AbstractMggPanel {
 		add(scrollPane, c.down().anchor("west").expandBoth());
 	}
 	
+	
+
 	
 	
 	private JPanel createControlPanel() {
@@ -185,7 +202,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 	
 	
 	
-	
+	//-----------------------Selected nodes----------------------------------
 	private JPanel createNodesPanel() {
 		nodesPanel = new JPanel();
 		nodesPanel.setLayout(new GridBagLayout());
@@ -208,6 +225,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
 
 
+	
 	private void updateNodesPanel() {
 		if (nodesPanel == null) return;
 		nodesPanel.removeAll();
@@ -236,19 +254,19 @@ public class MGGNodePanel extends AbstractMggPanel {
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0; // This makes sure components use the full horizontal space
+		gbc.weightx = 1.0; // makes sure components use the full horizontal space
 		
-		// Set default constraints
+		// Set constraints
 		gbc.gridx = 0;  // Column 0
 		gbc.gridy = 0;  // Start from row 0
-		gbc.anchor = GridBagConstraints.WEST;  // Left-align components
-		gbc.insets = new Insets(5, 5, 5, 5);  // 5-pixel margins
+		gbc.anchor = GridBagConstraints.WEST;  // Left-align 
+		gbc.insets = new Insets(5, 5, 5, 5);  // 5pixel marg
 
-		// Obtain the current network
+		
 		CyNetwork currentNetwork = manager.getCurrentNetwork();
 		if (currentNetwork == null) return panel;
 
-		// Get the node table for the current network
+		
 		CyTable nodeTable = currentNetwork.getDefaultNodeTable();
 		//String name = null;
 
@@ -291,137 +309,139 @@ public class MGGNodePanel extends AbstractMggPanel {
 		
 		
 		
-		// -------------------------------------------------------For the nested phenDB CollapsablePanel------------------------------------------------------------------
-		JPanel phenDBPanel = new JPanel(new BorderLayout()); // Change layout manager
+				// ----------------------For the nested phenDB CollapsablePanel------------------
+		
+		
+					JPanel phenDBPanel = new JPanel(new BorderLayout()); 
 
-		// 1. Create a model for the table
-		DefaultTableModel model = new DefaultTableModel() {
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		        return false; // This will make all cells uneditable
-		    }
-		};
-		model.addColumn("Feature");
-		model.addColumn("Present");
-		model.addColumn("Score");
+						
+						DefaultTableModel model = new DefaultTableModel() {
+							@Override
+							public boolean isCellEditable(int row, int column) {
+								return false; //  make  cells uneditable
+							}
+						};
+						model.addColumn("Feature");
+						model.addColumn("Present");
+						model.addColumn("Score");
 
-		// 2. Instantiate the table with the model
-		JTable table = new JTable(model);
+						//  Instantiate table with the model
+						JTable table = new JTable(model);
 
-		// Adjust column widths
-		TableColumnModel columnModel = table.getColumnModel();
-		// Modify the widths as per your preference
-		columnModel.getColumn(0).setPreferredWidth(5);  // Feature column
-		columnModel.getColumn(1).setPreferredWidth(5);  // Present column
-		columnModel.getColumn(2).setPreferredWidth(5);  // Score column
+						// Adjust column widths
+						TableColumnModel columnModel = table.getColumnModel();
+						// Modify the widths 
+							columnModel.getColumn(0).setPreferredWidth(5);  
+							columnModel.getColumn(1).setPreferredWidth(5);  
+							columnModel.getColumn(2).setPreferredWidth(5); 
 		
 			
 
 		
-		for (CyColumn column : nodeTable.getColumns()) {
-		    String columnName = column.getName();
+							for (CyColumn column : nodeTable.getColumns()) {
+								String columnName = column.getName();
 		    
-		    // Check if column starts with "phendb::" and does NOT have "Score" as its namespace
-		    if (columnName.startsWith("phendb::") && !columnName.contains("phendbScore::")) {
+								// Check if column starts with "phendb" and NOT "phendbScore" 
+								if (columnName.startsWith("phendb::") && !columnName.contains("phendbScore::")) {
 		        
-		        // Extract feature name
-		        String feature = columnName.replace("phendb::", "");
+									// Extract  name
+									String feature = columnName.replace("phendb::", "");
 		        
-		        // Check if corresponding "Score" column exists under "phendbScore::" namespace
-		        CyColumn scoreColumn = nodeTable.getColumn("phendbScore::" + feature + "Score");
-		        if (scoreColumn != null) {
+									// Check corresponding "Score" column exists under "phendbScore::" 
+									CyColumn scoreColumn = nodeTable.getColumn("phendbScore::" + feature + "Score");
+									if (scoreColumn != null) {
 		            
-		            // Get "true/false" value
-		            Object presentObj = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
-		            String presentValue = (presentObj == null) ? "null" : presentObj.toString();
+										
+										Object presentObj = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
+										String presentValue = (presentObj == null) ? "null" : presentObj.toString();
 		            
-		            // Get score value
-		            Object scoreObj = nodeTable.getRow(node.getSUID()).get(scoreColumn.getName(), scoreColumn.getType());
-		            String scoreValue = (scoreObj == null) ? "null" : scoreObj.toString();
+										
+										Object scoreObj = nodeTable.getRow(node.getSUID()).get(scoreColumn.getName(), scoreColumn.getType());
+										String scoreValue = (scoreObj == null) ? "null" : scoreObj.toString();
 		            
-		            // Format the score value if it's a float/double to reduce the precision for better display
-		            try {
-		                double scoreAsDouble = Double.parseDouble(scoreValue);
-		                scoreValue = String.format("%.2f", scoreAsDouble);  // 2 decimal places
-		            } catch(NumberFormatException e) {
-		                // If scoreValue is not a number, leave it as is
-		            }
+										
+										try {
+											double scoreAsDouble = Double.parseDouble(scoreValue);
+											scoreValue = String.format("%.2f", scoreAsDouble); 
+										} 	catch(NumberFormatException e) {
+											
+										}
 		            
-		            // Add values to the table model
-		            model.addRow(new Object[]{feature, presentValue, scoreValue});
-		        }
-		    }
-		}
+										
+										model.addRow(new Object[]{feature, presentValue, scoreValue});
+									}
+								}
+							}
 
-		// Add table to a scroll pane:
-		JScrollPane tableScrollPane = new JScrollPane(table);
-		tableScrollPane.setPreferredSize(new Dimension(panel.getWidth() - 20, 200));
-		phenDBPanel.add(tableScrollPane, BorderLayout.CENTER);
+							// Add table to a scroll pane:
+							JScrollPane tableScrollPane = new JScrollPane(table);
+							tableScrollPane.setPreferredSize(new Dimension(panel.getWidth() - 20, 200));
+							phenDBPanel.add(tableScrollPane, BorderLayout.CENTER);
 
-		// 3. Ensure the main panel revalidates and repaints to reflect these changes:
-		phenDBPanel.revalidate();
-		phenDBPanel.repaint();
+							
+							phenDBPanel.revalidate();
+							phenDBPanel.repaint();
 
-		// 2. Wrap the phenDBPanel inside a CollapsablePanel:
+							//  Wrap the phenDBPanel inside a CollapsablePanel
 
-		CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, false, 10);
-		Border etchedBorder = BorderFactory.createEtchedBorder();
-		Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
-		phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+							CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, false, 10);
+							Border etchedBorder = BorderFactory.createEtchedBorder();
+							Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
+							phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
-		// 3. Add the phenDBCollapsablePanel to the main panel:
+							// Add the phenDBCollapsablePanel to the main panel:
 
-		panel.add(phenDBCollapsablePanel, gbc);
-		gbc.gridy++;
+							panel.add(phenDBCollapsablePanel, gbc);
+							gbc.gridy++;
 		
 
-	//--------------------------------------------------------------------------------------------------------------------------------------------
+	
 		
-//-----------------------------------------------------------------------panelforfaprotax--------------------------------------------------------
+							//---------------------------panel for faprotax--------------------------
 		
-		// Create a new JPanel for the faprotax. attributes
-		JPanel faprotaxPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints fapGBC = new GridBagConstraints();
-		fapGBC.fill = GridBagConstraints.HORIZONTAL;
-		fapGBC.weightx = 1.0;
-		fapGBC.gridx = 0;
-		fapGBC.gridy = 0;
-		fapGBC.anchor = GridBagConstraints.WEST;
-		fapGBC.insets = new Insets(5, 5, 5, 5);
+							
+							JPanel faprotaxPanel = new JPanel(new GridBagLayout());
+							GridBagConstraints fapGBC = new GridBagConstraints();
+							fapGBC.fill = GridBagConstraints.HORIZONTAL;
+							fapGBC.weightx = 1.0;
+							fapGBC.gridx = 0;
+							fapGBC.gridy = 0;
+							fapGBC.anchor = GridBagConstraints.WEST;
+							fapGBC.insets = new Insets(5, 5, 5, 5);
 
-		// Loop through the nodeTable columns and find the ones starting with faprotax::
-		for (CyColumn column : nodeTable.getColumns()) {
-		    String columnName = column.getName();
-		    if (columnName.startsWith("faprotax::")) {
-		        Object attrValue = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
-		        if (attrValue != null && attrValue instanceof Boolean) { // Ensure the value is Boolean
-		            // Split the column name at "::" and take the second part as the display name
-		            String displayName = columnName.split("::")[1];
+							// Loop throughnodeTable columns for starting faprotax::
+							for (CyColumn column : nodeTable.getColumns()) {
+								String columnName = column.getName();
+								if (columnName.startsWith("faprotax::")) {
+									Object attrValue = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
+									if (attrValue != null && attrValue instanceof Boolean) { 
+										
+										String displayName = columnName.split("::")[1];
 		            
-		            JCheckBox checkBox = new JCheckBox(displayName);  
-		            checkBox.setSelected((Boolean) attrValue);
-		            checkBox.setEnabled(false);  // Make it non-clickable
-		            faprotaxPanel.add(checkBox, fapGBC);
-		            fapGBC.gridy++;
-		        }
-		    }
-		}
+										JCheckBox checkBox = new JCheckBox(displayName);  
+										checkBox.setSelected((Boolean) attrValue);
+										checkBox.setEnabled(false);  
+										faprotaxPanel.add(checkBox, fapGBC);
+										fapGBC.gridy++;
+									}
+								}
+							}
 
-		// Wrap the faprotaxPanel inside a CollapsablePanel
-		CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, false, 10);
-		faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+							// Wrap faprotaxPanel inside  CollapsablePanel
+							CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, false, 10);
+							faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
-		// Add the faprotaxCollapsablePanel to the main panel
-		panel.add(faprotaxCollapsablePanel, gbc);
-		gbc.gridy++;
+							// Add  faprotaxCollapsablePanel to  main panel
+							panel.add(faprotaxCollapsablePanel, gbc);
+							gbc.gridy++;
 		
-		//--------------------------------------------------------------------------------------------------------------------------------
+		//------------------------------
 		
-//		if (name == null) {
-//		    name = "Selected Nodes";
-//		}
+							//	if (name == null) {
+							// name = "Selected Nodes";
+							//	}
 		
-		// Ensure the idValue is appropriately set to a string
+		
 		String nodeId = (idValue != null) ? idValue.toString() : "Selected Nodes";
 
 
@@ -444,16 +464,63 @@ public class MGGNodePanel extends AbstractMggPanel {
 		    textArea.setPreferredSize(new Dimension(800, 15));
 	}
 	
+	
+	
+	//------------------------------------ PhenDbscores filter ----------------------
+	
+			private JPanel createPhenDbScoresPanel() {
+			
+			PhendbScPanel =new JPanel();
+			PhendbScPanel.setLayout(new GridBagLayout());
+			EasyGBC c = new EasyGBC();
+			
+			List<String> phendbScList= Mutils.getPhenDbScList(currentNetwork);
+			
+			for (String phendbScore:phendbScList) {
+				PhendbScPanel.add(createFilterSlider2("phendbScore", phendbScore, currentNetwork, true, 100.0),
+						c.anchor("west").down().expandHoriz());
+			}
+			
+			
+				CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "phenDb Filters", PhendbScPanel, true, 10);
+				collapsablePanel.setToolTipText("Show nodes with a PhendbScore bigger than the chosen value");
+				collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+				return collapsablePanel;
+			}
+			
+		private void updatePhenDbScoresPanel() {
+			if (PhendbScPanel == null) return;
+			PhendbScPanel.removeAll();
+			EasyGBC c = new EasyGBC();
+			List<String> phendbScList = Mutils.getPhenDbScList(currentNetwork);
+			for (String phendbScore:phendbScList) {
+				PhendbScPanel.add(createFilterSlider2("phendbScore", phendbScore, currentNetwork, true, 100.0), 
+				                 c.anchor("west").down().expandHoriz());
+			}
+			return;
+		}
+		
+		
+		
+		//---------------------------------------------------------------------------------
+	
+	
+	
 	public void networkChanged(CyNetwork newNetwork) {
 		this.currentNetwork = newNetwork;
 		if (currentNetwork == null) {
 			// Hide results panel?
-			
+			if (	PhendbScPanel != null)
+				PhendbScPanel.removeAll();
 			return;
 		}
 
+		if (!filters.containsKey(currentNetwork)) {
+		filters.put(currentNetwork, new HashMap<>());
+		filters.get(currentNetwork).put("phendbScore", new HashMap<>());
+		}
 		
-
+		
 		// We need to get the view for the new network since we haven't actually switched yet
 		CyNetworkView networkView = Mutils.getNetworkView(manager, currentNetwork);
 		if (networkView != null) {
@@ -464,16 +531,197 @@ public class MGGNodePanel extends AbstractMggPanel {
 			}
 	
 		}
+		if (!phn.containsKey(currentNetwork)) {
+			phn.put(currentNetwork, new HashMap<>());
+			
+		}
 		updateNodesPanel();
+		updatePhenDbScoresPanel();
+		updateSubPanel();
 	}
+	
+	
+	
+	//----------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	private JPanel createSubScorePanel() {
+		subScorePanel = new JPanel();
+		subScorePanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
+		List<String> phenDbList = Mutils.getphenDbList(currentNetwork);
+
+		// OK, now we want to create 3 panels: Color, Label, and Filter
+		{
+			JPanel colorPanel = new JPanel();
+			colorPanel.setMinimumSize(new Dimension(25,30));
+			colorPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Checkbox");
+			lbl.setToolTipText("Check if having this attribute.");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			colorPanel.add(lbl, d.anchor("north").noExpand());
+
+			for (String phenDb: phenDbList) {
+				colorPanel.add(createScoreCheckBox(phenDb), d.down().expandVert());
+			}
+
+			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			subScorePanel.add(colorPanel, c.anchor("northwest").expandVert());
+		}
+
+		{
+			JPanel labelPanel = new JPanel();
+			labelPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("PhenDB");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			labelPanel.add(lbl, d.anchor("north").noExpand());
+			for (String phenDb: phenDbList) {
+				JLabel phenDbLabel = new JLabel(phenDb);
+				phenDbLabel.setFont(textFont);
+				phenDbLabel.setMinimumSize(new Dimension(100,30));
+				phenDbLabel.setMaximumSize(new Dimension(100,30));
+				labelPanel.add(phenDbLabel, d.down().expandVert());
+			}
+			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+			subScorePanel.add(labelPanel, c.right().expandVert());
+		}
+
+		
+
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "PhenDB", subScorePanel, false, 10);
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		return collapsablePanel;
+
+	}
+
+	private JComponent createScoreCheckBox(String phendb) {
+		
+			JCheckBox cb = new JCheckBox("");
+		    cb.setMinimumSize(new Dimension(20, 30));
+		    cb.setMaximumSize(new Dimension(20, 30));
+		    cb.setOpaque(true);
+
+		    	if (phn.containsKey(currentNetwork) && phn.get(currentNetwork).containsKey(phendb) 
+		    		&& phn.get(currentNetwork).get(phendb))
+		    			cb.setSelected(true);
+				
+		    
+			cb.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					Boolean selected = Boolean.FALSE;
+					if (e.getStateChange() == ItemEvent.SELECTED)
+						selected = Boolean.TRUE;
+
+					phn.get(currentNetwork).put(phendb, selected);
+		            doPhendb();
+		        }
+		    });
+		    return cb;
+	}
+	
+	
+	void doPhendb() {
+		
+		Map<String, Boolean> phend = phn.get(currentNetwork);
+		 CyNetworkView view = manager.getCurrentNetworkView();
+		    CyNetwork net = view.getModel();
+		    for (CyNode node : currentNetwork.getNodeList()) {
+		        CyRow nodeRow = currentNetwork.getRow(node);
+		        boolean show = true;
+
+		        for (String phenDb : phend.keySet()) {
+		            Boolean isSelected = phend.get(phenDb);
+		            Boolean phenDbValue = nodeRow.get("PhenDb::" + phenDb, Boolean.class);
+
+		            // Check if the PhenDb value is true and the corresponding checkbox is selected
+		            if (phenDbValue != null && !phenDbValue && isSelected) {
+		                show = false;
+		                break;
+		            }
+		        }
+
+		        View<CyNode> nodeView = view.getNodeView(node);
+		        if (nodeView == null) continue;
+		        if (show) {
+		            nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+		        } else {
+		            nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
+		            net.getRow(node).set(CyNetwork.SELECTED, false);
+		        }
+		    }
+	
+	
+	
+	}
+	
+	public void updateSubPanel() {
+		subScorePanel.removeAll();
+		EasyGBC d = new EasyGBC();
+		subScorePanel.add(createSubScorePanel(), d.anchor("west").expandHoriz());
+		subScorePanel.add(new JPanel(), d.down().anchor("west").expandBoth());
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	//------------------------- Filter logic--------------------------------
 	
 	
 	@Override
 	void doFilter(String type) {
-		// TODO Auto-generated method stub
 		
-	}
+		Map<String, Double> filter = filters.get(currentNetwork).get(type);
+		CyNetworkView view = manager.getCurrentNetworkView();
+		CyNetwork net = view.getModel();
+		for (CyNode node: currentNetwork.getNodeList()) {
+		    CyRow nodeRow = currentNetwork.getRow(node);
 
+		    boolean show = true;
+		    for (String lbl: filter.keySet()) {
+		        Double v = nodeRow.get(type, lbl, Double.class);
+		        double nv = filter.get(lbl);
+		        if ((v == null && nv > 0) || (v != null && v < nv)) {
+		            show = false;
+		            break;
+		        }
+		    }
+
+		    View<CyNode> nv = view.getNodeView(node);
+		    if (nv == null) continue;
+		    if (show) {
+		        nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+		        for (CyEdge e: net.getAdjacentEdgeList(node, CyEdge.Type.ANY)) {
+		            final View<CyEdge> ev = view.getEdgeView(e);
+		            if (ev == null) continue;
+		            ev.clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
+		        }
+		    } else {
+		        nv.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
+		        net.getRow(node).set(CyNetwork.SELECTED, false);
+		        for (CyEdge e: net.getAdjacentEdgeList(node, CyEdge.Type.ANY)) {
+		            final View<CyEdge> ev = view.getEdgeView(e);
+		            if (ev == null) continue;
+		            net.getRow(e).set(CyNetwork.SELECTED, false);
+		            ev.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);		
+		
+		        }
+		    }
+		}
+	}
+	
+	
 	@Override
 	void undoFilters() {
 		CyNetworkView view = manager.getCurrentNetworkView();
@@ -486,9 +734,21 @@ public class MGGNodePanel extends AbstractMggPanel {
 	}
 
 	@Override
-	double initFilter(String type, String text) {
-		// TODO Auto-generated method stub
-		return 0;
+	double initFilter(String type, String label) {
+		double minValue = 1.0;
+	    for (CyNode node: currentNetwork.getNodeList()) {
+	        CyRow nodeRow = currentNetwork.getRow(node);
+
+	        Double v = nodeRow.get(type, label, Double.class);
+	        if (v == null) {
+	            minValue = 0.0;
+	            break;
+	        } else if (v < minValue) {
+	            minValue = v.doubleValue();
+	        }
+	    }
+	    return minValue;
+			
 	}
 
 }
