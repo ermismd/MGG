@@ -19,6 +19,7 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
+import be.kuleuven.mgG.internal.utils.Mutils;
 
 
 public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
@@ -42,16 +43,17 @@ public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
 	    if (net == null) return false;
 
 	    //* Check for the existence of the 'flashweave-score' column in the edge table
-	   boolean hasFlashweaveScore = net.getRow(net).get("weight",Double.class) != null; 
+	  // boolean hasFlashweaveScore = net.getRow(net).get("weight::weight",Double.class) != null; 
 
 	    // Implement other checks if necessary
 	    // boolean hasIdColumn = net.getDefaultNodeTable().getColumn("@id") != null;
 	    // boolean hasScoreColumn = net.getDefaultEdgeTable().getColumn("score") != null;
 
 	    //* Return true if the column exists, otherwise return false
-	   return hasFlashweaveScore;
+	  // return hasFlashweaveScore;
+	   if( Mutils.isMGGNetwork(net)) return true;
 	   
-	    
+	    return false;
 	    
 	}
 }

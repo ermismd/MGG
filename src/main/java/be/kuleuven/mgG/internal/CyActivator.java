@@ -69,45 +69,45 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 
 public class CyActivator extends AbstractCyActivator {
 
-	public CyActivator() {
-		super();
-	}
+    public CyActivator() {
+        super();
+    }
 
-	public void start(BundleContext bc) {
-		final StreamUtil streamUtil = getService(bc, StreamUtil.class);
-		final CyServiceRegistrar serviceRegistrar = getService(bc, CyServiceRegistrar.class);
+    public void start(BundleContext bc) {
+        final StreamUtil streamUtil = getService(bc, StreamUtil.class);
+        final CyServiceRegistrar serviceRegistrar = getService(bc, CyServiceRegistrar.class);
 
-		final MGGManager MGGManager = new MGGManager(serviceRegistrar);
+        final MGGManager MGGManager = new MGGManager(serviceRegistrar);
 
-		//MGGManager.addSource(new FileSource(NGGManager));
-		
-		
-		// Get services
-		//CyApplicationManager appManager = getService(bc, CyApplicationManager.class);
-       // CySwingApplication swingApplication = getService(bc, CySwingApplication.class);
+        //MGGManager.addSource(new FileSource(NGGManager));
+
+
+        // Get services
+        //CyApplicationManager appManager = getService(bc, CyApplicationManager.class);
+        // CySwingApplication swingApplication = getService(bc, CySwingApplication.class);
 
         //CyNetworkFactory networkFactory =getService(bc, CyNetworkFactory.class);
-       // CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
-        
-	
-		
-        
+        // CyNetworkManager networkManager = getService(bc, CyNetworkManager.class);
+
+
+
+
         // Register taskfactory
-        
+
         ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(MGGManager);
         Properties props = new Properties();
-		props.setProperty(TITLE, "Import Abundance Data");
-		props.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
-		props.setProperty(IN_TOOL_BAR, "FALSE");
-		props.setProperty(IN_MENU_BAR, "TRUE");
-		props.setProperty(MENU_GRAVITY, "1");
-		props.setProperty(COMMAND_NAMESPACE, "MGG");
-		props.setProperty(COMMAND_DESCRIPTION, "Load abudance table(TSV/CSV) or network");
-		props.setProperty(COMMAND, "Load_File");
-	     
+        props.setProperty(TITLE, "Import Abundance Data");
+        props.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
+        props.setProperty(IN_TOOL_BAR, "FALSE");
+        props.setProperty(IN_MENU_BAR, "TRUE");
+        props.setProperty(MENU_GRAVITY, "1");
+        props.setProperty(COMMAND_NAMESPACE, "MGG");
+        props.setProperty(COMMAND_DESCRIPTION, "Load abudance table(TSV/CSV) or network");
+        props.setProperty(COMMAND, "Load_File");
+
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
-        
-        
+
+
         //---------------------
         examoleFactory examole = new examoleFactory(MGGManager);
         Properties exaprops1 = new Properties();
@@ -119,116 +119,86 @@ public class CyActivator extends AbstractCyActivator {
         exaprops1.setProperty(COMMAND_NAMESPACE, "MGG");
         exaprops1.setProperty(COMMAND_DESCRIPTION, "examole");
         exaprops1.setProperty(COMMAND, "examole");
-	     
+
         registerService(bc, examole, TaskFactory.class, exaprops1);
-        
-        
+
+
         // Register taskfactory
-        
+
         SendDataToServerTaskFactory sendDataToServerTaskFactory = new SendDataToServerTaskFactory(MGGManager.getJsonObject(), MGGManager);
         Properties Sendprops = new Properties();
-		Sendprops.setProperty(TITLE, "Get Annotated Network");
-		Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
-		Sendprops.setProperty(IN_TOOL_BAR, "FALSE");
-		Sendprops.setProperty(IN_MENU_BAR, "TRUE");
-		Sendprops.setProperty(MENU_GRAVITY, "2");
-		Sendprops.setProperty(COMMAND_NAMESPACE, "MGG");
-		Sendprops.setProperty(COMMAND_DESCRIPTION, "Upload data to Microbetag Server and Get the Network");
-		Sendprops.setProperty(COMMAND, "Get_Network");
-	     
-        registerService(bc,sendDataToServerTaskFactory, TaskFactory.class, Sendprops);
-        
-        
-        
-        
-//        CreateMGGVisualStyleTaskFactory mggVisualStyleTaskFactory=new  CreateMGGVisualStyleTaskFactory(MGGManager);
-//        
-//        Properties Visualprops = new Properties();
-//        Visualprops.setProperty(TITLE, "Apply MGG Visual Style");
-//        Visualprops.setProperty(PREFERRED_MENU, "Apps.MGG.Visual Style");
-//        Visualprops.setProperty(IN_TOOL_BAR, "FALSE");
-//        Visualprops.setProperty(IN_MENU_BAR, "TRUE");
-//        Visualprops.setProperty(MENU_GRAVITY, "1");
-//        Visualprops.setProperty(COMMAND_NAMESPACE, "MGG");
-//        Visualprops.setProperty(COMMAND_DESCRIPTION, "Get MGG visual Style");
-//        Visualprops.setProperty(COMMAND, "Get_Style");
-//	     
-//        registerService(bc,mggVisualStyleTaskFactory, TaskFactory.class, Visualprops);
-//        
-        
-        
-        
-        
-        CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager );
-		
-		registerService(bc,createVisualStyleAction,CyAction.class, new Properties());
-        
+        Sendprops.setProperty(TITLE, "Get Annotated Network");
+        Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
+        Sendprops.setProperty(IN_TOOL_BAR, "FALSE");
+        Sendprops.setProperty(IN_MENU_BAR, "TRUE");
+        Sendprops.setProperty(MENU_GRAVITY, "2");
+        Sendprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        Sendprops.setProperty(COMMAND_DESCRIPTION, "Upload data to Microbetag Server and Get the Network");
+        Sendprops.setProperty(COMMAND, "Get_Network");
+
+        registerService(bc, sendDataToServerTaskFactory, TaskFactory.class, Sendprops);
+
+
+
+
+        //        CreateMGGVisualStyleTaskFactory mggVisualStyleTaskFactory=new  CreateMGGVisualStyleTaskFactory(MGGManager);
+        //        
+        //        Properties Visualprops = new Properties();
+        //        Visualprops.setProperty(TITLE, "Apply MGG Visual Style");
+        //        Visualprops.setProperty(PREFERRED_MENU, "Apps.MGG.Visual Style");
+        //        Visualprops.setProperty(IN_TOOL_BAR, "FALSE");
+        //        Visualprops.setProperty(IN_MENU_BAR, "TRUE");
+        //        Visualprops.setProperty(MENU_GRAVITY, "1");
+        //        Visualprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        //        Visualprops.setProperty(COMMAND_DESCRIPTION, "Get MGG visual Style");
+        //        Visualprops.setProperty(COMMAND, "Get_Style");
+        //	     
+        //        registerService(bc,mggVisualStyleTaskFactory, TaskFactory.class, Visualprops);
+        //        
+
+
+
+
+        CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager);
+
+        registerService(bc, createVisualStyleAction, CyAction.class, new Properties());
+
         {
-			ShowResultsPanelAction sra = new ShowResultsPanelAction("Show results panel", MGGManager);
-			registerService(bc, sra, CyAction.class);
+            ShowResultsPanelAction sra = new ShowResultsPanelAction("Show results panel", MGGManager);
+            registerService(bc, sra, CyAction.class);
 
-			ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(MGGManager);				
-			//showResults.reregister();
-			MGGManager.setShowResultsPanelTaskFactory(showResults);
-			
-			// Now bring up the side panel if the current network is a STRING network
-			CyNetwork current = MGGManager.getCurrentNetwork();
-			if (Mutils.ifHaveMGG(current)) {
-				// It's the current network.  Bring up the results panel
-				MGGManager.execute(showResults.createTaskIterator(), true);
-			}
-		}	
-	
-       
-        
-        
-    	
-        
-    	
-    	
-    	
-    	
-    	
-    	
-        //createnetworktaskfactory
-        
-		/*
-		 * TaskFactory createNetworkTaskFactory = new
-		 * CreateNetworkTaskFactory(MGGManager);
-		 * 
-		 * Properties propsNetwork = new Properties(); propsNetwork.setProperty(TITLE,
-		 * "Visualize Network"); propsNetwork.setProperty(PREFERRED_MENU,
-		 * "Apps.MGG.Import Experiment"); propsNetwork.setProperty(IN_TOOL_BAR,
-		 * "FALSE"); propsNetwork.setProperty(IN_MENU_BAR, "TRUE");
-		 * propsNetwork.setProperty(MENU_GRAVITY, "3");
-		 * propsNetwork.setProperty(COMMAND_NAMESPACE, "MGG");
-		 * propsNetwork.setProperty(COMMAND_DESCRIPTION,
-		 * "Create a network from server response"); propsNetwork.setProperty(COMMAND,
-		 * "create network");
-		 * 
-		 * 
-		 * // Register the task factory registerService(bc, createNetworkTaskFactory,
-		 * TaskFactory.class,propsNetwork );
-		 */
-        
+            ShowResultsPanelTaskFactory showResults = new ShowResultsPanelTaskFactory(MGGManager);
+            //showResults.reregister();
+            MGGManager.setShowResultsPanelTaskFactory(showResults);
+
+            // Now bring up the side panel if the current network is a STRING network
+            CyNetwork current = MGGManager.getCurrentNetwork();
+            if (Mutils.ifHaveMGG(current)) {
+                // It's the current network.  Bring up the results panel
+                MGGManager.execute(showResults.createTaskIterator(), true);
+            }
+        }
+
+
+
+
+
+
+
+
+
     }
-	
-	
-	    
-    
-//  MGGManager mggManager = getService(bc, MGGManager.class);
-//	JSONDisplayPanel displayPanel = new JSONDisplayPanel(mggManager, mggManager.getJsonArray());
-//
-//  // Register the JSONDisplayPanel as a service
-//  registerService(bc, displayPanel, CytoPanelComponent.class);
-//  
-  
-		
-		
-		// Register our menu items
 
 
-		// Start the thread the loads all of the species
-		//Species.loadSpecies(scNVManager);
-	
+
+
 }
+
+
+
+
+
+
+
+
+

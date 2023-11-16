@@ -217,24 +217,24 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     
     public void executeCommand(String namespace, String command, 
             Map<String, Object> args, TaskObserver observer) {
-TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
-execute(ti, true);
-}
+    		TaskIterator ti = commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+    		execute(ti, true);
+    }
     
     public TaskIterator getCommandTaskIterator(String namespace, String command, 
             Map<String, Object> args, TaskObserver observer) {
-return commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
-}
+    		return commandExecutorTaskFactory.createTaskIterator(namespace, command, args, observer);
+    }
     
     
     public void execute(TaskIterator iterator, boolean synchronous) {
-		if (synchronous) {
-			synchronousTaskManager.execute(iterator);
-		} else {
-			dialogTaskManager.execute(iterator);
-		}
+			if (synchronous) {
+				synchronousTaskManager.execute(iterator);
+				} else {
+					dialogTaskManager.execute(iterator);
+			}
 	}
-    
+    	
     public CyNetworkView getCurrentNetworkView() {
 		return cyRegistrar.getService(CyApplicationManager.class).getCurrentNetworkView();
 	}
@@ -251,8 +251,7 @@ return commandExecutorTaskFactory.createTaskIterator(namespace, command, args, o
         taskManager.execute(tasks);
     } 
 
-    
-
+ 
 			    /**
 			     * Retrieves a service of the specified class.
 			     * This method is used to get a service registered in the Cytoscape environment.
@@ -413,50 +412,6 @@ return commandExecutorTaskFactory.createTaskIterator(namespace, command, args, o
 	
 	
 	
-	
-	
-	
-	
-	
-
-
-	
-	/*
-	 * public void executeTasks(TaskIterator tasks) { taskManager.execute(tasks); }
-	 * 
-	 * public void executeTasks(TaskIterator tasks, TaskObserver observer) {
-	 * taskManager.execute(tasks, observer); }
-	 * 
-	 * public void executeTasks(TaskFactory factory) {
-	 * taskManager.execute(factory.createTaskIterator()); }
-	 * 
-	 * public void executeTasks(TaskFactory factory, TaskObserver observer) {
-	 * taskManager.execute(factory.createTaskIterator(), observer); }
-	 */
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	
-	 
-	
-	
-	/*
-	 * public void executeCommand(String namespace, String command,Map<String,
-	 * Object> args, TaskObserver observer) { if (ceTaskFactory == null)
-	 * ceTaskFactory = getService(CommandExecutorTaskFactory.class); if
-	 * (availableCommands == null) availableCommands=
-	 * getService(AvailableCommands.class); if (syncTaskManager == null)
-	 * syncTaskManager = getService(SynchronousTaskManager.class); if
-	 * (availableCommands.getNamespaces() == null ||
-	 * !availableCommands.getCommands(namespace).contains(command)) throw new
-	 * RuntimeException("Can’t find command" +namespace+ "+command"); TaskIterator
-	 * ti = ceTaskFactory.createTaskIterator(namespace, command, args, observer);
-	 * syncTaskManager.execute(ti); }
-	 */
 
 	
 

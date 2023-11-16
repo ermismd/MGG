@@ -127,9 +127,9 @@ public class MGGCytoPanel extends JPanel
 	}
 
 	public void updateControls() {
-		 nodePanel.updateControls();
+		nodePanel.updateControls();
 		edgePanel.updateWeightPanelPanel();
-		nodePanel.updateSubPanel();
+		//nodePanel.updateSubPanel();
 	}
 
 	@Override
@@ -154,35 +154,14 @@ public class MGGCytoPanel extends JPanel
 
 			// Tell tabs
 		   nodePanel.networkChanged(network);
-			edgePanel.networkChanged(network);
+		   edgePanel.networkChanged(network);
+			
 		} else {
 			hideCytoPanel();
 		}
 	}
 		
-		/*
-		 * if (network == null) { hideCytoPanel(); return; }
-		 * 
-		 * // Check for the existence of the "flashweave-score" attribute on edges
-		 * boolean hasFlashweaveScore =
-		 * network.getRow(network).get("flashweave-score",Double.class) != null;
-		 * 
-		 * 
-		 * // Further checks can be added to see if the flashweave-scores are unique,
-		 * different, etc. // For example: Set<Double> uniqueScores = new HashSet<>();
-		 * boolean hasDifferentScores = false; if (hasFlashweaveScore) { for (CyEdge
-		 * edge : network.getEdgeList()) { Double score =
-		 * network.getRow(edge).get("flashweave-score", Double.class); if (score !=
-		 * null) { if (uniqueScores.contains(score)) { hasDifferentScores = true; break;
-		 * } uniqueScores.add(score); } } }
-		 * 
-		 * 
-		 * // Based on the above checks, decide whether to show the CytoPanel if
-		 * (hasFlashweaveScore) { if (!registered) { showCytoPanel(); }
-		 * 
-		 * // Inform the tabs // nodePanel.networkChanged(network);
-		 * edgePanel.networkChanged(network); } else { hideCytoPanel(); }
-		 */
+	
 
 	}
 

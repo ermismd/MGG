@@ -200,7 +200,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 			     
 			// Create a continuous mapping for edge color based on the "weight" attribute
 			   ContinuousMapping<Double, Paint> edgeColorMapping = (ContinuousMapping<Double, Paint>) mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)")
-			            .createVisualMappingFunction("weight", Double.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+			            .createVisualMappingFunction("weight::weight", Double.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
 
 			 /// Define the points at which the color changes
 			    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(Color.PINK, Color.PINK, Color.PINK); // for values from -1 to -0.01

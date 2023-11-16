@@ -31,7 +31,7 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.HTTPUtils;
 
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
-import be.kuleuven.mgG.internal.view.JSONViewerPanel;
+
 
 import java.io.BufferedWriter;
 import java.io.File;

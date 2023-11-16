@@ -96,6 +96,11 @@
 
 	<dependencies>
 		<dependency>
+   			 <groupId>org.hdfgroup</groupId>
+    		<artifactId>hdf-java</artifactId>
+   			 <version>2.6.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.cytoscape</groupId>
 			<artifactId>application-api</artifactId>
 			<version>${cytoscape.api.version}</version>
