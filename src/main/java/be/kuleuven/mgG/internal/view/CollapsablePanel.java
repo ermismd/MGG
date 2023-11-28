@@ -1,6 +1,7 @@
 package be.kuleuven.mgG.internal.view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -29,27 +30,45 @@ public class CollapsablePanel extends JPanel {
 		boolean expanded = false;
 
 		public HeaderPanel(Font iconFont, String text, boolean collapsed, int fontSize) {
-			font = new Font("sans-serif", Font.BOLD, fontSize);
+			font = new Font("Arial", Font.BOLD, fontSize);
 
 			this.setLayout(new GridBagLayout());
 			this.expanded = !collapsed;
 
 			EasyGBC c = new EasyGBC();
 
-			if (collapsed)
-				expandButton = new JButton(RIGHT_ARROW);
-			else
-				expandButton = new JButton(DOWN_ARROW);
-			expandButton.addActionListener(this);
-			expandButton.setBorderPainted(false);
-			expandButton.setContentAreaFilled(false);
-			expandButton.setOpaque(false);
-			expandButton.setFocusPainted(false);
-			expandButton.setFont(iconFont);
-			this.add(expandButton, c.anchor("west").noExpand());
+//			if (collapsed)
+//				expandButton = new JButton(RIGHT_ARROW);
+//				
+//			else
+//				expandButton = new JButton(DOWN_ARROW);
+//			expandButton.addActionListener(this);
+//			expandButton.setBorderPainted(false);
+//			expandButton.setContentAreaFilled(false);
+//			expandButton.setOpaque(false);
+//			expandButton.setFocusPainted(false);
+//			expandButton.setFont(iconFont);
+//			this.add(expandButton, c.anchor("west").noExpand());
+			
+			 if (collapsed) {
+	                expandButton = new JButton(RIGHT_ARROW);
+	                expandButton.setToolTipText("Click to expand");
+	            } else {
+	                expandButton = new JButton(DOWN_ARROW);
+	                expandButton.setToolTipText("Click to collapse");
+	            }
+	            expandButton.addActionListener(this);
+	            expandButton.setBorderPainted(false);
+	            expandButton.setContentAreaFilled(false);
+	            expandButton.setOpaque(false);
+	            expandButton.setFocusPainted(false);
+	            expandButton.setFont(iconFont);
+	            expandButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Change cursor to hand pointer
+	            this.add(expandButton, c.anchor("west").noExpand());
+			
 			label = new JLabel(text);
 			label.setFont(font);
-			// label.setForeground(Color.BLUE);
+			//label.setForeground(Color.BLUE);
 			this.add(label, c.right().expandHoriz());
 			this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 			// this.setBorder(BorderFactory.createEtchedBorder());
@@ -108,10 +127,12 @@ public class CollapsablePanel extends JPanel {
 	public void toggleSelection() {
 		if (contentPanel_.isShowing()) {
 			headerPanel_.setButton(RIGHT_ARROW);
+			headerPanel_.expandButton.setToolTipText("Click to expand"); // Update tooltip
 			contentPanel_.setVisible(false);
 		} else {
 			contentPanel_.setVisible(true);
 			headerPanel_.setButton(DOWN_ARROW);
+			 headerPanel_.expandButton.setToolTipText("Click to collapse"); // Update tooltip
 		}
 
 		validate();

@@ -1,9 +1,10 @@
-package be.kuleuven.mgG.internal.view;
+	package be.kuleuven.mgG.internal.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,6 +13,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +32,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import org.cytoscape.model.CyColumn;
@@ -44,6 +48,9 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.Mutils;
+import be.kuleuven.mgG.internal.utils.SwingLink;
+
+
 
 
 
@@ -53,27 +60,25 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 public class MGGNodePanel extends AbstractMggPanel {
 
     private JCheckBox highlightBox;
+    private JCheckBox showMspecies;
     private boolean updating = false;
     private JPanel nodesPanel = null;
     private Color defaultBackground;
-    private JPanel PhendbScPanel = null;
+    //private JPanel PhendbScPanel = null;
 
     private JPanel PhenDbFilterPanel = null;
+    
+    private JCheckBox showSingletons;
+  
+    private JCheckBox modeToggleCheckbox;
 
-    private JPanel subScorePanel = null;
-
-    //private Map<CyNetwork, Map<String, Boolean>> phn;
-
-
+  
     public MGGNodePanel(final MGGManager manager) {
 
         super(manager);
         filters.get(currentNetwork).put("phendbScore", new HashMap < > ());
 
-        //phn = new HashMap<>();
-        //phn.put(currentNetwork, new HashMap<>());
-
-
+     
         init();
         revalidate();
         repaint();
@@ -84,15 +89,15 @@ public class MGGNodePanel extends AbstractMggPanel {
     public void updateControls() {
         updating = true;
 
-
-        // TODO: fix me
+        showSingletons.setSelected(manager.showSingletons());
         highlightBox.setSelected(manager.highlightNeighbors());
-        //if (!manager.showGlassBallEffect())
-        //showStructure.setEnabled(false);
-        //else
-        //showStructure.setEnabled(true);
+       // showMspecies.setSelected(manager.showMspecies());
+          
         updating = false;
     }
+    
+    
+    
 
     private void init() {
         setLayout(new GridBagLayout());
@@ -107,10 +112,12 @@ public class MGGNodePanel extends AbstractMggPanel {
             mainPanel.setLayout(new GridBagLayout());
             mainPanel.setBackground(defaultBackground);
             EasyGBC d = new EasyGBC();
-            mainPanel.add(createNodesPanel(), d.down().anchor("west").expandHoriz());
-            mainPanel.add(createPhenDbScoresPanel(), d.down().anchor("west").expandHoriz());
+            
 
             mainPanel.add(createPhenDbPanel(), d.down().anchor("west").expandHoriz());
+            
+            mainPanel.add(createNodesPanel(), d.down().anchor("west").expandHoriz());
+            
 
             mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
         }
@@ -147,22 +154,66 @@ public class MGGNodePanel extends AbstractMggPanel {
                     }
                 }
             });
-            // highlightBox.setAlignmentX( Component.LEFT_ALIGNMENT );
-            // highlightBox.setBorder(BorderFactory.createEmptyBorder(10,2,10,0));
-            upperPanel.add(highlightBox, upperGBC.right().insets(0, 10, 0, 0).noExpand());
+            
+            upperPanel.add(highlightBox, upperGBC.anchor("northwest").noExpand());
         }
-
+        
+    	{
+			showSingletons = new JCheckBox("Singletons");
+			showSingletons.setFont(labelFont);
+			showSingletons.setSelected(true);
+			showSingletons.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (updating) return;
+					manager.setShowSingletons(showSingletons.isSelected());
+					Mutils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
+				}
+			});
+			upperPanel.add(showSingletons, upperGBC.right().insets(0,10,0,0).noExpand());
+		}
+        
+        
         upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
         controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
-
+        
+        
+        JPanel lowerPanel = new JPanel();
+		GridLayout layout2 = new GridLayout(2,2);
+		layout2.setVgap(0);
+		lowerPanel.setLayout(layout2);
+		
+    	{
+			showMspecies = new JCheckBox("Show MSpecies");
+			showMspecies.setFont(labelFont);
+			showMspecies.addItemListener(new ItemListener() {
+					public void itemStateChanged(ItemEvent e) {
+						 if (e.getStateChange() == ItemEvent.SELECTED) {
+							// manager.setShowMspecies(true);
+					            doShowMspecies(true); // Show MSpecies nodes
+					        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+					        	//manager.setShowMspecies(false);
+					            doShowMspecies(false); // Hide MSpecies nodes
+					        }
+			}
+			});		
+			lowerPanel.add(showMspecies);
+		}
+    	
+    	controlPanel.add(lowerPanel, d.down().anchor("west").expandHoriz());
+    	
         updateControls();
-        // TODO: change max size when more buttons get added?
+       
         controlPanel.setMaximumSize(new Dimension(300, 100));
         controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         return controlPanel;
     }
 
+    
+    
+    
+    
+    
     public void selectedNodes(Collection < CyNode > nodes) {
         // Clear the nodes panel
         nodesPanel.removeAll();
@@ -181,9 +232,44 @@ public class MGGNodePanel extends AbstractMggPanel {
         } else {
             clearHighlight(manager.getCurrentNetworkView());
         }
+        
         revalidate();
         repaint();
     }
+    
+    
+    
+    private void doShowMspecies(boolean show) {
+        CyNetworkView view = manager.getCurrentNetworkView();
+        CyNetwork net = view.getModel();
+
+        String columnName = "microbetag::ncbi-tax-level";
+        String targetValue = "mspecies";
+
+        // Check if the column exists
+        if (net.getDefaultNodeTable().getColumn(columnName) == null) {
+            System.out.println("Column " + columnName + " does not exist");
+            return;
+        }
+
+        for (CyNode node : net.getNodeList()) {
+            View<CyNode> nodeView = view.getNodeView(node);
+            if (nodeView == null) continue;
+
+            if (show) {
+                CyRow nodeRow = net.getRow(node);
+                String attributeValue = nodeRow.get(columnName, String.class);
+                boolean isVisible = "mspecies".equals(attributeValue);
+                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, isVisible);
+            } else {
+                // If 'show' is false, set all nodes to visible
+                nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+            }
+        }
+
+        view.updateView();
+    }
+    
 
     private void doHighlight(CyNetworkView networkView) {
 
@@ -203,8 +289,12 @@ public class MGGNodePanel extends AbstractMggPanel {
     }
 
 
+  
 
-    //-----------------------Selected nodes----------------------------------
+
+ //-----------------------Selected nodes----------------------------------------
+   
+    
     private JPanel createNodesPanel() {
         nodesPanel = new JPanel();
         nodesPanel.setLayout(new GridBagLayout());
@@ -274,42 +364,127 @@ public class MGGNodePanel extends AbstractMggPanel {
 
 
 
-        Object idValue = (nodeTable.getColumn("@id") != null) ? nodeTable.getRow(node.getSUID()).get("@id", nodeTable.getColumn("@id").getType()) : null;
-        JTextArea idArea = new JTextArea("ID: " + (idValue != null ? idValue.toString() : "null"));
-        setJTextAreaAttributes(idArea);
-        panel.add(idArea, gbc);
-        gbc.gridy++;
-
         Object taxonValue = (nodeTable.getColumn("microbetag::taxon name") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxon name", nodeTable.getColumn("microbetag::taxon name").getType()) : null;
         JTextArea taxonArea = new JTextArea("Taxon Name: " + (taxonValue != null ? taxonValue.toString() : "null"));
         setJTextAreaAttributes(taxonArea);
         panel.add(taxonArea, gbc);
         gbc.gridy++;
-
-        Object taxonomyValue = (nodeTable.getColumn("microbetag::ncbi-tax-level") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxonomy", nodeTable.getColumn("microbetag::taxonomy").getType()) : null;
-        JTextArea taxonomyArea = new JTextArea("Ncbi-tax-level: " + (taxonomyValue != null ? taxonomyValue.toString() : "null"));
+        
+        Object idValue = (nodeTable.getColumn("@id") != null) ? nodeTable.getRow(node.getSUID()).get("@id", nodeTable.getColumn("@id").getType()) : null;
+        JTextArea idArea = new JTextArea("ID: " + (idValue != null ? idValue.toString() : "null"));
+        setJTextAreaAttributes(idArea);
+        panel.add(idArea, gbc);
+        gbc.gridy++;
+        
+        
+        Object taxonomyValue = (nodeTable.getColumn("microbetag::taxonomy") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxonomy", nodeTable.getColumn("microbetag::taxonomy").getType()) : null;
+        JTextArea taxonomyArea = new JTextArea("Taxonomy: " + (taxonomyValue != null ? taxonomyValue.toString() : "null"));
         setJTextAreaAttributes(taxonomyArea);
         panel.add(taxonomyArea, gbc);
         gbc.gridy++;
 
+    
+        Object taxonidValue = (nodeTable.getColumn("microbetag::ncbi-tax-level") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::ncbi-tax-level", nodeTable.getColumn("microbetag::ncbi-tax-level").getType()) : null;
+        JTextArea taxonidArea = new JTextArea("Ncbi-tax-level: " + (taxonidValue  != null ? taxonidValue .toString() : "null"));
+        setJTextAreaAttributes(taxonidArea);
+        panel.add(taxonidArea, gbc);
+        gbc.gridy++;
 
-
+      
+        
         String[] attributes = {
-            "microbetag::gtdb-genomes",
-            "microbetag::ncbi-tax-id",
-            "microbetag:: ncbi-tax-level"
-        };
-        for (String attribute: attributes) {
+        	    "microbetag::gtdb-genomes",
+        	    "microbetag::ncbi-tax-id",
+        	    "microbetag::ncbi-tax-level"
+        	};
+
+        for (String attribute : attributes) {
             if (nodeTable.getColumn(attribute) != null) {
                 Object attrValue = nodeTable.getRow(node.getSUID()).get(attribute, nodeTable.getColumn(attribute).getType());
-
-                // Extract the attribute name without the namespace
                 String attributeName = attribute.split("::")[1];
 
-                JTextArea attributeArea = new JTextArea(attributeName + ": " + attrValue);
-                setJTextAreaAttributes(attributeArea);
-                panel.add(attributeArea, gbc);
-                gbc.gridy++;
+                if (attribute.equals("microbetag::gtdb-genomes") && attrValue != null ) {
+                    //  sub-panel with FlowLayout for the label and link
+                    JPanel subPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+                    subPanel.setOpaque(false); //  to make the panel transparent
+
+                 // Label
+                    JLabel attributeNameLabel = new JLabel(attributeName + ": ");
+                    attributeNameLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+                    subPanel.add(attributeNameLabel);
+
+                    // Link
+                    String genomeId = attrValue.toString().replaceAll("\\[|\\]", "");
+                    String url = "https://gtdb.ecogenomic.org/genome?gid=" + genomeId;
+                    SwingLink link = new SwingLink(genomeId, url, openBrowser);
+                    subPanel.add(link);
+
+                    // Add sub-panel to main panel
+                    gbc.gridwidth = GridBagConstraints.REMAINDER; 
+                    panel.add(subPanel, gbc);
+
+                    // Reset for next component
+                    gbc.gridy++;
+                    gbc.gridwidth = 1; // Reset for next component
+                    
+                } else if (attribute.equals("microbetag::ncbi-tax-id") && attrValue != null ) {
+                	
+                        // Create a sub-panel
+                        JPanel subPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+                       
+                        // Label for NCBI Tax ID
+                        JLabel attributeNameLabel = new JLabel(attributeName + ": ");
+                        attributeNameLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+                        subPanel.add(attributeNameLabel);
+                        
+                        
+                     // Extract the NCBI Tax ID value and remove brackets if present
+                        String taxId = attrValue.toString().replaceAll("\\[|\\]", "");
+                        
+                        // Check if the tax ID is "<NA>"
+                        if (!taxId.equals("<NA>")) {
+                            // Create and add a link if tax ID is not "<NA>"
+                            String url = "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + taxId;
+                            SwingLink link = new SwingLink(taxId, url, openBrowser);
+                            subPanel.add(link);
+                        } else {
+                            // If it is "<NA>", display it as plain text
+                            JLabel taxIdLabel = new JLabel(taxId);
+                            taxIdLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+                            subPanel.add(taxIdLabel);
+                        }
+
+                        // Add sub-panel to main panel
+                        gbc.gridwidth = GridBagConstraints.REMAINDER; 
+                        panel.add(subPanel, gbc);
+
+                        // Reset for next component
+                        gbc.gridy++;
+                        gbc.gridwidth = 1; // Reset for next component
+                    
+
+//                        // Link for NCBI Tax ID
+//                        String taxId = attrValue.toString().replaceAll("\\[|\\]", "");
+//                        String url = "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + taxId;
+//                        SwingLink link = new SwingLink(taxId, url, openBrowser);
+//                        subPanel.add(link);
+//
+//                        // Add sub-panel to main panel
+//                        gbc.gridwidth = GridBagConstraints.REMAINDER; 
+//                        panel.add(subPanel, gbc);
+//                        // Reset for next component
+//                        gbc.gridy++;
+//                        gbc.gridwidth = 1; // Reset for next component
+                        
+                } else {
+                    // Handle other attributes normally
+                    JTextArea attributeArea = new JTextArea(attributeName + ": " + (attrValue != null ? attrValue.toString() : "null"));
+                    setJTextAreaAttributes(attributeArea);
+                    gbc.gridwidth = 2;
+                    panel.add(attributeArea, gbc);
+                    gbc.gridy++;
+                    gbc.gridwidth = 1;
+                }
             }
         }
 
@@ -382,19 +557,37 @@ public class MGGNodePanel extends AbstractMggPanel {
                 }
             }
         }
+        
+        
+     // Adjust column widths based on content
+        for (int col = 0; col < table.getColumnCount(); col++) {
+            int maxWidth = 0;
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, col);
+                Component comp = table.prepareRenderer(renderer, row, col);
+                maxWidth = Math.max(comp.getPreferredSize().width + 1, maxWidth);
+            }
+            if (maxWidth > 5) { // Ensure a minimum width
+                table.getColumnModel().getColumn(col).setPreferredWidth(maxWidth);
+            }
+        }
 
         // Add table to a scroll pane:
         JScrollPane tableScrollPane = new JScrollPane(table);
-        tableScrollPane.setPreferredSize(new Dimension(panel.getWidth() - 20, 200));
-        phenDBPanel.add(tableScrollPane, BorderLayout.CENTER);
+      
 
+     // Set scroll pane size based on table size
+        Dimension tableSize = table.getPreferredSize();
+        tableScrollPane.setPreferredSize(new Dimension(panel.getWidth() - 20, Math.min(tableSize.height + table.getTableHeader().getPreferredSize().height + 20, 200)));
+        phenDBPanel.add(tableScrollPane, BorderLayout.CENTER);
+        
 
         phenDBPanel.revalidate();
         phenDBPanel.repaint();
 
         //  Wrap the phenDBPanel inside a CollapsablePanel
 
-        CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, false, 10);
+        CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, true, 10);
         Border etchedBorder = BorderFactory.createEtchedBorder();
         Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
         phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
@@ -403,8 +596,6 @@ public class MGGNodePanel extends AbstractMggPanel {
 
         panel.add(phenDBCollapsablePanel, gbc);
         gbc.gridy++;
-
-
 
 
         //---------------------------panel for faprotax--------------------------
@@ -428,166 +619,219 @@ public class MGGNodePanel extends AbstractMggPanel {
 
                     String displayName = columnName.split("::")[1];
 
-                    JCheckBox checkBox = new JCheckBox(displayName);
-                    checkBox.setSelected((Boolean) attrValue);
-                    checkBox.setEnabled(false);
-                    faprotaxPanel.add(checkBox, fapGBC);
+               
+                    JTextArea label = new JTextArea(displayName);
+                    setJTextAreaAttributes(label);
+                    faprotaxPanel.add(label, fapGBC);
+                     
                     fapGBC.gridy++;
                 }
             }
         }
 
         // Wrap faprotaxPanel inside  CollapsablePanel
-        CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, false, 10);
+        CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, true, 10);
         faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
         // Add  faprotaxCollapsablePanel to  main panel
         panel.add(faprotaxCollapsablePanel, gbc);
         gbc.gridy++;
 
-        //------------------------------
-
-        //	if (name == null) {
-        // name = "Selected Nodes";
-        //	}
-
+     
 
         String nodeId = (idValue != null) ? idValue.toString() : "Selected Nodes";
 
 
         CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, nodeId, panel, false, 10);
-        //Border etchedBorder = BorderFactory.createEtchedBorder();
-        //Border emptyBorder = BorderFactory.createEmptyBorder(0,5,0,0);
         collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
         return collapsablePanel;
-        //		
+        	
     }
 
     private void setJTextAreaAttributes(JTextArea textArea) {
-        textArea.setWrapStyleWord(true);
+       // textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
         textArea.setEditable(false);
         textArea.setFont(new Font("Arial", Font.PLAIN, 10));
         textArea.setOpaque(false);
         textArea.setBorder(null);
-        textArea.setPreferredSize(new Dimension(800, 15));
+        textArea.setPreferredSize(new Dimension(600, 15));
     }
 
 
-
-    //------------------------------------ PhenDbscores filter ----------------------
-
-    private JPanel createPhenDbScoresPanel() {
-
-        PhendbScPanel = new JPanel();
-        PhendbScPanel.setLayout(new GridBagLayout());
-        EasyGBC c = new EasyGBC();
-
-        List < String > phendbScList = Mutils.getPhenDbScList(currentNetwork);
-
-        for (String phendbScore: phendbScList) {
-            PhendbScPanel.add(createFilterSlider2("phendbScore", phendbScore, currentNetwork, true, 100.0),
-                c.anchor("west").down().expandHoriz());
-        }
+    //------------------------------Phendb panel--------------------------
 
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "phenDbScore Filters", PhendbScPanel, true, 10);
-        collapsablePanel.setToolTipText("Show nodes with a PhendbScore bigger than the chosen value");
-        collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
-        return collapsablePanel;
-    }
 
-    private void updatePhenDbScoresPanel() {
-        if (PhendbScPanel == null) return;
-        PhendbScPanel.removeAll();
-        EasyGBC c = new EasyGBC();
-        List < String > phendbScList = Mutils.getPhenDbScList(currentNetwork);
-        for (String phendbScore: phendbScList) {
-            PhendbScPanel.add(createFilterSlider2("phendbScore", phendbScore, currentNetwork, true, 100.0),
-                c.anchor("west").down().expandHoriz());
-        }
-        return;
-    }
-
-    //------------------------------------------------------------------
-
+    
     private JPanel createPhenDbPanel() {
-        PhenDbFilterPanel = new JPanel();
+    	PhenDbFilterPanel = new JPanel();
         PhenDbFilterPanel.setLayout(new BoxLayout(PhenDbFilterPanel, BoxLayout.Y_AXIS));
+        
+        
+        // Mode toggle checkbox
+        modeToggleCheckbox = new JCheckBox("Toggle AND/OR Mode");
+        modeToggleCheckbox.setToolTipText("Check to toggle AND mode");
+        modeToggleCheckbox.setFont(labelFont);
+        modeToggleCheckbox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                toggleFilterMode();
+            }
+        });
+        PhenDbFilterPanel.add(modeToggleCheckbox);
 
-        EasyGBC c = new EasyGBC();
+        // Get the list of attributes from phendb and faprotax
+        List<String> phendbAttributeList = Mutils.getPhendbAttributes(currentNetwork);
+        List<String> faprotaxAttributeList = Mutils.getFaprotaxAttributes(currentNetwork);
 
-
-
-        List < String > phendbAttributeList = Mutils.getPhendbAttributes(currentNetwork);
-        // Add checkboxes for each phendb attribute
-        for (String phendbAttribute: phendbAttributeList) {
-            PhenDbFilterPanel.add(createPhendbCheckbox(phendbAttribute));
+        
+     // Create a map of categories to their corresponding attributes
+        Map<String, List<String>> categoryToAttributesMap = new HashMap<>();
+        for (String category : Mutils.getCategories()) {
+            categoryToAttributesMap.put(category, new ArrayList<>());
         }
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "phenDb Filters", PhenDbFilterPanel, true, 10);
-        collapsablePanel.setToolTipText("Show nodes that have a phendb attribute ");
-        collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
-        return collapsablePanel;
-    }
+        // Add attributes to their corresponding category
+        populateCategoryToAttributesMap(phendbAttributeList, categoryToAttributesMap, Mutils.PhenDb_NAMESPACE + "::");
+        populateCategoryToAttributesMap(faprotaxAttributeList, categoryToAttributesMap, Mutils.Faprotax_NAMESPACE + "::");
 
-    private void updatePhenDbPanel() {
-        if (PhenDbFilterPanel == null) return;
-        PhenDbFilterPanel.removeAll();
-        EasyGBC c = new EasyGBC();
-
-        List < String > phendbAttributeList = Mutils.getPhendbAttributes(currentNetwork);
-        // Add checkboxes for each phendb attribute
-        for (String phendbAttribute: phendbAttributeList) {
-            PhenDbFilterPanel.add(createPhendbCheckbox(phendbAttribute));
-        }
-    }
-
-    private void filterNodesByPhendbAttribute() {
-        CyNetworkView view = manager.getCurrentNetworkView();
-        CyNetwork net = view.getModel();
-
-        boolean anyCheckboxSelected = isAnyCheckboxSelected();
-
-        for (CyNode node: net.getNodeList()) {
-            View < CyNode > nodeView = view.getNodeView(node);
-            if (nodeView == null) continue;
-
-            boolean isVisible = false;
-            if (!anyCheckboxSelected) {
-                isVisible = true;
-            } else {
-                for (Component comp: PhenDbFilterPanel.getComponents()) {
-                    if (comp instanceof JCheckBox) {
-                        JCheckBox checkBox = (JCheckBox) comp;
-                        if (checkBox.isSelected()) {
-                            CyRow nodeRow = net.getRow(node);
-                            Boolean attributeValue = nodeRow.get("phendb::" + checkBox.getText(), Boolean.class);
-                            isVisible = isVisible || (attributeValue != null && attributeValue);
-                        }
-                    }
+        // Add checkboxes under category labels
+        for (String category : Mutils.getCategories()) {
+            List<String> attributes = categoryToAttributesMap.get(category);
+            if (!attributes.isEmpty()) {
+                JLabel categoryLabel = new JLabel(category);
+                categoryLabel.setFont(labelFont);
+                PhenDbFilterPanel.add(categoryLabel);
+                
+                for (String attribute : attributes) {
+                    String namespace = attribute.split("::")[0] + "::";
+                    String attributeName = attribute.split("::")[1];
+                    PhenDbFilterPanel.add(createCheckbox(attributeName, namespace));
                 }
             }
-            nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, isVisible);
         }
-        view.updateView();
+        
+
+        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "PhenDb/Faprotax Filters", PhenDbFilterPanel, true, 10);
+        collapsablePanel.setToolTipText("Show nodes that have Phendb and Faprotax attributes");
+        collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+        return collapsablePanel;
+        
+        //return new CollapsablePanel(iconFont, "PhenDb Filters", PhenDbFilterPanel, true, 10);
+    }
+    
+    private void populateCategoryToAttributesMap(List<String> attributeList, Map<String, List<String>> categoryToAttributesMap, String namespace) {
+        for (String attribute : attributeList) {
+            String category = Mutils.getCategoryForAttribute(attribute);
+            categoryToAttributesMap.computeIfAbsent(category, k -> new ArrayList<>());
+            categoryToAttributesMap.get(category).add(namespace + attribute);
+        }
     }
 
-
-    private JCheckBox createPhendbCheckbox(String attributeName) {
+    private JCheckBox createCheckbox(String attributeName, String namespace) {
         JCheckBox checkBox = new JCheckBox(attributeName);
-
         checkBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 filterNodesByPhendbAttribute();
             }
         });
+        checkBox.setActionCommand(namespace + attributeName);
         return checkBox;
     }
 
+    
+   
+    
+    private void updatePhenDbPanel() {
+    	
+   	
+    	  if (PhenDbFilterPanel == null) return;
+    	    PhenDbFilterPanel.removeAll();
+    	    
+    	    // Mode toggle checkbox
+    	    modeToggleCheckbox = new JCheckBox("Toggle AND/OR Mode");
+    	    modeToggleCheckbox.setToolTipText("Check to toggle AND mode");
+            modeToggleCheckbox.setFont(labelFont);
+    	    modeToggleCheckbox.addItemListener(new ItemListener() {
+    	        public void itemStateChanged(ItemEvent e) {
+    	            toggleFilterMode();
+    	        }
+    	    });
+    	    PhenDbFilterPanel.add(modeToggleCheckbox);
+        
+    	 // Get the list of attributes from phendb and faprotax
+            List<String> phendbAttributeList = Mutils.getPhendbAttributes(currentNetwork);
+            List<String> faprotaxAttributeList = Mutils.getFaprotaxAttributes(currentNetwork);
+        
+         // Create a map of categories to their corresponding attributes
+            Map<String, List<String>> categoryToAttributesMap = new HashMap<>();
+            for (String category : Mutils.getCategories()) {
+                categoryToAttributesMap.put(category, new ArrayList<>());
+            }
+
+            // Add attributes to their corresponding category
+            populateCategoryToAttributesMap(phendbAttributeList, categoryToAttributesMap, "phendb::");
+            populateCategoryToAttributesMap(faprotaxAttributeList, categoryToAttributesMap, "faprotax::");
+
+            // Add checkboxes under category labels
+            for (String category : Mutils.getCategories()) {
+                List<String> attributes = categoryToAttributesMap.get(category);
+                if (!attributes.isEmpty()) {
+                    JLabel categoryLabel = new JLabel(category);
+                    categoryLabel.setFont(labelFont);
+                    PhenDbFilterPanel.add(categoryLabel);
+                    
+                    for (String attribute : attributes) {
+                        String namespace = attribute.split("::")[0] + "::";
+                        String attributeName = attribute.split("::")[1];
+                        PhenDbFilterPanel.add(createCheckbox(attributeName, namespace));
+                    }
+                
+            }
+       
+              
+             
+            }
+            }
+    
+    
+    
+    private void filterNodesByPhendbAttribute() {
+    	
+    	  CyNetworkView view = manager.getCurrentNetworkView();
+    	    CyNetwork net = view.getModel();
+    	    
+    	    boolean isAndMode = modeToggleCheckbox.isSelected();
+    	    boolean anyCheckboxSelected = isAnyCheckboxSelected();
+
+    	    for (CyNode node : net.getNodeList()) {
+    	        View<CyNode> nodeView = view.getNodeView(node);
+    	        if (nodeView == null) continue;
+
+    	        // Default visibility - nodes are visible unless a checkbox is selected
+    	        boolean isVisible = !anyCheckboxSelected; 
+
+    	        if (anyCheckboxSelected) {
+    	            // Update visibility based on selected mode and checkboxes
+    	            isVisible = isAndMode ? checkNodeVisibilityForAnd(node, net) : checkNodeVisibilityForOr(node, net);
+    	        }
+    	        
+    	        nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, isVisible);
+    	    }
+
+    	    view.updateView();
+    	}
+    	   	
+    	
+    private void toggleFilterMode() {
+       
+        filterNodesByPhendbAttribute();
+    }
+          
+    
     private boolean isAnyCheckboxSelected() {
-        for (Component comp: PhenDbFilterPanel.getComponents()) {
+        for (Component comp : PhenDbFilterPanel.getComponents()) {
             if (comp instanceof JCheckBox) {
                 JCheckBox checkBox = (JCheckBox) comp;
                 if (checkBox.isSelected()) {
@@ -597,7 +841,63 @@ public class MGGNodePanel extends AbstractMggPanel {
         }
         return false;
     }
+    
+    
+    private boolean checkNodeVisibilityForOr(CyNode node, CyNetwork net) {
+    	for (Component comp : PhenDbFilterPanel.getComponents()) {
+            if (comp instanceof JLabel) {
+                continue; // Skip labels
+            }
+            if (comp instanceof JCheckBox) {
+                JCheckBox checkBox = (JCheckBox) comp;
+                if (checkBox.isSelected()) {
+                    String attributeFullName = checkBox.getActionCommand();
+                    String[] parts = attributeFullName.split("::");
+                    if (parts.length != 2) continue;
 
+                    String namespace = parts[0] + "::";
+                    String attributeName = parts[1];
+
+                    CyRow nodeRow = net.getRow(node);
+                    Boolean attributeValue = nodeRow.get(namespace + attributeName, Boolean.class);
+                    // Node is visible if any of the selected checkboxes match
+                    if (attributeValue != null && attributeValue) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false; // Node is not visible if none of the selected checkboxes match
+    }
+    
+
+    
+    private boolean checkNodeVisibilityForAnd(CyNode node, CyNetwork net) {
+    	for (Component comp : PhenDbFilterPanel.getComponents()) {
+            if (comp instanceof JCheckBox && comp != modeToggleCheckbox) {
+                JCheckBox checkBox = (JCheckBox) comp;
+                if (checkBox.isSelected()) {
+                    String attributeFullName = checkBox.getActionCommand();
+                    String[] parts = attributeFullName.split("::");
+                    if (parts.length != 2) continue;
+
+                    String namespace = parts[0] + "::";
+                    String attributeName = parts[1];
+
+                    CyRow nodeRow = net.getRow(node);
+                    Boolean attributeValue = nodeRow.get(namespace + attributeName, Boolean.class);
+                    // Node is not visible if any of the selected checkboxes do not match
+                    if (attributeValue == null || !attributeValue) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true; // Node is visible if all selected checkboxes match
+    }
+    
+
+   
     //---------------------------------------------------------------------------------
 
 
@@ -606,22 +906,16 @@ public class MGGNodePanel extends AbstractMggPanel {
         this.currentNetwork = newNetwork;
         if (currentNetwork == null) {
             // Hide results panel?
-            if (PhendbScPanel != null)
-                PhendbScPanel.removeAll();
+           // if (PhendbScPanel != null)
+             //   PhendbScPanel.removeAll();
 
             if (PhenDbFilterPanel != null)
                 PhenDbFilterPanel.removeAll();
             return;
 
         }
-
-
-        if (!filters.containsKey(currentNetwork)) {
-            filters.put(currentNetwork, new HashMap < > ());
-            filters.get(currentNetwork).put("phendbScore", new HashMap < > ());
-        }
-
-
+        
+ 
         // We need to get the view for the new network since we haven't actually switched yet
         CyNetworkView networkView = Mutils.getNetworkView(manager, currentNetwork);
         if (networkView != null) {
@@ -630,16 +924,21 @@ public class MGGNodePanel extends AbstractMggPanel {
             } else {
                 clearHighlight(networkView);
             }
+            
+            if (manager.showSingletons()) {
+    			Mutils.hideSingletons(networkView, true);
+    		} else {
+    			Mutils.hideSingletons(networkView, false);
+    		}
 
+               
         }
-        //if (!phn.containsKey(currentNetwork)) {
-        //phn.put(currentNetwork, new HashMap<>());
-
-        //}
+        
+    
+       
         updateNodesPanel();
-        updatePhenDbScoresPanel();
-        //updateSubPanel();
         updatePhenDbPanel();
+        
     }
 
 
@@ -724,5 +1023,12 @@ public class MGGNodePanel extends AbstractMggPanel {
         return minValue;
 
     }
+
+
+	@Override
+	double initFilterSeed(String type, String text) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

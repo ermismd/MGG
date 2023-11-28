@@ -64,6 +64,8 @@ public abstract class AbstractMggPanel extends JPanel {
 	abstract void undoFilters();
 	
 	abstract double initFilter(String type, String text);
+	
+	abstract double initFilterSeed(String type, String text);
 
 	protected JComponent createFilterSlider(String type, String text, CyNetwork network, boolean labels, double max) {
 		double value = 0.0;
@@ -143,6 +145,49 @@ public abstract class AbstractMggPanel extends JPanel {
 		return box;
 	}
 
+	protected JComponent createFilterSlider3(String type, String text, CyNetwork network, boolean labels, double max) {
+		double value = 0.0;
+		if (filters.containsKey(network) && 
+		    filters.get(network).containsKey(type) && 
+		    filters.get(network).get(type).containsKey(text)) {
+			value = filters.get(network).get(type).get(text);
+			// System.out.println("value = "+value);
+		} else {
+			value = initFilterSeed(type, text);
+		}
+		Box box = Box.createHorizontalBox();
+		if (labels) {
+			JLabel label = new JLabel(text);
+			label.setFont(labelFont);
+			label.setPreferredSize(new Dimension(100,20));
+			box.add(Box.createRigidArea(new Dimension(10,0)));
+			box.add(label);
+			box.add(Box.createHorizontalGlue());
+		}
+		 // Assume max is positive and represents the maximum value for the slider.
+	    // Slider's range is from -100 to max * 100, assuming max is also a double.
+		JSlider slider;
+		slider = new JSlider(0,(int)max,(int)(value*100));
+		slider.setToolTipText("Filter ranges between 0.0 and " + max/100);
+		slider.setPreferredSize(new Dimension(150,20));
+		box.add(slider);
+		// box.add(Box.createHorizontalGlue());
+		JTextField textField;
+		textField = new JTextField(String.format("%.2f",value),4);
+		textField.setPreferredSize(new Dimension(30,20));
+		textField.setMaximumSize(new Dimension(30,20));
+		textField.setFont(textFont);
+		box.add(textField);
+		// Hook it up
+		addChangeListeners(type, text, slider, textField, max);
+		box.setAlignmentX(Component.LEFT_ALIGNMENT);
+		return box;
+	}
+
+	
+	
+	
+	
 	protected void addChangeListeners(String type, String label, JSlider slider, 
 	                                  JTextField textField, double max) {
 //		slider.addChangeListener(new ChangeListener() {

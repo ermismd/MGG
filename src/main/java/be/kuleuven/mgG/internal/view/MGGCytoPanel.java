@@ -129,7 +129,8 @@ public class MGGCytoPanel extends JPanel
 	public void updateControls() {
 		nodePanel.updateControls();
 		edgePanel.updateWeightPanelPanel();
-		//nodePanel.updateSubPanel();
+		
+		edgePanel.updateSeedPanel();
 	}
 
 	@Override
@@ -147,7 +148,7 @@ public class MGGCytoPanel extends JPanel
 		CyNetwork network = event.getNetwork();
 
 		
-		if (Mutils.isMGGNetwork(network)) {
+		if (Mutils.isMGGNetworkMicrobetagDB(network)) {
 			if (!registered) {
 				showCytoPanel();
 			}

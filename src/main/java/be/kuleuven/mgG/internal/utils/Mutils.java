@@ -1,8 +1,11 @@
 package be.kuleuven.mgG.internal.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
@@ -32,7 +35,8 @@ public class Mutils {
     public static String PhenDbSc_NAMESPACE = "phendbScore";
     public static String PhenDb_NAMESPACE = "phendb";
     public static String Weight_NAMESPACE = "weight";
-
+    public static String Seed_NAMESPACE = "seed";
+    public static String Faprotax_NAMESPACE = "faprotax";
 
 
     public static boolean isMGGNetwork(CyNetwork network) {
@@ -49,6 +53,17 @@ public class Mutils {
 
         return true; // All checks passed, return true
     }
+    
+    public static boolean isMGGNetworkMicrobetagDB(CyNetwork network) {
+		// This is a string network only if we have a confidence score in the network table,
+		// "@id" column in the node table, and a "score" column in the edge table
+		if (network == null || network.getRow(network).get("database", String.class) == null)
+			return false;
+		return isMGGNetwork(network);
+	}
+	
+    
+    
 
     // This method will tell us if we have the new side panel functionality (i.e. namespaces)
     public static boolean ifHaveMGG(CyNetwork network) {
@@ -57,9 +72,26 @@ public class Mutils {
         Collection < CyColumn > columns = network.getDefaultNodeTable().getColumns("@id");
         if (columns != null && columns.size() > 0)
             return true;
-        return false;
+        return false;          
     }
 
+    
+    public static void hideSingletons(CyNetworkView view, boolean show) {
+		CyNetwork net = view.getModel();
+		for (View<CyNode> nv: view.getNodeViews()) {
+			CyNode node = nv.getModel();
+			List<CyEdge> edges = net.getAdjacentEdgeList(node, CyEdge.Type.ANY);
+			if (edges != null && edges.size() > 0) continue;
+			if (!show)
+				nv.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
+			else
+				nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+		}
+	}
+    
+    
+    
+    
 
     public static void clearHighlight(MGGManager manager, CyNetworkView view) {
         // if (node == null) return;
@@ -123,6 +155,7 @@ public class Mutils {
     }
 
 
+    
     public static CyNetworkView getNetworkView(MGGManager manager, CyNetwork network) {
         Collection < CyNetworkView > views =
             manager.getService(CyNetworkViewManager.class).getNetworkViews(network);
@@ -134,21 +167,36 @@ public class Mutils {
         return null;
     }
 
+    
+    
+    
     public static List < String > getPhenDbScList(CyNetwork network) {
-        List < String > phendb = new ArrayList < > ();
+        List < String > phendbScores = new ArrayList < > ();
         if (network == null) {
             // System.out.println("network is null");
-            return phendb;
+            return phendbScores;
         }
         Collection < CyColumn > columns = network.getDefaultNodeTable().getColumns(PhenDbSc_NAMESPACE);
-        if (columns == null || columns.size() == 0) return phendb;
-        for (CyColumn col: columns) {
-            phendb.add(col.getNameOnly());
+        if (columns == null || columns.isEmpty()) {
+            return phendbScores;
         }
-        return phendb;
+        
+        for (CyColumn col : columns) {
+        String columnName = col.getName();
+        // Check if the column name ends with 'Score'
+        if (columnName.endsWith("Score")) {
+            // Remove the PhenDbSc_NAMESPACE prefix and add to the list
+            String adjustedName = columnName.replace(PhenDbSc_NAMESPACE + "::", "");
+            phendbScores.add(adjustedName);
+        }
+    }
+
+    return phendbScores;
     }
 
 
+    
+    
     public static List < String > getPhendbAttributes(CyNetwork network) {
         List < String > phendbAttributes = new ArrayList < > ();
         if (network == null) {
@@ -161,10 +209,32 @@ public class Mutils {
         for (CyColumn col: columns) {
             phendbAttributes.add(col.getNameOnly());
         }
+        
         return phendbAttributes;
     }
+    
+    
+    
+    
+    public static List < String > getFaprotaxAttributes(CyNetwork network) {
+        List < String > faprotaxAttributes = new ArrayList < > ();
+        if (network == null) {
+            return faprotaxAttributes;
+        }
 
 
+        Collection < CyColumn > columns = network.getDefaultNodeTable().getColumns(Faprotax_NAMESPACE);
+        if (columns == null || columns.size() == 0) return faprotaxAttributes;
+        for (CyColumn col: columns) {
+        	faprotaxAttributes.add(col.getNameOnly());
+        }
+        
+        return faprotaxAttributes;
+    }
+
+    
+    
+    
     public static List < String > getWeightList(CyNetwork network) {
         List < String > weight = new ArrayList < > ();
         if (network == null) {
@@ -179,8 +249,25 @@ public class Mutils {
         return weight;
     }
 
+    
+    
+    
+	public static List<String> getSeedList(CyNetwork network) {
+		List<String> seed = new ArrayList<>();
+		if (network == null) return seed;
+		Collection<CyColumn> columns = network.getDefaultEdgeTable().getColumns(Seed_NAMESPACE);
+		if (columns == null || columns.size() == 0) return seed;
+		for (CyColumn col: columns) {
+			if (col.getNameOnly().equals("competition-std") ||col.getNameOnly().equals("cooperation-std")|| !col.getType().equals(Double.class))
+				continue;
+			seed.add(col.getNameOnly());
+		}
+		return seed;
+	}
 
-
+	
+	
+	
     public static List < String > getphenDbList(CyNetwork network) {
         List < String > phenDb = new ArrayList < > ();
         if (network == null) return phenDb;
@@ -195,14 +282,180 @@ public class Mutils {
     }
 
 
-    //	public static boolean isMGGNetwork(CyNetwork network) {
-    //		// This is a string network only if we have a confidence score in the network table,
-    //		// "@id" column in the node table, and a "score" column in the edge table
-    //		if (network == null || network.getRow(network).get(CONFIDENCE, Double.class) == null)
-    //			return false;
-    //		return isMergedStringNetwork(network);
-    //	}
+    
+
+    
+    
+    
+ 
+    
+    
+    // Method to determine the category for an attribute
+    public static String getCategoryForAttribute(String attribute) {
+    	
+    	 // Map of attribute to its category
+        Map<String, String> attributeCategoryMap = new HashMap<>();
+
+        // Add mappings for each attribute to its category
+        // Example: attributeCategoryMap.put("aSaccharolytic", "Lifestyle: Energy Source");
+
+        // Lifestyle
+        String[] lifestyleAttributes = {
+            "aSaccharolytic", "autoCo2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative",
+            "phototrophy","psychrophilic","saccharolytic","symbiont","thermophilic","methylotrophy","chitinolysis","knallgas bacteria",
+            "cellulolysis","xylanolysis","plant pathogen","ligninolysis","fermentation","aerobic chemoheterotrophy","invertebrate parasites",
+            "human pathogens septicemia","intracellular parasites","predatory or exoparasitic","human pathogens pneumonia","human pathogens nosocomia",
+            "human pathogens meningitis","human pathogens gastroenteritis","human pathogens diarrhea","nonphotosynthetic cyanobacteria","human pathogens all",
+            "photosynthetic cyanobacteria","fish parasites","aerobic anoxygenic phototrophy","anoxygenic photoautotrophy H2 oxidizing",
+            "anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing","anoxygenic photoautotrophy",
+            "human gut","human associated","mammal gut","chemoheterotrophy","animal parasites or symbionts","oxygenic photoautotrophy",
+            "photoautotrophy","phototrophy","photoheterotrophy","dGlucose"
+        };
+        
+        
+        
+        for (String attr : lifestyleAttributes) {
+            attributeCategoryMap.put(attr, "Lifestyle");
+        }
+
+        // Subgroups of Lifestyle
+        String[] energySourceAttributes = {
+            "phototrophy", "aerobic chemoheterotrophy", "nonphotosynthetic cyanobacteria",       
+            "photosynthetic cyanobacteria","aerobic anoxygenic phototrophy","anoxygenic photoautotrophy H2 oxidizing",
+            "anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing","anoxygenic photoautotrophy",
+            "chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","phototrophy","photoheterotrophy","dGlucose" };
+        
+        for (String attr : energySourceAttributes) {
+            attributeCategoryMap.put(attr, "Lifestyle: Energy Source");
+        }
+        
+        String[] carbonSourceAttributes = {"autoCo2","aSaccharolytic","fermentative","methanotroph","methanotrophy","nonFermentative",
+        		"phototrophy","saccharolytic","methylotrophy","chitinolysis","cellulolysis","xylanolysis","ligninolysis","fermentation",
+        		"aerobic chemoheterotrophy","nonphotosynthetic cyanobacteria","photosynthetic cyanobacteria","aerobic anoxygenic phototrophy",
+        		"anoxygenic photoautotrophy H2 oxidizing","anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing",
+        		"anoxygenic photoautotrophy","chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","photoheterotrophy",
+        		"dGlucose"};
+        
+        for (String attr : carbonSourceAttributes) {
+            attributeCategoryMap.put(attr, "Lifestyle: Carbon Source");
+        }
+        
+        
+        String[] host_associatedSourceAttributes= {"symbiont","plant pathogen","invertebrate parasites","human pathogens septicemia",
+        		"intracellular parasites","predatory or exoparasitic","human pathogens pneumonia","human pathogens nosocomia",
+        		"human pathogens meningitis","human pathogens gastroenteritis","human pathogens diarrhea","human pathogens all",
+        		"fish parasites","human gut","human associated","mammal gut","animal parasites or symbionts" };
 
 
+        for (String attr : host_associatedSourceAttributes) {
+            attributeCategoryMap.put(attr, "Lifestyle: Host - Associated");
+        }		
+        
+        
+        String[] biogeochemical_processesAttributes = { "NOB","nitrogen fixation","aob","dark sulfite oxidation","fixingN2",
+        		"nitrate ammonification","sulfateReducer","sulfite respiration","arsenate detoxification","nitrite ammonification",
+        		"acetoclastic methanogenesis","thiosulfate respiration","arsenate respiration","nitrite respiration",
+        		"methanogenesis by disproportionation of methyl groups","respiration of sulfur compounds","dissimilatory arsenate reduction",
+        		"dark sulfide oxidation","methanogenesis using formate","oil bioremediation","arsenite oxidation detoxification",
+        		"dark sulfur oxidation","methanogenesis by CO2 reduction with H2","aromatic hydrocarbon degradation","arsenite oxidation energy yielding",
+        		"dark thiosulfate oxidation","methanogenesis by reduction of methyl compounds with H2","aromatic compound degradation",
+        		"dissimilatory arsenite oxidation","dark oxidation of sulfur compounds","hydrogenotrophic methanogenesis",
+        		"aliphatic non methane hydrocarbon degradation","anammox","manganese oxidation","methanogenesis","hydrocarbon degradation",
+        		"nitrate denitrification","fumarate respiration","methanol oxidation","manganese respiration","nitrite denitrification",
+        		"dark iron oxidation","nitrous oxide denitrification","nitrate respiration","aerobic ammonia oxidation",
+        		"nitrate reduction","denitrification","nitrogen respiration","aerobic nitrite oxidation","chlorate reducers",
+        		"sulfate respiration","nitrification","dark hydrogen oxidation","iron respiration","sulfur respiration","plastic degradation",
+        		"reductive acetogenesis","ureolysis"     };
+
+        
+        for (String attr : biogeochemical_processesAttributes) {
+            attributeCategoryMap.put(attr, "Biogeochemical processes");
+        }		
+        
+        
+        String[] carbonCycleAttributes= {"acetoclastic methanogenesis","methanogenesis by disproportionation of methyl groups",
+        		"methanogenesis using formate","methanogenesis by CO2 reduction with H2",
+        		"methanogenesis by reduction of methyl compounds with H2","hydrogenotrophic methanogenesis",
+        		"methanogenesis","methanol oxidation","oil bioremediation","aromatic hydrocarbon degradation",
+        		"aromatic compound degradation","aliphatic non methane hydrocarbon degradation","hydrocarbon degradation",
+        		"fumarate respiration","plastic degradation","reductive acetogenesis"  };
+
+        
+        		
+        for (String attr : carbonCycleAttributes) {
+            attributeCategoryMap.put(attr, "Biogeochemical processes: Carbon Cycle");
+        }	
+        
+        
+        String[] nitrogenCycleattributes = {"NOB","aob","fixingN2","anammox","nitrate denitrification","nitrite denitrification",
+        		"nitrous oxide denitrification","aerobic ammonia oxidation","denitrification","aerobic nitrite oxidation",
+        		"nitrogen fixation","nitrate ammonification","nitrite ammonification","nitrite respiration","nitrate respiration",
+        		"nitrate reduction","nitrogen respiration","nitrification","ureolysis" };
+
+        		
+        for (String attr : nitrogenCycleattributes) {
+            attributeCategoryMap.put(attr, "Biogeochemical processes: Nitrogen Cycle");
+        }	
+        
+        String[] sulfurCycleAttributes  = {"sulfateReducer","sulfate respiration","sulfur respiration","dark sulfite oxidation",
+        		"sulfite respiration","thiosulfate respiration","respiration of sulfur compounds","dark sulfide oxidation",
+        		"dark sulfur oxidation","dark thiosulfate oxidation","dark oxidation of sulfur compounds" };
+
+        
+        for (String attr : sulfurCycleAttributes) {
+            attributeCategoryMap.put(attr, "Biogeochemical processes: Sulfur Cycle");
+        }	
+        
+        
+        String[] arsenicCycleAttributes= {"arsenate detoxification","arsenate respiration","dissimilatory arsenate reduction",
+        		"arsenite oxidation detoxification","arsenite oxidation energy yielding","dissimilatory arsenite oxidation"
+        };
+       
+   
+        for (String attr : arsenicCycleAttributes) {
+            attributeCategoryMap.put(attr, "Biogeochemical processes: Arsenic Cycle");
+        }	
+            
+        	
+        
+        String[] metaboliteProducedAttributes= {"aceticAcid","butanol","butyricAcid","dLacticAcid","ethanol",
+        		"hydrogen","indole","isobutyricAcid","isovalericAcid","lLacticAcid","formicAcid","rAcetoin","succinicAcid"};
+
+        
+        for (String attr : metaboliteProducedAttributes) {
+            attributeCategoryMap.put(attr, "Metabolites Produced");
+        }	
+
+        
+        String[] miscAttributes= {"chloroplasts","T3SS","T6SS"};
+
+        for (String attr : miscAttributes) {
+            attributeCategoryMap.put(attr, "Misc");
+        }	
+    		 
+     
+
+        // Return the category for the given attribute
+        return attributeCategoryMap.getOrDefault(attribute, "Unknown");
+    }
+  
+    // Method to get all categories
+    public static List<String> getCategories() {
+    	return Arrays.asList(
+    	        "Lifestyle",
+    	        "Lifestyle: Energy Source",
+    	        "Lifestyle: Carbon Source",
+    	        "Lifestyle: Host - Associated",
+    	        "Biogeochemical processes",
+    	        "Biogeochemical processes: Carbon Cycle",
+    	        "Biogeochemical processes: Nitrogen Cycle",
+    	        "Biogeochemical processes: Sulfur Cycle",
+    	        "Biogeochemical processes: Arsenic Cycle",
+    	        "Metabolites Produced",
+    	        "Misc"
+    	        
+    	        
+    	    );
+    }
 
 }

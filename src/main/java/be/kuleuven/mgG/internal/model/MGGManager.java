@@ -10,6 +10,7 @@ import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
 
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -100,7 +101,16 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	
 	
 	private boolean highlightNeighbors = false;
-		
+	private boolean showMspecies = false;
+	private boolean showSingletons = true;
+	
+	private Map<String, Color> channelColors;
+	public static String[] channels = { "cooperation", "competition"
+};
+	
+	public static String HighlightNeighbors = "highlightNeighbors";
+	public static String ShowSingletons = "showSingletons";
+	
 	//private Icon MGGicon;
 
 	
@@ -130,6 +140,14 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		commandExecutorTaskFactory = cyRegistrar.getService(CommandExecutorTaskFactory.class);
 		dialogTaskManager = cyRegistrar.getService(TaskManager.class);
 		//MGGicon = new ImageIcon(getClass().getResource("/images/scNetViz.png"));
+		
+		
+		channelColors = new HashMap<>();
+		// Set up our default channel colors
+		
+		channelColors.put("cooperation",Color.MAGENTA);
+		channelColors.put("competition",Color.BLUE);
+		
 					
 	}
 	
@@ -175,6 +193,32 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     public JSONObject getServerResponse() {
         return this.serverResponse;
     }
+    
+    public Map<String, Color> getChannelColors() { return channelColors; }
+
+	public void setChannelColors(Map<String, Color> colorMap) { channelColors = colorMap; }
+	public void setChannelColors(String colors) { 
+		String[] colorStrs = colors.split("\\|");
+		if (colorStrs.length != 8) return;
+
+		channelColors = new HashMap<>();
+		for (int i = 0; i < colorStrs.length; i++) {
+			channelColors.put(channels[i], parseColor(colorStrs[i]));
+		}
+	}
+	private Color parseColor(String s) {
+		int r = 0, g = 0, b = 0;
+		if (s.length() == 9)
+			s = s.substring(3);
+		else if (s.length() == 7)
+			s = s.substring(1);
+		else return Color.BLACK;
+
+		r = Integer.parseInt(s.substring(0,2), 16);
+		g = Integer.parseInt(s.substring(2,4), 16);
+		b = Integer.parseInt(s.substring(4,6), 16);
+		return new Color(r,g,b);
+	}
 	
   //-----------------------------addition------------------------------for cytopanel------------------------------------------------------------------------------------------  
     
@@ -188,6 +232,8 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     return newNetwork;
 	}
 
+
+    
 	public void setShowResultsPanelTaskFactory(ShowResultsPanelTaskFactory factory) {
 		resultsPanelTaskFactory = factory;		
 	}
@@ -204,9 +250,22 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		highlightNeighbors = set; 
 	}
 
+	//public boolean showMspecies() { return showMspecies; }
+	//public void setShowMspecies(boolean set) { 
+	//	showMspecies = set; 
+	//}
 	
+	public boolean showSingletons() { return showSingletons; }
+
+	public void setShowSingletons(boolean set) { 
+		showSingletons = set; 
+	}
+
 	
-	
+	public void updateControls() {
+		if (cytoPanel != null)
+			cytoPanel.updateControls();
+	}
 	
 	
     
@@ -332,7 +391,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     				}
     			}
 
-    
+    			
     //------------------------------------------------------------------------------------------------------------------------
     
     	/**

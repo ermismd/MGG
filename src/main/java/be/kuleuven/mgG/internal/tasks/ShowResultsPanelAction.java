@@ -41,7 +41,7 @@ public class ShowResultsPanelAction extends AbstractCyAction {
 	
 	@Override
 	public void updateEnableState() {
-		setEnabled(Mutils.isMGGNetwork(manager.getCurrentNetwork()));
+		setEnabled(Mutils.isMGGNetworkMicrobetagDB(manager.getCurrentNetwork()));
 	}
 	
 }

@@ -20,53 +20,53 @@ import be.kuleuven.mgG.internal.view.MGGCytoPanel;
 
 
 public class ShowResultsPanelTask extends AbstractTask {
-	final MGGManager manager;
-	final ShowResultsPanelTaskFactory factory;
-	final boolean show;
+    final MGGManager manager;
+    final ShowResultsPanelTaskFactory factory;
+    final boolean show;
 
-	public ShowResultsPanelTask(final MGGManager manager, 
-	                            final ShowResultsPanelTaskFactory factory, boolean show) {
-		this.manager = manager;
-		this.factory = factory;
-		this.show = show;
-	}
+    public ShowResultsPanelTask(final MGGManager manager,
+        final ShowResultsPanelTaskFactory factory, boolean show) {
+        this.manager = manager;
+        this.factory = factory;
+        this.show = show;
+    }
 
-	public void run(TaskMonitor monitor) {
-		monitor.setTitle("Show/hide results panel");
+    public void run(TaskMonitor monitor) {
+        monitor.setTitle("Show/hide results panel");
 
-		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
-		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
+        CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+        CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
 
-		// If the panel is not already registered, create it
-		if (cytoPanel.indexOfComponent("be.kuleuven.mgG.internal.MGG") < 0) {
-			CytoPanelComponent2 panel = new MGGCytoPanel(manager);
+        // If the panel is not already registered, create it
+        if (cytoPanel.indexOfComponent("be.kuleuven.mgG.internal.MGG") < 0) {
+            CytoPanelComponent2 panel = new MGGCytoPanel(manager);
 
-			// Register it
-			manager.registerService(panel, CytoPanelComponent.class, new Properties());
+            // Register it
+            manager.registerService(panel, CytoPanelComponent.class, new Properties());
 
-			if (cytoPanel.getState() == CytoPanelState.HIDE)
-				cytoPanel.setState(CytoPanelState.DOCK);
+            if (cytoPanel.getState() == CytoPanelState.HIDE)
+                cytoPanel.setState(CytoPanelState.DOCK);
 
-		} else {
-			int compIndex = cytoPanel.indexOfComponent("be.kuleuven.mgG.internal.MGG");
-			Component panel = cytoPanel.getComponentAt(compIndex);
-			if (panel instanceof CytoPanelComponent2) {
-				// Unregister it
-				manager.unregisterService(panel, CytoPanelComponent.class);
-				manager.setCytoPanel(null);
-			}
-		}
+        } else {
+            int compIndex = cytoPanel.indexOfComponent("be.kuleuven.mgG.internal.MGG");
+            Component panel = cytoPanel.getComponentAt(compIndex);
+            if (panel instanceof CytoPanelComponent2) {
+                // Unregister it
+                manager.unregisterService(panel, CytoPanelComponent.class);
+                manager.setCytoPanel(null);
+            }
+        }
 
-		// factory.reregister();
-	}
+        // factory.reregister();
+    }
 
-	public static boolean isPanelRegistered(MGGManager manager) {
-		CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
-		CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
+    public static boolean isPanelRegistered(MGGManager manager) {
+        CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
+        CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
 
-		if (cytoPanel.indexOfComponent("be.kuleuven.mgG.internal.MGG") >= 0) 
-			return true;
+        if (cytoPanel.indexOfComponent("be.kuleuven.mgG.internal.MGG") >= 0)
+            return true;
 
-		return false;
-	}
+        return false;
+    }
 }

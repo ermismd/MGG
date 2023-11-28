@@ -23,38 +23,29 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 
 
 public class ShowResultsPanelTaskFactory extends AbstractTaskFactory {
-	final MGGManager manager;
-	boolean show = false;
+    final MGGManager manager;
+    boolean show = false;
 
-	public ShowResultsPanelTaskFactory(final MGGManager manager) {
-		this.manager = manager;
-	}
+    public ShowResultsPanelTaskFactory(final MGGManager manager) {
+        this.manager = manager;
+    }
 
-	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ShowResultsPanelTask(manager, this, show));
-	}
+    public TaskIterator createTaskIterator() {
+        return new TaskIterator(new ShowResultsPanelTask(manager, this, show));
+    }
 
 
-	public boolean isReady() {
-		// We always want to be able to shut it off
-	    if (!show) return true;
+    public boolean isReady() {
+        // We always want to be able to shut it off
+        if (!show) return true;
 
-	    CyNetwork net = manager.getCurrentNetwork();
-	    if (net == null) return false;
+        CyNetwork net = manager.getCurrentNetwork();
+        if (net == null) return false;
 
-	    //* Check for the existence of the 'flashweave-score' column in the edge table
-	  // boolean hasFlashweaveScore = net.getRow(net).get("weight::weight",Double.class) != null; 
+        
+        if (Mutils.isMGGNetworkMicrobetagDB(net)) return true;
 
-	    // Implement other checks if necessary
-	    // boolean hasIdColumn = net.getDefaultNodeTable().getColumn("@id") != null;
-	    // boolean hasScoreColumn = net.getDefaultEdgeTable().getColumn("score") != null;
+        return false;
 
-	    //* Return true if the column exists, otherwise return false
-	  // return hasFlashweaveScore;
-	   if( Mutils.isMGGNetwork(net)) return true;
-	   
-	    return false;
-	    
-	}
+    }
 }
-

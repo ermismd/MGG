@@ -160,39 +160,43 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 
 				// Check if the network is not null
 				if (currentNetwork != null) {
+				    CyTable nodeTable = currentNetwork.getDefaultNodeTable();
+
 				    // Get the network view for the current network
 				    Collection<CyNetworkView> views = networkViewManager.getNetworkViews(currentNetwork);
 
-				    // Check if there are views associated with the network
+				    // Apply visual styles if there are views associated with the network
 				    if (views != null && !views.isEmpty()) {
-				        // Use the first view (most networks will only have one view)
 				        CyNetworkView currentNetworkView = views.iterator().next();
-				    
-				        // Apply the visual style to the current network view
 				        style.apply(currentNetworkView);
 
 				        vmmServiceRef.addVisualStyle(style);
 				        vmmServiceRef.setCurrentVisualStyle(style);
 				        currentNetworkView.updateView();
-				
-				    	// layout ( "force-directed")
-						CyLayoutAlgorithm layout = layoutAlgorithmManager.getLayout("force-directed");
-						if (layout == null) {
-							// layout is not found, use the default layout
-							layout = layoutAlgorithmManager.getDefaultLayout();
-						}
-					// Create a TaskIterator to apply the layout
-						TaskIterator layoutTask = layout.createTaskIterator(currentNetworkView, layout.createLayoutContext(), CyLayoutAlgorithm.ALL_NODE_VIEWS, null);
+				    }
 
-					// Execute the TaskIterator using a TaskManager
-						TaskManager<?, ?> taskManager = mggManager.getService(TaskManager.class);
-						taskManager.execute(layoutTask);
-						
-						// After layout application, update the view to reflect the changes
-					    currentNetworkView.updateView();
-					    		
-					    
-			}	
+				    // Check if the node table does not contain the manta::cluster column
+				    if (nodeTable.getColumn("manta::cluster") == null) {
+				        // Apply force-directed layout as this column is not present
+				        if (views != null && !views.isEmpty()) {
+				            CyNetworkView currentNetworkView = views.iterator().next();
+
+				            CyLayoutAlgorithm layout = layoutAlgorithmManager.getLayout("force-directed");
+				            if (layout == null) {
+				                layout = layoutAlgorithmManager.getDefaultLayout();
+				            }
+
+				            TaskIterator layoutTask = layout.createTaskIterator(currentNetworkView, layout.createLayoutContext(), CyLayoutAlgorithm.ALL_NODE_VIEWS, null);
+				            TaskManager<?, ?> taskManager = mggManager.getService(TaskManager.class);
+				            taskManager.execute(layoutTask);
+
+				            currentNetworkView.updateView();
+				        }
+				    } else {
+				        // The manta::cluster column is present, do not apply force-directed layout
+				        //  add alternative layout  here 
+				    }
+				}
 				        
 				   
 			           
@@ -220,7 +224,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				        
 				    
 	}
-	}
+	
 			    
 			    
 			
