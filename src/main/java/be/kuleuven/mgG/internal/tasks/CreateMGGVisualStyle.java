@@ -214,8 +214,8 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 			    // Set the boundary points and associated colors
 			    edgeColorMapping.addPoint(-1.0, negativeRange); // values from -1 to -0.01 are Red
 			    edgeColorMapping.addPoint(-0.01, negativeRange); // this ensures that the Red continues until -0.01
-			    edgeColorMapping.addPoint(0.0, neutralRange); // values from 0 to 0.3 are Black
-			    edgeColorMapping.addPoint(0.3, neutralRange); // this ensures that the Black continues until 0.3
+			   // edgeColorMapping.addPoint(0.0, neutralRange); // values from 0 to 0.3 are Black
+			    //edgeColorMapping.addPoint(0.3, neutralRange); // this ensures that the Black continues until 0.3
 			    edgeColorMapping.addPoint(0.3, positiveRange); // values from 0.3 to 1 are Green
 			    edgeColorMapping.addPoint(1.0, positiveRange); // this ensures that the Green continues up to 1
 			    

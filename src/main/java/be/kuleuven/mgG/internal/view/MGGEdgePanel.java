@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -40,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -63,8 +65,7 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.utils.SwingLink;
 import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
-
-
+import be.kuleuven.mgG.internal.utils.ViewUtils;
 
 
 
@@ -78,7 +79,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
     JPanel scorePanel;
     JButton deleteEdges;
     private JPanel WeightPanel = null;
-    JPanel seedPanel;
+    private boolean showComplEdgesState ;
+    //JPanel seedPanel;
     private Color defaultBackground;
     
     
@@ -147,19 +149,43 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         JPanel upperPanel = new JPanel(new GridBagLayout());
         
-     // Creating the checkbox for Compl edges
-        JCheckBox showComplEdges = new JCheckBox("Show Edges with Complements");
-        showComplEdges.setFont(labelFont);
-        showComplEdges.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
+//   
+//        JCheckBox showComplEdges = new JCheckBox("Show Edges with Complements");
+//        showComplEdges.setFont(labelFont);
+//        showComplEdges.addItemListener(new ItemListener() {
+//            public void itemStateChanged(ItemEvent e) {
+//                if (e.getStateChange() == ItemEvent.SELECTED) {
+//                    doShowComplEdges(true); // Show edges with Compl values
+//                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+//                    doShowComplEdges(false); // Show all edges
+//                }
+//            }
+//        });
+//        upperPanel.add(showComplEdges);
+        
+     
+        JButton showComplEdgesButton = new JButton("Edges with Pathway Complementarities");
+        showComplEdgesButton.setFont(labelFont);
+        showComplEdgesButton.setToolTipText("Show/Hide Edges with Pathway Complementarities");
+        showComplEdgesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Toggle the state
+                showComplEdgesState = !showComplEdgesState;
+
+                // Update the button label based on the current state
+                if (showComplEdgesState) {
+                    showComplEdgesButton.setText("All Edges ");
+                    showComplEdgesState=true;
                     doShowComplEdges(true); // Show edges with Compl values
-                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                } else {
+                    showComplEdgesButton.setText("Edges with Pathway Complementarities");
+                    showComplEdgesState=false;
                     doShowComplEdges(false); // Show all edges
                 }
             }
         });
-        upperPanel.add(showComplEdges);
+        upperPanel.add(showComplEdgesButton);
         
         upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
@@ -199,7 +225,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
             }
         }
 
-         view.updateView(); // Uncomment if necessary to refresh the view
+         view.updateView(); 
     }
 
 
@@ -237,13 +263,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
     //------------------------------------------------------------------------------------
     private JPanel createSeedPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
+		subScorePanel = new JPanel();
+		subScorePanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
 		List<String> seedList = Mutils.getSeedList(currentNetwork);
 
-		// OK, now we want to create 3 panels: Color, Label, and Filter
+		// create 3 panels: Color, Label, and Filter
 		{
 			JPanel colorPanel = new JPanel();
 			colorPanel.setMinimumSize(new Dimension(25,30));
@@ -260,7 +286,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 			}
 
 			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			panel.add(colorPanel, c.anchor("northwest").expandVert());
+			subScorePanel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
 
 		{
@@ -279,7 +305,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 				labelPanel.add(scoreLabel, d.down().expandVert());
 			}
 			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-			panel.add(labelPanel, c.right().expandVert());
+			subScorePanel.add(labelPanel, c.right().expandVert());
 		}
 
 		{
@@ -287,30 +313,90 @@ public class MGGEdgePanel extends AbstractMggPanel {
 			filterPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Filters");
-			lbl.setToolTipText("Hide edges with a confidence score below the chosen subscore.");
+			lbl.setToolTipText("Hide edges  score below the chosen .");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
 			for (String seedScore: seedList) {
-				JComponent scoreSlider = createFilterSlider3("Seed Score", seedScore, currentNetwork, false, 100.0);
+				JComponent scoreSlider = createFilterSlider3("seed", seedScore, currentNetwork, false, 100.0);
 				scoreSlider.setMinimumSize(new Dimension(100,30));
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
 			}
 			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			panel.add(filterPanel, c.right().expandBoth());
+			subScorePanel.add(filterPanel, c.right().expandBoth());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Seed Scores", panel, false, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Seed Scores", subScorePanel, false, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
 
 	}
+    
     public void updateSeedPanel() {
-		seedPanel.removeAll();
-		EasyGBC d = new EasyGBC();
-		seedPanel.add(createSeedPanel(), d.anchor("west").expandHoriz());
-		seedPanel.add(new JPanel(), d.down().anchor("west").expandBoth());
+    	if (subScorePanel==null) return;
+    	subScorePanel.removeAll();
+    	EasyGBC c = new EasyGBC();
+		List<String> seedList = Mutils.getSeedList(currentNetwork);
+
+		// create 3 panels: Color, Label, and Filter
+		{
+			JPanel colorPanel = new JPanel();
+			colorPanel.setMinimumSize(new Dimension(25,30));
+			colorPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Color");
+			lbl.setToolTipText("Color edges with this type seed score.");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			colorPanel.add(lbl, d.anchor("north").noExpand());
+
+			for (String seedScore: seedList) {
+				colorPanel.add(createScoreCheckBox(seedScore), d.down().expandVert());
+			}
+
+			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			subScorePanel.add(colorPanel, c.anchor("northwest").expandVert());
+		}
+
+		{
+			JPanel labelPanel = new JPanel();
+			labelPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Seed Score");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			labelPanel.add(lbl, d.anchor("north").noExpand());
+			for (String seedScore: seedList) {
+				JLabel scoreLabel = new JLabel(seedScore);
+				scoreLabel.setFont(textFont);
+				scoreLabel.setMinimumSize(new Dimension(100,30));
+				scoreLabel.setMaximumSize(new Dimension(100,30));
+				labelPanel.add(scoreLabel, d.down().expandVert());
+			}
+			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+			subScorePanel.add(labelPanel, c.right().expandVert());
+		}
+
+		{
+			JPanel filterPanel = new JPanel();
+			filterPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Filters");
+			lbl.setToolTipText("Hide edges  score below the chosen .");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			filterPanel.add(lbl, d.anchor("north").noExpand());
+			for (String seedScore: seedList) {
+				JComponent scoreSlider = createFilterSlider3("seed", seedScore, currentNetwork, false, 100.0);
+				scoreSlider.setMinimumSize(new Dimension(100,30));
+				// scoreSlider.setMaximumSize(new Dimension(100,30));
+				filterPanel.add(scoreSlider, d.down().expandBoth());
+			}
+			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			subScorePanel.add(filterPanel, c.right().expandBoth());
+		}
+		return;
 	}
     
     private JComponent createScoreCheckBox(String seedScore) {
@@ -379,6 +465,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         }
         edgesSPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected edges", edgesSPanel, false, 10);
+        collapsablePanel.setAlwaysExpanded();
         collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
         return collapsablePanel;
     }
@@ -406,7 +493,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
     
     
-    // Helper method to get taxon name from node table
+    //  method to get taxon name from node table
     private String getTaxonName(CyTable nodeTable, CyNode node) {
         if (nodeTable.getColumn("microbetag::taxon name") != null) {
             Object taxonValue = nodeTable.getRow(node.getSUID()).get("microbetag::taxon name", String.class);
@@ -422,13 +509,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0; // makes sure components use the full horizontal space
+        gbc.weightx = 1.0; // use the full horizontal space
 
         // Set constraints
         gbc.gridx = 0; // Column 0
         gbc.gridy = 0; // Start from row 0
         gbc.anchor = GridBagConstraints.WEST; // Left-align 
-        gbc.insets = new Insets(5, 5, 5, 5); // 5pixel marg
+        gbc.insets = new Insets(5, 5, 5, 5); // 5pix marg
 
         EasyGBC c = new EasyGBC();
 
@@ -450,12 +537,12 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         
         JTextArea sourceTaxonArea = new JTextArea("Donor Taxon: " + sourceTaxon);
-        setJTextAreaAttributes(sourceTaxonArea);
+        ViewUtils.setJTextAreaAttributesEdges(sourceTaxonArea);
         panel.add(sourceTaxonArea, gbc);
         gbc.gridy++;
     
         JTextArea targetTaxonArea = new JTextArea("Beneficiary Taxon: " + targetTaxon);
-        setJTextAreaAttributes(targetTaxonArea);
+        ViewUtils.setJTextAreaAttributesEdges(targetTaxonArea);
         panel.add(targetTaxonArea, gbc);
         gbc.gridy++;
 
@@ -477,7 +564,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         Object interactionValue = (edgeTable.getColumn("interaction type") != null) ? edgeTable.getRow(edge.getSUID()).get("interaction type", edgeTable.getColumn("interaction type").getType()) : null;
         JTextArea interactionArea = new JTextArea("Interaction: " + (interactionValue != null ? interactionValue.toString() : "null"));
-        setJTextAreaAttributes(interactionArea);
+        ViewUtils.setJTextAreaAttributesEdges(interactionArea);
         panel.add(interactionArea, gbc);
         gbc.gridy++;
         
@@ -485,7 +572,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation", edgeTable.getColumn("seed::cooperation").getType()) : null;
         if (cooperationSeedValue != null) {
             JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
-            setJTextAreaAttributes(cooperationSeedArea);
+            ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
             panel.add(cooperationSeedArea, gbc);
             gbc.gridy++;
         }
@@ -493,23 +580,59 @@ public class MGGEdgePanel extends AbstractMggPanel {
         Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
         if (competitionSeedValue != null) {
             JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
-            setJTextAreaAttributes(competitionSeedArea);
+            ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
             panel.add(competitionSeedArea, gbc);
             gbc.gridy++;
         }
         
         JTextArea donorArea = new JTextArea("Donor: " + donor );
-        setJTextAreaAttributes(donorArea);
+        ViewUtils.setJTextAreaAttributesEdges(donorArea);
         panel.add(donorArea, gbc);
         gbc.gridy++;
         
         JTextArea BeneficiaryArea = new JTextArea( "Beneficiary: " + beneficiary);
-        setJTextAreaAttributes(BeneficiaryArea);
+        ViewUtils.setJTextAreaAttributesEdges(BeneficiaryArea);
         panel.add(BeneficiaryArea, gbc);
         gbc.gridy++;
         
   
+     // Create a sub-panel  for the complement input components
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
+        // Label 
+        JLabel complementLabel = new JLabel("Input Kegg Module:");
+        complementLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        inputPanel.add(complementLabel);
+
+        // JTextField for input
+        JTextField complementField = new JTextField(10); 
+        complementField.setToolTipText("Format should be like K00928 or M00001 "); 
+        inputPanel.add(complementField);
+
+        // JButton to open the link
+        JButton openLinkButton = new JButton("Open Link");
+        inputPanel.add(openLinkButton);
+
+    
+        panel.add(inputPanel, gbc);
+        gbc.gridy++;
+
+        
+        openLinkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                String complement = complementField.getText().trim();
+
+                if (!complement.isEmpty()) {
+                    complement = complement.replace("[", ""); 
+                    
+                    String url = "https://www.genome.jp/entry/" + complement;
+                    SwingLink link = new SwingLink(complement, url, openBrowser);
+                    link.open1(link.getURI()); 
+                }
+            }
+        });
 
 
         //------------------- nested Pathways Panel---------------------------------------
@@ -519,7 +642,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         GridBagConstraints pathgbc = new GridBagConstraints();
 
         pathgbc.fill = GridBagConstraints.HORIZONTAL;
-        pathgbc.weightx = 1.0; // makes sure components use the full horizontal space
+        pathgbc.weightx = 1.0; // use the full horizontal space
 
         // Set constraints
         pathgbc.gridx = 0; // Column 0
@@ -546,7 +669,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 		    public Class<?> getColumnClass(int columnIndex) {
                 		        switch (columnIndex) {
                 		            case 0: return SwingLink.class; // For Kegg Module links
-                		            case 3: return SwingLink.class; // for Complement
+                		            //case 3: return SwingLink.class; // for Complement
                 		            case 5: return SwingLink.class; //for color map links
                 		            default: return Object.class;
                 		        }
@@ -569,8 +692,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
                         	
                         	// Handle Kegg Module Link
                         	
-                        	 String moduleId = parts[0].trim(); // Trim to remove leading or trailing spaces
-                             moduleId = moduleId.replace("[", ""); // Remove  unwanted "[ ]" characters
+                        	 String moduleId = parts[0].trim(); // Trim to remove before and after spaces
+                             moduleId = moduleId.replace("[", ""); // Remove  unwanted "[" "]" 
                              SwingLink  link = new SwingLink(moduleId, "https://www.genome.jp/entry/" + moduleId, openBrowser);
                              
 
@@ -588,7 +711,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                  
                 	JTable table = new JTable(tableM);
                 
-                	// Setting the custom renderer for SwingLink class
+                	//  custom renderer for SwingLink class
                 	table.setDefaultRenderer(SwingLink.class, new SwingLinkCellRenderer());
                 	
                 	table.addMouseListener(new MouseAdapter() {
@@ -606,7 +729,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	});
                 	
             
-                	  //  preferred size of the scroll pane based on the number of rows
+                	// size of the scroll pane based on the number of rows
                     int rowHeight = table.getRowHeight();
                     int tableHeight = (table.getRowCount() * rowHeight) + table.getTableHeader().getPreferredSize().height;
                     JScrollPane scrollPane = new JScrollPane(table);
@@ -624,7 +747,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         
     
-     CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathways", PathwaysPanel, true, 10);
+     CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 10);
      PathwaysCollapsablePanel .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
      panel.add(PathwaysCollapsablePanel, gbc);
      gbc.gridy++;
@@ -643,15 +766,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
     
     
-    private void setJTextAreaAttributes(JTextArea textArea) {
-        textArea.setWrapStyleWord(true);
-        textArea.setLineWrap(true);
-        textArea.setEditable(false);
-        textArea.setFont(new Font("Arial", Font.PLAIN, 10));
-        textArea.setOpaque(false);
-        textArea.setBorder(null);
-        textArea.setPreferredSize(new Dimension(500, 15));
-    }
+    
 
 
     //-----------------------------------------------------------------------------
@@ -697,6 +812,23 @@ public class MGGEdgePanel extends AbstractMggPanel {
     }
 
 
+	@Override
+	double initFilterSeed(String type, String label) {
+		double minValue = 1.0;
+		for (CyEdge edge: currentNetwork.getEdgeList()) {
+            CyRow edgeRow = currentNetwork.getRow(edge);
+
+            Double v = edgeRow.get(type, label, Double.class);
+            if (v == null) {
+                minValue = 0.0;
+                break;
+            } else if (v < minValue) {
+                minValue = v.doubleValue();
+            }
+        }
+        return minValue;
+
+	}
 
 
     @Override
@@ -717,25 +849,27 @@ public class MGGEdgePanel extends AbstractMggPanel {
             boolean show = true;
             for (String lbl: filter.keySet()) {
                 Double v = edgeRow.get(type, lbl, Double.class);
-                double nv = filter.get(lbl);
+               // double nv = filter.get(lbl);
+                Double nv = (filter.get(lbl));
                 if ((v == null && nv > 0) || (v != null && v < nv)) {
                     show = false;
                     break;
                 }
             }
 
-            View < CyEdge > edgeView = view.getEdgeView(edge);
-            if (edgeView == null) continue;
+            //View < CyEdge > edgeView = view.getEdgeView(edge);
+            //if (edgeView == null) continue;
 
             if (show) {
                 // Make the edge visible
-                edgeView.clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
+                view.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
+                //view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
                 System.out.println("Edge " + edge + " is set to visible");
             } else {
                 // Hide the edge and deselect it if it doesn't meet the criteria
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
-                net.getRow(edge).set(CyNetwork.SELECTED, false);
+                view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
+               // net.getRow(edge).set(CyNetwork.SELECTED, false);
+                view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
                 System.out.println("Edge " + edge + " is hidden");
 
             }
@@ -784,7 +918,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         edgesSPanel.removeAll();
         EasyGBC c = new EasyGBC();
-        Mutils.clearHighlight(manager, manager.getCurrentNetworkView());
+        //Mutils.clearHighlight(manager, manager.getCurrentNetworkView());
 
         for (CyEdge edge: edges) {
             JPanel newPanel = createEdgePanel(edge);
@@ -799,22 +933,5 @@ public class MGGEdgePanel extends AbstractMggPanel {
         repaint();
     }
 
-	@Override
-	double initFilterSeed(String type, String label) {
-		double minValue = 1.0;
-        for (CyNode node: currentNetwork.getNodeList()) {
-            CyRow nodeRow = currentNetwork.getRow(node);
-
-            Double v = nodeRow.get(type, label, Double.class);
-            if (v == null) {
-                minValue = 0.0;
-                break;
-            } else if (v < minValue) {
-                minValue = v.doubleValue();
-            }
-        }
-        return minValue;
-
-	}
 
 }

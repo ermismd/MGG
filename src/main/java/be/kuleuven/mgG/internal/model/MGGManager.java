@@ -102,7 +102,8 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	
 	private boolean highlightNeighbors = false;
 	private boolean showMspecies = false;
-	private boolean showSingletons = true;
+	private boolean showSingletons = false;
+	
 	
 	private Map<String, Color> channelColors;
 	public static String[] channels = { "cooperation", "competition"
@@ -250,10 +251,10 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		highlightNeighbors = set; 
 	}
 
-	//public boolean showMspecies() { return showMspecies; }
-	//public void setShowMspecies(boolean set) { 
-	//	showMspecies = set; 
-	//}
+	public boolean showMspecies() { return showMspecies; }
+	public void setShowMspecies(boolean set) { 
+		showMspecies = set; 
+	}
 	
 	public boolean showSingletons() { return showSingletons; }
 
@@ -261,6 +262,8 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		showSingletons = set; 
 	}
 
+	
+	
 	
 	public void updateControls() {
 		if (cytoPanel != null)

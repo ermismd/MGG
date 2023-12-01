@@ -23,6 +23,7 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
+import be.kuleuven.mgG.internal.view.MGGNodePanel;
 
 
 
@@ -83,13 +84,66 @@ public class Mutils {
 			List<CyEdge> edges = net.getAdjacentEdgeList(node, CyEdge.Type.ANY);
 			if (edges != null && edges.size() > 0) continue;
 			if (!show)
-				nv.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
+				nv.setLockedValue(BasicVisualLexicon.NODE_VISIBLE,false);
 			else
 				nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
 		}
 	}
     
+    public static void doShowMspecies(CyNetworkView view, boolean show, boolean showSingletons,boolean phendbselected) {
+    	
+   	   	
+    	
+    	if (phendbselected) {
+            return;
+        }
     
+        //CyNetworkView view = manager.getCurrentNetworkView();
+        CyNetwork net = view.getModel();
+
+        String columnName = "microbetag::ncbi-tax-level";
+        //String targetValue = "mspecies";
+
+        // Check if the column exists
+       if (net.getDefaultNodeTable().getColumn(columnName) == null) {
+           return;
+        }
+       
+       
+
+       // for (CyNode node : net.getNodeList()) {
+          //  View<CyNode> nodeView = view.getNodeView(node);
+        for (View<CyNode> nodeView:view.getNodeViews()) {
+            if (nodeView == null) continue;
+            CyNode node=nodeView.getModel();
+            if (show) {
+                CyRow nodeRow = net.getRow(node);
+                String attributeValue = nodeRow.get(columnName, String.class);
+               boolean isVisible = "mspecies".equals(attributeValue);
+               
+                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, isVisible);}
+//            else
+//            	nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+//            } //else {
+//                // If 'show' is false, set all nodes to visible
+//               //nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+//            }   
+            else {
+                // When show is false
+                if (showSingletons==false) {
+                    // Hide singletons
+                    List<CyEdge> edges = net.getAdjacentEdgeList(node, CyEdge.Type.ANY);
+                    boolean isSingleton = edges == null || edges.isEmpty();
+                    nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, !isSingleton);
+                } else {
+                    // If hide singletons is not enabled, clear visibility lock
+                    nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
+                }
+            }
+        }
+    }
+          
+    	
     
     
 

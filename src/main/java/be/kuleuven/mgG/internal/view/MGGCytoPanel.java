@@ -94,6 +94,7 @@ public class MGGCytoPanel extends JPanel
 		nodePanel.removeFilters(current);
 		nodePanel.undoFilters();
 		nodePanel.networkChanged(current);
+		
 		edgePanel.removeFilters(current);
 		edgePanel.undoFilters();
 		edgePanel.networkChanged(current);
@@ -128,6 +129,7 @@ public class MGGCytoPanel extends JPanel
 
 	public void updateControls() {
 		nodePanel.updateControls();
+		
 		edgePanel.updateWeightPanelPanel();
 		
 		edgePanel.updateSeedPanel();
@@ -138,7 +140,7 @@ public class MGGCytoPanel extends JPanel
 		if (!registered)
 			return;
 		// Pass selected nodes to nodeTab
-		 nodePanel.selectedNodes(event.getSelectedNodes());
+		nodePanel.selectedNodes(event.getSelectedNodes());
 		// Pass selected edges to edgeTab
 		edgePanel.selectedEdges(event.getSelectedEdges());
 	}

@@ -48,8 +48,8 @@ public abstract class AbstractMggPanel extends JPanel {
 		this.currentNetwork = manager.getCurrentNetwork();
 		IconManager iconManager = manager.getService(IconManager.class);
 		iconFont = iconManager.getIconFont(17.0f);
-		labelFont = new Font("SansSerif", Font.BOLD, 10);
-		textFont = new Font("SansSerif", Font.PLAIN, 10);
+		labelFont = new Font("Arial", Font.BOLD, 10);
+		textFont = new Font("Arial", Font.PLAIN, 10);
 		filters = new HashMap<>();
 		filters.put(currentNetwork, new HashMap<>());
 		
