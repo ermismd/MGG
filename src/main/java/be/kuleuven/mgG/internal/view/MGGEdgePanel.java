@@ -536,12 +536,12 @@ public class MGGEdgePanel extends AbstractMggPanel {
         String targetTaxon = getTaxonName(nodeTable, targetNode);
         
         
-        JTextArea sourceTaxonArea = new JTextArea("Donor Taxon: " + sourceTaxon);
+        JTextArea sourceTaxonArea = new JTextArea("Donor Taxon: " + targetTaxon );
         ViewUtils.setJTextAreaAttributesEdges(sourceTaxonArea);
         panel.add(sourceTaxonArea, gbc);
         gbc.gridy++;
     
-        JTextArea targetTaxonArea = new JTextArea("Beneficiary Taxon: " + targetTaxon);
+        JTextArea targetTaxonArea = new JTextArea("Beneficiary Taxon: " + sourceTaxon);
         ViewUtils.setJTextAreaAttributesEdges(targetTaxonArea);
         panel.add(targetTaxonArea, gbc);
         gbc.gridy++;
@@ -561,6 +561,17 @@ public class MGGEdgePanel extends AbstractMggPanel {
         String donor = nameParts.length > 0 ? nameParts[0] : "";
         String beneficiary = nameParts.length > 1 ? nameParts[1] : "";
 
+        
+        JTextArea donorArea = new JTextArea("Donor / Seed Set B: " +  beneficiary );
+        ViewUtils.setJTextAreaAttributesEdges(donorArea);
+        panel.add(donorArea, gbc);
+        gbc.gridy++;
+        
+        JTextArea BeneficiaryArea = new JTextArea( "Beneficiary / Seed Set A: " + donor);
+        ViewUtils.setJTextAreaAttributesEdges(BeneficiaryArea);
+        panel.add(BeneficiaryArea, gbc);
+        gbc.gridy++;
+        
 
         Object interactionValue = (edgeTable.getColumn("interaction type") != null) ? edgeTable.getRow(edge.getSUID()).get("interaction type", edgeTable.getColumn("interaction type").getType()) : null;
         JTextArea interactionArea = new JTextArea("Interaction: " + (interactionValue != null ? interactionValue.toString() : "null"));
@@ -585,15 +596,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
             gbc.gridy++;
         }
         
-        JTextArea donorArea = new JTextArea("Donor: " + donor );
-        ViewUtils.setJTextAreaAttributesEdges(donorArea);
-        panel.add(donorArea, gbc);
-        gbc.gridy++;
         
-        JTextArea BeneficiaryArea = new JTextArea( "Beneficiary: " + beneficiary);
-        ViewUtils.setJTextAreaAttributesEdges(BeneficiaryArea);
-        panel.add(BeneficiaryArea, gbc);
-        gbc.gridy++;
         
   
      // Create a sub-panel  for the complement input components
@@ -652,6 +655,24 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         Border etchedBorder = BorderFactory.createEtchedBorder();
         Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
+        
+        
+        if (cooperationSeedValue != null) {
+            JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
+            cooperationLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+            PathwaysPanel.add(cooperationLabel, pathgbc);
+            pathgbc.gridy++;
+        }
+
+        if (competitionSeedValue != null) {
+            JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
+            competitionLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+            PathwaysPanel.add(competitionLabel, pathgbc);
+            pathgbc.gridy++;
+        }
+        
+        
+        
  
         for (CyColumn column : edgeTable.getColumns()) {
             if (column.getName().startsWith("compl::")) {

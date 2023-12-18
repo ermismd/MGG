@@ -97,7 +97,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	  private CyNetwork newNetwork = null;
 	//----------------------------------------------------------
 	private JSONObject jsonObject;
-	private JSONObject serverResponse;
+	private JSONArray serverResponse;
 	
 	
 	private boolean highlightNeighbors = false;
@@ -180,7 +180,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
      * 
      * @param jsonResponse The server response in the form of a JSONObject.
      */
-    public void setServerResponse(JSONObject jsonResponse) {
+    public void setServerResponse(JSONArray jsonResponse) {
         this.serverResponse = jsonResponse;
     }
 	
@@ -191,7 +191,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
      *
      * @return The stored server response in the form of a JSONObject.
      */
-    public JSONObject getServerResponse() {
+    public JSONArray getServerResponse() {
         return this.serverResponse;
     }
     

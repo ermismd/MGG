@@ -32,7 +32,7 @@ import be.kuleuven.mgG.internal.utils.HTTPUtils;
 
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 
-
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -96,7 +96,7 @@ public class SendDataToServerTask extends AbstractTask {
         taskMonitor.setTitle("Sending Data to Server");
         taskMonitor.setStatusMessage("Processing Data on Server( May take some time... )");
           
-        taskMonitor.setStatusMessage("Server Send " + jsonObject.toJSONString());
+        //taskMonitor.setStatusMessage("Server Send " + jsonObject.toJSONString());
        
 
         	
@@ -136,15 +136,25 @@ public class SendDataToServerTask extends AbstractTask {
                           }
 
                           HttpEntity responseEntity = response.getEntity();
-                          JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
+                         // JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
+                          JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
+                        //  JSONObject jsonResponse=(JSONObject) responseEntity ;
                           
-                          taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
+                        
+                  		//BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity .getContent()));
+                  		
+                  		//JSONObject jsonResponse= (JSONObject) new JSONParser().parse(reader);
+                          
+                          
+                          
+                          //taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
                           taskMonitor.setStatusMessage("Processing server response");
                           taskMonitor.setStatusMessage("Data sent to server and retrieved successfully!");
                        // Here's the new line where you set the JSON response as a status message
-                          taskMonitor.setStatusMessage("Server Response: " + jsonResponse.toJSONString());
-                          mggManager.setServerResponse(jsonResponse);
-
+                          taskMonitor.setStatusMessage("Server Response: " + jsonResponse1.toJSONString());
+                          taskMonitor.setStatusMessage("Server Response: " + responseEntity);
+                         mggManager.setServerResponse(jsonResponse1);
+                        
                       
                       } catch (Exception e) {
                     	 
