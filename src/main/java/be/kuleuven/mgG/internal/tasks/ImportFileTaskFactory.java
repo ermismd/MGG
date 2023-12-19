@@ -26,7 +26,7 @@ public class ImportFileTaskFactory implements TaskFactory {
     
 	@Override
     public TaskIterator createTaskIterator() {
-		  // Use a JFileChooser to get the file path
+		 
 	    JFileChooser fileChooser = new JFileChooser();
 	    int option = fileChooser.showOpenDialog(null);
 	    if (option == JFileChooser.APPROVE_OPTION) {
@@ -35,14 +35,14 @@ public class ImportFileTaskFactory implements TaskFactory {
 
 	        return new TaskIterator(new ImportFileTask(filePath, mggManager));
 	    } else if (option == JFileChooser.CANCEL_OPTION) {
-	        // User cancelled the file selection, return an empty TaskIterator
+	        
 	        return new TaskIterator();
 	    } else {
-	        // An error occurred or no file was selected
+	        
 	        String errorMessage = "Error selecting file";
-	        // You can display an error message or handle the error in any other way appropriate for your application
+	        
 	        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-	        // Return an empty TaskIterator or any other appropriate error handling
+	       
 	        return new TaskIterator();
 	    }
 	}

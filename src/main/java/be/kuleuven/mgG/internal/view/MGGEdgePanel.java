@@ -714,13 +714,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
                         	// Handle Kegg Module Link
                         	
                         	 String moduleId = parts[0].trim(); // Trim to remove before and after spaces
-                             moduleId = moduleId.replace("[", ""); // Remove  unwanted "[" "]" 
+                             moduleId = moduleId.replace("[", "").replace("]", "");; // Remove  unwanted "[" "]" 
                              SwingLink  link = new SwingLink(moduleId, "https://www.genome.jp/entry/" + moduleId, openBrowser);
                              
 
                              
                              String colorMapUrlString = parts[5].trim();
-                             colorMapUrlString = colorMapUrlString.replace("[", ""); 
+                             colorMapUrlString = colorMapUrlString.replace("[", "").replace("]", "");; 
                              SwingLink  colorMapLink = new SwingLink("Url", colorMapUrlString, openBrowser);
                             
                              //add the rows to the table
@@ -811,10 +811,10 @@ public class MGGEdgePanel extends AbstractMggPanel {
     double initFilter(String type, String label) {
 
 
-        double minValue = 1.0; // Start with the highest value to ensure you find the lowest one available.
+        double minValue = 1.0; 
         for (CyEdge edge: currentNetwork.getEdgeList()) {
             CyRow edgeRow = currentNetwork.getRow(edge);
-            Double edgeScore = edgeRow.get(type, label, Double.class); // Get the edge weight based on the type parameter.
+            Double edgeScore = edgeRow.get(type, label, Double.class); // Get the edge weight 
             // Skip this edge if the score is null.
             if (edgeScore == null) {
                 minValue = -1.0;

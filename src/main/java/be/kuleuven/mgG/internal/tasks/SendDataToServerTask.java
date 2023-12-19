@@ -23,6 +23,7 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.util.ListSingleSelection;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -61,11 +62,56 @@ import javax.swing.SwingUtilities;
 public class SendDataToServerTask extends AbstractTask {
  
 	private  String serverResponse; // Stores the server response
-	private final JSONObject jsonObject; // The JSON array to send to the server
+	private final JSONObject dataObject; // The JSON array to send to the server
+	private final JSONObject metaDataObject;
+	//private final JSONObject jsonObject;
     private final MGGManager mggManager;  // The MGGManager instance for retrieving the JSON array
     
    
+    
+ 	// @Tunables part 
+     
+    
+     @Tunable(description="Choose input type", groups={"Input Parameters"}, gravity=1.0, required=true)
+     public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
+     
+     @Tunable(description="Choose if heterogeneous", groups={"Additional Input if chosen abudance_table"}, gravity=10.0, required=true)
+     public boolean heterogeneous=false;
+     
+     @Tunable(description="Choose if sensitive", groups={"Additional Input if chosen abudance_table"}, gravity=11.0, required=true)
+     public boolean sensitive=false;
+  
+     @Tunable(description="Choose delimiter", groups={"Input Parameters"}, gravity=2.0, required=true)
+     public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
 
+     @Tunable(description="Choose taxonomy Database", groups={"Input Parameters"}, gravity=3.0, required=true)
+     public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("GTDB", "Silva(as in DADA2)","microbetag_prep", "other");
+     
+     @Tunable(description="PhenDB", longDescription="Choose whether to get PhenDB.", groups={"Input Parameters"}, 
+     		tooltip="Choose whether to get PhenDB values annotations" ,gravity=4.0, exampleStringValue="True, False", required=true)
+     public boolean phenDB=true;
+
+     @Tunable(description="FAPROTAX", longDescription="Choose whether to get FAPROTAX.", groups={"Input Parameters"}, 
+     		tooltip="Choose whether to get FAPROTAX values annotations" , gravity=5.0, exampleStringValue="True, False", required=true)
+     public boolean faproTax=true; 
+
+     @Tunable(description="Pathway Complementarity", longDescription="Choose whether to get the pathway complementarity.", 
+     		 tooltip="Choose whether to get Pathway Complementarity annotations" ,groups={"Input Parameters"}, gravity=6.0, exampleStringValue="True, False", required=true)
+     public boolean pathway_complement=true;
+     
+     @Tunable(description="Seed Scores", longDescription="Choose whether to get the Seed Scores.", groups={"Input Parameters"}, gravity=7.0, exampleStringValue="True, False", required=true)
+     public boolean seed_scores= false;
+     
+     @Tunable(description="Get_Children", longDescription="Choose whether to get Children(different strains).", groups={"Input Parameters"}, 
+     		tooltip="Choose whether to get strains from the same species" , gravity=8.0, exampleStringValue="True, False", required=true)
+     public boolean get_children=false; 
+     
+     @Tunable(description="Manta", longDescription="Choose whether to get Manta annotations.", groups={"Input Parameters"}, 
+     		tooltip="Choose whether to get Manta annotations" , gravity=9.0, exampleStringValue="True, False", required=true)
+     public boolean manta=false; 
+     
+     //@Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
+     //public boolean netCmpt= true;
     				
     
    
@@ -76,21 +122,67 @@ public class SendDataToServerTask extends AbstractTask {
      * @param mggManager  The MGGManager instance for retrieving the JSON array.
      */
     
-    public SendDataToServerTask( JSONObject jsonObject, MGGManager mggManager) {
-    	this.mggManager=mggManager;
-    	this.jsonObject = mggManager.getJsonObject();
+    public SendDataToServerTask(MGGManager mggManager) {
     	
+		this.mggManager=mggManager;
+    	this.dataObject = mggManager.getJsonObject();
+    	this.metaDataObject=mggManager.getMetadataJsonObject();
     }
 
+    
+    
     /**
      * Runs the task to send data to the server.
      *
      * @param taskMonitor The task monitor to display progress and status messages.
      */
     
+    
     @Override
     public void run(TaskMonitor taskMonitor) {
     	
+    	   // Create a new JSONObject
+        JSONObject jsonObject = new JSONObject();
+        
+        taskMonitor.setStatusMessage("data array: " + dataObject.toString());
+        
+        taskMonitor.setStatusMessage("metadata array: " + metaDataObject.toString());
+        
+        // Add the 'data' JSONArray from dataObject
+        if (dataObject != null && dataObject.containsKey("data")) {
+            JSONArray dataJsonArray = (JSONArray) dataObject.get("data");
+            jsonObject.put("data", dataJsonArray);
+        }
+
+        // Add the 'metadata' JSONArray from metaDataObject
+        if (metaDataObject != null && metaDataObject.containsKey("metadata")) {
+            JSONArray metaDataJsonArray = (JSONArray) metaDataObject.get("metadata");
+            jsonObject.put("metadata", metaDataJsonArray);
+        }
+    	
+        // Create a new JSONArray for the input parameters
+	       JSONArray inputParameters = new JSONArray();
+	        
+	 
+	        inputParameters.add("input:"+input.getSelectedValue());
+	        inputParameters.add("taxonomy:"+taxonomy.getSelectedValue());
+	        inputParameters.add("delimiter:"+delimiter.getSelectedValue()); 
+    // inputParameters.add(sensitive);
+	      //  inputParameters.add(heterogeneous);
+	        inputParameters.add("phenDB:"+phenDB);
+	        inputParameters.add("faproTax:"+faproTax);
+	        inputParameters.add("pathway_complement:"+pathway_complement);
+	        inputParameters.add("seed_scroes:"+seed_scores);
+	        inputParameters.add("manta"+manta);
+	        	
+	 
+	        
+	        // Add the input parameters to the jsonObject
+	        jsonObject.put("inputParameters", inputParameters);
+	        
+    	
+    	
+	        taskMonitor.setStatusMessage("Server tried to sent: " +  jsonObject.toString());
     	
     		
         taskMonitor.setTitle("Sending Data to Server");
@@ -102,9 +194,9 @@ public class SendDataToServerTask extends AbstractTask {
         	
         
         RequestConfig config = RequestConfig.custom()
-        	    .setConnectTimeout(600 * 1000)  // time to establish the connection with the remote host
-        	    .setSocketTimeout(600 * 1000)  // time waiting for data – after the connection was established; maximum time of inactivity between two data packets
-        	    .setConnectionRequestTimeout(600 * 1000) // time to wait for a connection from the connection manager/pool
+        	    .setConnectTimeout(600 * 1000)  // time to establish the connection 
+        	    .setSocketTimeout(600 * 1000)  // time waiting for data 
+        	    .setConnectionRequestTimeout(600 * 1000) // time to wait for a connection from  manager/pool
         	    .build();
 
         
@@ -136,26 +228,37 @@ public class SendDataToServerTask extends AbstractTask {
                           }
 
                           HttpEntity responseEntity = response.getEntity();
-                         // JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
+                         
                           JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
-                        //  JSONObject jsonResponse=(JSONObject) responseEntity ;
-                          
-                        
-                  		//BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity .getContent()));
-                  		
-                  		//JSONObject jsonResponse= (JSONObject) new JSONParser().parse(reader);
+                       
                           
                           
+                           // JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
+                           //  JSONObject jsonResponse=(JSONObject) responseEntity ; 
+                  		   //BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity .getContent()));
+                  		   //JSONObject jsonResponse= (JSONObject) new JSONParser().parse(reader);
                           
-                          //taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
+                          
+                          
+                          taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
                           taskMonitor.setStatusMessage("Processing server response");
                           taskMonitor.setStatusMessage("Data sent to server and retrieved successfully!");
-                       // Here's the new line where you set the JSON response as a status message
-                          taskMonitor.setStatusMessage("Server Response: " + jsonResponse1.toJSONString());
-                          taskMonitor.setStatusMessage("Server Response: " + responseEntity);
+                    
+                         //  taskMonitor.setStatusMessage("Server Response: " + jsonResponse1.toJSONString());
+                         // taskMonitor.setStatusMessage("Server Response: " + responseEntity);
+                          
                          mggManager.setServerResponse(jsonResponse1);
                         
-                      
+                         
+                         
+                         
+                         // Set jsonObject and metadataObject to null if the response is successful
+                         
+                         mggManager.setJsonObject(null);
+                         mggManager.setMetadataJsonObject(null);
+
+                         taskMonitor.setStatusMessage("Data sent to server and response processed successfully.");
+                         
                       } catch (Exception e) {
                     	 
                           taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Error when waiting for the response: " + e.getMessage());
@@ -183,67 +286,6 @@ public class SendDataToServerTask extends AbstractTask {
     
     
 
-/*private void viewData(JSONObject jsonResponse) {
-	  JSONViewerPanel viewerPanel = new JSONViewerPanel(jsonResponse);
-  
-    
-    JFrame frame = new JFrame("JSON Viewer");
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.getContentPane().add(viewerPanel);
-    frame.pack();
-    frame.setVisible(true);
-    */
-    
-    
-    
-    
-    /*
-	 * private void sendJSONDataToServer(JSONArray jsonArray, TaskMonitor
-	 * taskMonitor) { try {
-	 * 
-	 * 
-	 * // Convert the JSONArray to a JSON string String jsonQuery =
-	 * jsonArray.toJSONString();
-	 * 
-	 * System.out.println(jsonQuery);
-	 * 
-	 * // Set the server URL String serverURL =
-	 * "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table"; // Replace with
-	 * the actual server URL
-	 * 
-	 * 
-	 * // Create an instance of CloseableHttpClient CloseableHttpClient httpclient =
-	 * HttpClients.createDefault();
-	 * 
-	 * taskMonitor.setStatusMessage("Sending data to server");
-	 * 
-	 * // Send the JSON data to the server JSONObject jsonResponse =
-	 * HTTPUtils.postJSON(serverURL, httpclient, jsonQuery, taskMonitor);
-	 * 
-	 * // Process the server response if needed if (jsonResponse != null) {
-	 * taskMonitor.setStatusMessage("Processing server response");
-	 * 
-	 * // Process the response here serverResponse = jsonResponse.toJSONString();
-	 * mggManager.setServerResponse(jsonResponse);
-	 * 
-	 * }
-	 * 
-	 * 
-	 * 
-	 * taskMonitor.setStatusMessage("Closing connection");
-	 * 
-	 * // Close the HttpClient httpclient.close(); } catch (Exception e) {
-	 * taskMonitor.showMessage(TaskMonitor.Level.ERROR,
-	 * "Error while sending JSON data to server: " + e.getMessage());
-	 * e.printStackTrace();
-	 * 
-	 * // Show the JSON data in a panel if showJSONInPanel
-	 * 
-	 * SwingUtilities.invokeLater(() ->showDataInPanel(jsonArray));
-	 * 
-	 * 
-	 * 
-	 * } }
-	 */  
+
     
 

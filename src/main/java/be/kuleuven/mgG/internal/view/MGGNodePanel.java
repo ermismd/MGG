@@ -1027,7 +1027,7 @@ public class MGGNodePanel extends AbstractMggPanel {
         }
         
  
-        // We need to get the view for the new network since we haven't actually switched yet
+        //  get the view for the new network since we haven't actually switched yet
         CyNetworkView networkView = Mutils.getNetworkView(manager, currentNetwork);
         if (networkView != null) {
             if (manager.highlightNeighbors()) {

@@ -73,7 +73,7 @@ public class JsonResultPanel extends JPanel implements CytoPanelComponent {
         sendButton.addActionListener(new ActionListener() {  
             public void actionPerformed(ActionEvent e) {
               
-            	 TaskIterator taskIterator = new SendDataToServerTaskFactory(jsonObject, manager).createTaskIterator();
+            	 TaskIterator taskIterator = new SendDataToServerTaskFactory( manager).createTaskIterator();
                  manager.executeTasks(taskIterator);
                  
                  //added this to start the factory for showResultsPaneltaskFactory

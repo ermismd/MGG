@@ -50,10 +50,13 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.kuleuven.mgG.internal.tasks.CheckAbudanceFileTaskFactory;
+import be.kuleuven.mgG.internal.tasks.CheckMetaDataFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyle;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyleTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
+import be.kuleuven.mgG.internal.tasks.ImportMetadataTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
@@ -102,12 +105,53 @@ public class CyActivator extends AbstractCyActivator {
         props.setProperty(IN_MENU_BAR, "TRUE");
         props.setProperty(MENU_GRAVITY, "1");
         props.setProperty(COMMAND_NAMESPACE, "MGG");
-        props.setProperty(COMMAND_DESCRIPTION, "Load abudance table(TSV/CSV) or network");
-        props.setProperty(COMMAND, "Load_File");
+        props.setProperty(COMMAND_DESCRIPTION, "Load abudance table(TSV/CSV)");
+        props.setProperty(COMMAND, "Load_Abudance");
 
         registerService(bc, mggImportFileTaskFactory, TaskFactory.class, props);
 
+        ImportMetadataTaskFactory mggImportMetaDataTaskFactory = new ImportMetadataTaskFactory(MGGManager);
+        Properties metadataprops = new Properties();
+        metadataprops.setProperty(TITLE, "Import MetaData");
+        metadataprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
+        metadataprops.setProperty(IN_TOOL_BAR, "FALSE");
+        metadataprops.setProperty(IN_MENU_BAR, "TRUE");
+        metadataprops.setProperty(MENU_GRAVITY, "2");
+        metadataprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        metadataprops.setProperty(COMMAND_DESCRIPTION, "Load Metadata File");
+        metadataprops.setProperty(COMMAND, "Load_MetaData");
 
+        registerService(bc, mggImportMetaDataTaskFactory, TaskFactory.class, metadataprops);
+        
+        
+        CheckAbudanceFileTaskFactory mggCheckAbudanceFileTaskFactory = new CheckAbudanceFileTaskFactory(MGGManager);
+        Properties checkdataprops = new Properties();
+        checkdataprops.setProperty(TITLE, "Check Abudance Data");
+        checkdataprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data.Check Data Files");
+        checkdataprops.setProperty(IN_TOOL_BAR, "FALSE");
+        checkdataprops.setProperty(IN_MENU_BAR, "TRUE");
+        checkdataprops.setProperty(MENU_GRAVITY, "1");
+        checkdataprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        checkdataprops.setProperty(COMMAND_DESCRIPTION, "Check abudance data File");
+        checkdataprops.setProperty(COMMAND, "Check_Abudance_Data");
+
+        registerService(bc, mggCheckAbudanceFileTaskFactory, TaskFactory.class, checkdataprops);
+        
+        
+        
+        CheckMetaDataFileTaskFactory mggCheckMetaDataFileTaskFactory = new CheckMetaDataFileTaskFactory(MGGManager);
+        Properties checkMetaDataprops = new Properties();
+        checkMetaDataprops.setProperty(TITLE, "Check  MetaData");
+        checkMetaDataprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data.Check Data Files");
+        checkMetaDataprops.setProperty(IN_TOOL_BAR, "FALSE");
+        checkMetaDataprops.setProperty(IN_MENU_BAR, "TRUE");
+        checkMetaDataprops.setProperty(MENU_GRAVITY, "2");
+        checkMetaDataprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        checkMetaDataprops.setProperty(COMMAND_DESCRIPTION, "Check metadata File");
+        checkMetaDataprops.setProperty(COMMAND, "Check_MetaData");
+
+        registerService(bc, mggCheckMetaDataFileTaskFactory, TaskFactory.class, checkMetaDataprops);
+        
         //---------------------
         examoleFactory examole = new examoleFactory(MGGManager);
         Properties exaprops1 = new Properties();
@@ -123,12 +167,26 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, examole, TaskFactory.class, exaprops1);
 
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         // Register taskfactory
 
-        SendDataToServerTaskFactory sendDataToServerTaskFactory = new SendDataToServerTaskFactory(MGGManager.getJsonObject(), MGGManager);
+        SendDataToServerTaskFactory sendDataToServerTaskFactory = new SendDataToServerTaskFactory( MGGManager);
         Properties Sendprops = new Properties();
         Sendprops.setProperty(TITLE, "Get Annotated Network");
-        Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
+        Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG");
         Sendprops.setProperty(IN_TOOL_BAR, "FALSE");
         Sendprops.setProperty(IN_MENU_BAR, "TRUE");
         Sendprops.setProperty(MENU_GRAVITY, "2");

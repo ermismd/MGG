@@ -73,56 +73,51 @@ public class ImportFileTask extends AbstractTask {
     private JSONObject jsonObject;
     
     
-    /*
-	 * @Tunable(description="Take back the network from Microbetag",
-	 * longDescription="Send the JSON array that was created by the imported CSV to the microbetag server to get back the network."
-	 * , tooltip="If checked, the JSON will be sent to the server", gravity=3.0)
-	 * public boolean sendToServer = true;
-	 */
-    
+   
+ 
     @Tunable(description = "Display Data", groups = { "Display Settings" }, tooltip="If checked, the Data will be displayed in a panel")
-    public boolean showJSONInPanel = true;
-    
+    	public boolean showJSONInPanel = true;
+//    
     @Tunable(description="Write JSON to file",groups = { "Create File Settings" },tooltip="If checked, a new JSON file will be created in the same path as the original file",exampleStringValue="true")
    public boolean writeToFile = false;  
-    
-    @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
-    public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
-    
-    @Tunable(description="Choose if heterogeneous", groups={"Additional Input if chosen abudance_table"}, gravity=10.0, required=true)
-    public boolean heterogeneous=false;
-    
-    @Tunable(description="Choose if sensitive", groups={"Additional Input if chosen abudance_table"}, gravity=11.0, required=true)
-    public boolean sensitive=false;
- 
-    @Tunable(description="Choose delimiter", groups={"Input Settings"}, gravity=2.0, required=true)
-    public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
-
-    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=3.0, required=true)
-    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "other");
-    
-    @Tunable(description="PhenDB", longDescription="Choose whether to get PhenDB.", groups={"Input Settings"}, 
-    		tooltip="Choose whether to get PhenDB values annotations" ,gravity=4.0, exampleStringValue="True, False", required=true)
-    public boolean phenDB=true;
-
-    @Tunable(description="FAPROTAX", longDescription="Choose whether to get FAPROTAX.", groups={"Input Settings"}, 
-    		tooltip="Choose whether to get FAPROTAX values annotations" , gravity=5.0, exampleStringValue="True, False", required=true)
-    public boolean faproTax=true; 
-
-    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to get the pathway complementarity.", 
-    		 tooltip="Choose whether to get Pathway Complementarity annotations" ,groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
-    public boolean pathway_complement=true;
-    
-    @Tunable(description="Seed Scores", longDescription="Choose whether to get the Seed Scores.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
-    public boolean seed_scores= false;
-    
-    @Tunable(description="Get_Children", longDescription="Choose whether to get Children(different strains).", groups={"Input Settings"}, 
-    		tooltip="Choose whether to get strains from the same species" , gravity=8.0, exampleStringValue="True, False", required=true)
-    public boolean get_children=false; 
-    
-    @Tunable(description="Manta", longDescription="Choose whether to get Manta annotations.", groups={"Input Settings"}, 
-    		tooltip="Choose whether to get Manta annotations" , gravity=9.0, exampleStringValue="True, False", required=true)
-    public boolean manta=false; 
+//    
+//    @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
+//    public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
+//    
+//    @Tunable(description="Choose if heterogeneous", groups={"Additional Input if chosen abudance_table"}, gravity=10.0, required=true)
+//    public boolean heterogeneous=false;
+//    
+//    @Tunable(description="Choose if sensitive", groups={"Additional Input if chosen abudance_table"}, gravity=11.0, required=true)
+//    public boolean sensitive=false;
+// 
+//    @Tunable(description="Choose delimiter", groups={"Input Settings"}, gravity=2.0, required=true)
+//    public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
+//
+//    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=3.0, required=true)
+//    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "other");
+//    
+//    @Tunable(description="PhenDB", longDescription="Choose whether to get PhenDB.", groups={"Input Settings"}, 
+//    		tooltip="Choose whether to get PhenDB values annotations" ,gravity=4.0, exampleStringValue="True, False", required=true)
+//    public boolean phenDB=true;
+//
+//    @Tunable(description="FAPROTAX", longDescription="Choose whether to get FAPROTAX.", groups={"Input Settings"}, 
+//    		tooltip="Choose whether to get FAPROTAX values annotations" , gravity=5.0, exampleStringValue="True, False", required=true)
+//    public boolean faproTax=true; 
+//
+//    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to get the pathway complementarity.", 
+//    		 tooltip="Choose whether to get Pathway Complementarity annotations" ,groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
+//    public boolean pathway_complement=true;
+//    
+//    @Tunable(description="Seed Scores", longDescription="Choose whether to get the Seed Scores.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
+//    public boolean seed_scores= false;
+//    
+//    @Tunable(description="Get_Children", longDescription="Choose whether to get Children(different strains).", groups={"Input Settings"}, 
+//    		tooltip="Choose whether to get strains from the same species" , gravity=8.0, exampleStringValue="True, False", required=true)
+//    public boolean get_children=false; 
+//    
+//    @Tunable(description="Manta", longDescription="Choose whether to get Manta annotations.", groups={"Input Settings"}, 
+//    		tooltip="Choose whether to get Manta annotations" , gravity=9.0, exampleStringValue="True, False", required=true)
+//    public boolean manta=false; 
     
     //@Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
     //public boolean netCmpt= true;
@@ -234,26 +229,7 @@ public class ImportFileTask extends AbstractTask {
 	        
 	        
 	     
-	        // Create a new JSONArray for the input parameters
-	       JSONArray inputParameters = new JSONArray();
-	        
-	 
-	        inputParameters.add(input.getSelectedValue());
-	        inputParameters.add(taxonomy.getSelectedValue());
-	        inputParameters.add(delimiter.getSelectedValue()); 
-       // inputParameters.add(sensitive);
-	      //  inputParameters.add(heterogeneous);
-	        inputParameters.add(phenDB);
-	        inputParameters.add(faproTax);
-	        inputParameters.add(pathway_complement);
-	        inputParameters.add(seed_scores);
-	        inputParameters.add(manta);
-	        	
-	 
-	        
-	        // Add the input parameters to the jsonObject
-	        jsonObject.put("inputParameters", inputParameters);
-	        
+	    
 	  
 	       
 	        
@@ -286,7 +262,7 @@ public class ImportFileTask extends AbstractTask {
 			 
 	        
             taskMonitor.setProgress(1.0);
-            taskMonitor.setStatusMessage("Finished processing  file.");
+            taskMonitor.setStatusMessage("Abudance data imported successfully.");
             
                                    
             

@@ -119,24 +119,44 @@ public class CSVReader {
 
 
 	public static String[] smartSplit(String input) {
-		String[] splitString;
-		if (delimiter != null)
-			splitString = input.split(delimiter, -1);
-		else {
-			delimiter = "\t";
-			splitString = input.split(delimiter, -1);
-			if (splitString.length == 1) {
-				delimiter = ",";
-				splitString = input.split(delimiter, -1);
-				if (splitString.length == 1) {
-					delimiter = null;
-					return splitString;
-					// throw new RuntimeException("Only tabs and commas are supported delimiters");
-				}
-			}
-		}
-		return splitString;
-	
+		
+		
+		 String[] splitString;
+		    if (delimiter != null)
+		        splitString = input.split(delimiter, -1);
+		    else {
+		        delimiter = "\t";
+		        splitString = input.split(delimiter, -1);
+		        if (splitString.length == 1) {
+		            delimiter = ",";
+		            splitString = input.split(delimiter, -1);
+		        }
+		    }
+		    
+		    // Strip quotes from each token
+		    for (int i = 0; i < splitString.length; i++) {
+		        splitString[i] = splitString[i].replaceAll("^\"|\"$", ""); // Remove quotes at the start and end
+		    }
+
+		    return splitString;
+//		String[] splitString;
+//		if (delimiter != null)
+//			splitString = input.split(delimiter, -1);
+//		else {
+//			delimiter = "\t";
+//			splitString = input.split(delimiter, -1);
+//			if (splitString.length == 1) {
+//				delimiter = ",";
+//				splitString = input.split(delimiter, -1);
+//				if (splitString.length == 1) {
+//					delimiter = null;
+//					return splitString;
+//					// throw new RuntimeException("Only tabs and commas are supported delimiters");
+//				}
+//			}
+//		}
+//		return splitString;
+//	
 	}
 
 }

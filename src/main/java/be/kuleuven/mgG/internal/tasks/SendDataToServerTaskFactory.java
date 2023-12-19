@@ -12,18 +12,18 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 public class SendDataToServerTaskFactory implements TaskFactory {
     
     private final MGGManager mggManager;
-    private JSONObject jsonObject;
+   
     
     
     
-    public SendDataToServerTaskFactory(JSONObject jsonObject,MGGManager mggManager) {
-    	this.jsonObject = jsonObject;
+    public SendDataToServerTaskFactory(MGGManager mggManager) {
+    	
         this.mggManager=mggManager;
     }
 
     @Override
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(2,new SendDataToServerTask(jsonObject, mggManager),new CreateNetworkTask(mggManager));
+        return new TaskIterator(2,new SendDataToServerTask( mggManager),new CreateNetworkTask(mggManager));
         
         
     }

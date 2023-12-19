@@ -99,6 +99,8 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	private JSONObject jsonObject;
 	private JSONArray serverResponse;
 	
+	private JSONObject metadataObject;
+	
 	
 	private boolean highlightNeighbors = false;
 	private boolean showMspecies = false;
@@ -154,8 +156,8 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	
 
 	 /**
-     * Sets the JSONArray object.
-     * This method is used to store a JSONArray object which can be used later.
+     * Sets the JSONObject from data(abundance table).
+     * This method is used to store a JSONObject which can be used later.
      *
      * @param jsonArray The JSONArray object to be stored.
      */
@@ -164,21 +166,44 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     }
 
     /**
-     * Gets the stored JSONArray object.
-     * This method is used to retrieve the stored JSONArray object.
+     * Gets the stored JSONObject data(abundance table) .
+     * This method is used to retrieve the stored JSONObject.
      *
-     * @return The stored JSONArray object.
+     * @return The stored JSONObject.
      */
     public JSONObject getJsonObject() {
         return jsonObject;
     }
 	
-   
+    
+    /**
+     * Sets the JSONObject of the metadata file.
+     * 
+     * This method is used to store a JSONObject which can be used later.
+     * 
+     * @param jsonArray The JSONObject to be stored.
+     */
+    public void setMetadataJsonObject(JSONObject jsonObject) {
+        this.metadataObject= jsonObject;
+    }
+
+    /**
+     * Gets the stored JSONObject from the metadata.
+     * This method is used to retrieve the stored JSONObject.
+     *
+     * @return The stored JSONObject.
+     */
+    public JSONObject getMetadataJsonObject() {
+        return metadataObject;
+    }
+    
+    
+    
     /**
      * Sets the server response.
      * This method is used to store the server response which can be used later.
      * 
-     * @param jsonResponse The server response in the form of a JSONObject.
+     * @param jsonResponse The server response in the form of a JSONArray.
      */
     public void setServerResponse(JSONArray jsonResponse) {
         this.serverResponse = jsonResponse;
@@ -194,6 +219,11 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     public JSONArray getServerResponse() {
         return this.serverResponse;
     }
+    
+    
+    
+    
+    
     
     public Map<String, Color> getChannelColors() { return channelColors; }
 
@@ -221,7 +251,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 		return new Color(r,g,b);
 	}
 	
-  //-----------------------------addition------------------------------for cytopanel------------------------------------------------------------------------------------------  
+  //-----------------------------addition------------------------------for Cytopanel------------------------------------------------------------------------------------------  
     
     public void setCytoPanel(MGGCytoPanel panel) {
   		this.cytoPanel = panel;
