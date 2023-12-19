@@ -72,6 +72,8 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 
 public class CyActivator extends AbstractCyActivator {
 
+	// the AbstractCyActivator includes the registerService method 
+	
     public CyActivator() {
         super();
     }
