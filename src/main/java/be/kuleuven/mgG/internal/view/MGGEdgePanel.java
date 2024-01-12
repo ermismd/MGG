@@ -525,33 +525,19 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         CyTable edgeTable = currentNetwork.getDefaultEdgeTable();
         CyTable nodeTable = currentNetwork.getDefaultNodeTable();
-        //String name = null;
         
-     // Retrieve source and target node of the edge
+        // Retrieve source and target node of the edge
         CyNode sourceNode = edge.getSource();
         CyNode targetNode = edge.getTarget();
         
-     // Get taxon names for source and target nodes
+        // Get taxon names for source and target nodes
         String sourceTaxon = getTaxonName(nodeTable, sourceNode);
         String targetTaxon = getTaxonName(nodeTable, targetNode);
-        
-        
-        JTextArea sourceTaxonArea = new JTextArea("Donor Taxon: " + targetTaxon );
-        ViewUtils.setJTextAreaAttributesEdges(sourceTaxonArea);
-        panel.add(sourceTaxonArea, gbc);
-        gbc.gridy++;
-    
-        JTextArea targetTaxonArea = new JTextArea("Beneficiary Taxon: " + sourceTaxon);
-        ViewUtils.setJTextAreaAttributesEdges(targetTaxonArea);
-        panel.add(targetTaxonArea, gbc);
-        gbc.gridy++;
+
 
         Object nameValue = (edgeTable.getColumn("shared name") != null) ? edgeTable.getRow(edge.getSUID()).get("shared name", edgeTable.getColumn("shared name").getType()) : null;
-       // JTextArea nameArea = new JTextArea("Edge Name: " + (nameValue != null ? nameValue.toString() : "null"));
-      //  setJTextAreaAttributes(nameArea);
-       // panel.add(nameArea, gbc);
-        //gbc.gridy++;
 
+        
         // Split the name to get Donor and Beneficiary
         String[] nameParts = nameValue != null ? nameValue.toString().split(" \\(completes/competes with\\) | \\(cooccurss with\\) ") : new String[] {
             "",
@@ -561,45 +547,67 @@ public class MGGEdgePanel extends AbstractMggPanel {
         String donor = nameParts.length > 0 ? nameParts[0] : "";
         String beneficiary = nameParts.length > 1 ? nameParts[1] : "";
 
+            
+        JTextArea targetTaxonArea = new JTextArea("Beneficiary Taxon: " + sourceTaxon);
+        ViewUtils.setJTextAreaAttributesEdges(targetTaxonArea);
+        panel.add(targetTaxonArea, gbc);
+        gbc.gridy++;
+
+        JTextArea BeneficiaryArea = new JTextArea( "Seed Set A (beneficiary): " + donor);
+        ViewUtils.setJTextAreaAttributesEdges(BeneficiaryArea);
+        panel.add(BeneficiaryArea, gbc);
+        gbc.gridy++;
+
+
+        JTextArea sourceTaxonArea = new JTextArea("Donor Taxon: " + targetTaxon );
+        ViewUtils.setJTextAreaAttributesEdges(sourceTaxonArea);
+        panel.add(sourceTaxonArea, gbc);
+        gbc.gridy++;
         
-        JTextArea donorArea = new JTextArea("Donor / Seed Set B: " +  beneficiary );
+        JTextArea donorArea = new JTextArea("Seed Set B (donor): " +  beneficiary );
         ViewUtils.setJTextAreaAttributesEdges(donorArea);
         panel.add(donorArea, gbc);
         gbc.gridy++;
         
-        JTextArea BeneficiaryArea = new JTextArea( "Beneficiary / Seed Set A: " + donor);
-        ViewUtils.setJTextAreaAttributesEdges(BeneficiaryArea);
-        panel.add(BeneficiaryArea, gbc);
-        gbc.gridy++;
-        
 
-        Object interactionValue = (edgeTable.getColumn("interaction type") != null) ? edgeTable.getRow(edge.getSUID()).get("interaction type", edgeTable.getColumn("interaction type").getType()) : null;
-        JTextArea interactionArea = new JTextArea("Interaction: " + (interactionValue != null ? interactionValue.toString() : "null"));
-        ViewUtils.setJTextAreaAttributesEdges(interactionArea);
-        panel.add(interactionArea, gbc);
-        gbc.gridy++;
-        
+		
+		/*  // Interaction type
+		 * Object interactionValue = (edgeTable.getColumn("interaction type") != null) ?
+		 * edgeTable.getRow(edge.getSUID()).get("interaction type",
+		 * edgeTable.getColumn("interaction type").getType()) : null; JTextArea
+		 * interactionArea = new JTextArea("Interaction: " + (interactionValue != null ?
+		 * interactionValue.toString() : "null"));
+		 * ViewUtils.setJTextAreaAttributesEdges(interactionArea);
+		 * panel.add(interactionArea, gbc); gbc.gridy++;
+		 */		         
 
-        Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation", edgeTable.getColumn("seed::cooperation").getType()) : null;
-        if (cooperationSeedValue != null) {
-            JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
-            ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
-            panel.add(cooperationSeedArea, gbc);
-            gbc.gridy++;
-        }
+		
+		  Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") !=
+		  null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation",
+		  edgeTable.getColumn("seed::cooperation").getType()) : null; 
+		  
+//		  if (cooperationSeedValue != null) { 
+//			  JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
+//			  ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
+//			  panel.add(cooperationSeedArea, gbc); gbc.gridy++; 
+//		  }
 
-        Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
-        if (competitionSeedValue != null) {
-            JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
-            ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
-            panel.add(competitionSeedArea, gbc);
-            gbc.gridy++;
-        }
-        
+		  
+		  
+		  Object competitionSeedValue = (edgeTable.getColumn("seed::competition") !=
+		  null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition",
+		  edgeTable.getColumn("seed::competition").getType()) : null; 
+		  
+//		  if (competitionSeedValue != null) { 
+//			  JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
+//			  ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
+//			  panel.add(competitionSeedArea, gbc); gbc.gridy++; 
+//		  }
+		         
         
         
   
-     // Create a sub-panel  for the complement input components
+        // Create a sub-panel  for the complement input components
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
         // Label 
