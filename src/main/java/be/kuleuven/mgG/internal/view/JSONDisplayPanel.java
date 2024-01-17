@@ -24,56 +24,62 @@ public class JSONDisplayPanel extends JPanel  {
     
     public JSONDisplayPanel(final MGGManager manager,JSONObject jsonObject) {
         super(new BorderLayout());
-        
         this.manager = manager;
     	
-             
-        //JScrollPane scrollPane = new JScrollPane(table);
-      
-       
-//        // Set the scroll bar policies
-//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//        
-//        // Set the preferred size of the scroll pane
-//        scrollPane.setPreferredSize(new Dimension(800, 600));
-//        
-//        
-//       
-//        
-//        // Add the scroll pane to the center of the JSONDisplayPanel
-//        add(scrollPane, BorderLayout.CENTER);
-        
-        
-        // Check if the jsonObject contains an array named "data"
-        if (jsonObject.containsKey("data")) {
-            JSONArray dataJsonArray = (JSONArray) jsonObject.get("data");
-            createTable(dataJsonArray, "Data Table");
-
-            // Since "data" array exists, add the button for annotated network
-            JButton sendButton = createSendButton(jsonObject);
-            add(sendButton, BorderLayout.NORTH);
-        } 
-        else if (jsonObject.containsKey("metadata")) {
-            // If there's no "data" but "metadata" exists, display metadata table without button
-            JSONArray metadataJsonArray = (JSONArray) jsonObject.get("metadata");
-            createTable(metadataJsonArray, "Metadata Table");
-        }}
-
-    private JButton createSendButton(JSONObject jsonObject) {
-        JButton sendButton = new JButton("Get Annotated Network");
-        sendButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                TaskIterator taskIterator = new SendDataToServerTaskFactory( manager).createTaskIterator();
-                manager.executeTasks(taskIterator);
+        try {
+            if (jsonObject.containsKey("data")) {
+                JSONArray dataJsonArray = (JSONArray) jsonObject.get("data");
+                createTable(dataJsonArray, "Data Table");
             }
-        });
 
-        // Configure the appearance of the button
-        configureButtonAppearance(sendButton);
+            if (jsonObject.containsKey("network")) {
+                JSONArray networkJsonArray = (JSONArray) jsonObject.get("network");
+                createTable(networkJsonArray, "Network Table");
+            }
 
-        return sendButton;
-    }
+            if (jsonObject.containsKey("metadata")) {
+                JSONArray metadataJsonArray = (JSONArray) jsonObject.get("metadata");
+                createTable(metadataJsonArray, "Metadata Table");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error processing JSON data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }   
+        
+//        // Check if the jsonObject contains an array named "data"
+//        if (jsonObject.containsKey("data")) {
+//            JSONArray dataJsonArray = (JSONArray) jsonObject.get("data");
+//            createTable(dataJsonArray, "Data Table");
+//
+//            //add the button for annotated network
+//           // JButton sendButton = createSendButton(jsonObject);
+//           // add(sendButton, BorderLayout.NORTH);
+//        } else if (jsonObject.containsKey("network")) {
+//            // If there's no "data" but "metadata" exists, display metadata table without button
+//            JSONArray networkJsonArray = (JSONArray) jsonObject.get("network");
+//            createTable(networkJsonArray , "Network Table");}
+//        
+//        else if (jsonObject.containsKey("metadata")) {
+//            // If there's no "data" but "metadata" exists, display metadata table without button
+//            JSONArray metadataJsonArray = (JSONArray) jsonObject.get("metadata");
+//            createTable(metadataJsonArray, "Metadata Table");
+//        }}
+
+    //private JButton createSendButton(JSONObject jsonObject) {
+      //  JButton sendButton = new JButton("Get Annotated Network");
+      //  sendButton.addActionListener(new ActionListener() {
+       //     public void actionPerformed(ActionEvent e) {
+           //     TaskIterator taskIterator = new SendDataToServerTaskFactory( manager).createTaskIterator();
+           //     manager.executeTasks(taskIterator);
+         //   }
+       // });
+
+        
+       // configureButtonAppearance(sendButton);
+
+      //  return sendButton;
+    //}
 
     private void configureButtonAppearance(JButton button) {
         button.setForeground(Color.BLACK);
@@ -82,14 +88,14 @@ public class JSONDisplayPanel extends JPanel  {
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        // Create a rounded border for the button
+        // border for button
         int borderRadius = 20;
         int borderThickness = 2;
         button.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, borderThickness),
                 BorderFactory.createEmptyBorder(borderRadius, borderRadius, borderRadius, borderRadius)));
 
-        // Add hover effect for the button
+        // hover effect for the button
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(Color.GREEN);
@@ -102,59 +108,39 @@ public class JSONDisplayPanel extends JPanel  {
     }
 
     private void createTable(JSONArray jsonArray, String tableName) {
-    	if (jsonArray != null && !jsonArray.isEmpty()) {
-            DefaultTableModel tableModel = new DefaultTableModel();
-            JTable localTable = new JTable(tableModel); // Local table variable
+    	 if (jsonArray != null && !jsonArray.isEmpty()) {
+    	        DefaultTableModel tableModel = new DefaultTableModel();
+    	        JTable localTable = new JTable(tableModel); 
 
-            // Set the column names
-            JSONArray headers = (JSONArray) jsonArray.get(0);
-            for (Object header : headers) {
-                tableModel.addColumn(header.toString());
-            }
+    	        // Set the column names
+    	        JSONArray headers = (JSONArray) jsonArray.get(0);
+    	        for (Object header : headers) {
+    	            tableModel.addColumn(header.toString());
+    	        }
 
-            // Add the data to the table model
-            for (int i = 1; i < jsonArray.size(); i++) {
-                JSONArray row = (JSONArray) jsonArray.get(i);
-                Object[] rowData = new Object[row.size()];
-                for (int j = 0; j < row.size(); j++) {
-                    rowData[j] = row.get(j);
-                }
-                tableModel.addRow(rowData);
-            }
+    	        // Add the data to the table model
+    	        int numberOfRows = Math.min(jsonArray.size(), 21); //Limit to 20 rows plus header
+    	        for (int i = 1; i < numberOfRows; i++) {
+    	            JSONArray row = (JSONArray) jsonArray.get(i);
+    	            Object[] rowData = new Object[row.size()];
+    	            for (int j = 0; j < row.size(); j++) {
+    	                rowData[j] = row.get(j);
+    	            }
+    	            tableModel.addRow(rowData);
+    	        }
 
-            JScrollPane scrollPane = new JScrollPane(localTable);
-            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            scrollPane.setPreferredSize(new Dimension(800, 600));
-            scrollPane.setBorder(BorderFactory.createTitledBorder(tableName));
+    	        JScrollPane scrollPane = new JScrollPane(localTable);
+    	        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    	        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    	        scrollPane.setPreferredSize(new Dimension(800, 400));
+    	        scrollPane.setBorder(BorderFactory.createTitledBorder(tableName));
 
-            // Add the scroll pane to the panel
-            add(scrollPane, BorderLayout.CENTER);
+    	      
+    	        add(scrollPane, BorderLayout.CENTER);
+    	    }
     }
-}}
-
-
-/*	@Override
-public Component getComponent() {
-	// TODO Auto-generated method stub
-	return this;
 }
 
-@Override
-public CytoPanelName getCytoPanelName() {
-	// TODO Auto-generated method stub
-	return  CytoPanelName.SOUTH;
-}
 
-@Override
-public String getTitle() {
-	// TODO Auto-generated method stub
-	return "OTU/ASV Data";
-}
-
-@Override
-public Icon getIcon() {
-	// TODO Auto-generated method stub
-	return null;*/
 
 

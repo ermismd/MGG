@@ -31,8 +31,8 @@ public class ImportMetadataTask extends AbstractTask{
 	    
 	    private JSONObject jsonResult;
 	    
-	    @Tunable(description = "Display Data", groups = { "Display Settings" }, tooltip="If checked, the MetaData will be displayed in a panel")
-    	public boolean showMetaDataInPanel = true;
+	    //@Tunable(description = "Display Data", groups = { "Display Settings" }, tooltip="If checked, the MetaData will be displayed in a panel")
+    	//public boolean showMetaDataInPanel = true;
 	    
 	    
 	    
@@ -72,9 +72,9 @@ public class ImportMetadataTask extends AbstractTask{
 	            
 	            
 	            // Show the JSON data in a panel if showJSONInPanel 
-	            if (showMetaDataInPanel ) {
-	                SwingUtilities.invokeLater(() -> showDataInPanel(jsonResult));
-	            }
+	          //  if (showMetaDataInPanel ) {
+	             //   SwingUtilities.invokeLater(() -> showDataInPanel(jsonResult));
+	          //  }
 	            
 	            
 	            

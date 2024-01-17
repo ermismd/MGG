@@ -57,10 +57,6 @@ import be.kuleuven.mgG.internal.view.JsonResultPanel;
  * 
  */
 
-
-
-
-
 public class ImportFileTask extends AbstractTask {
    
 	final CySwingApplication swingApplication;
@@ -75,53 +71,15 @@ public class ImportFileTask extends AbstractTask {
     
    
  
-    @Tunable(description = "Display Data", groups = { "Display Settings" }, tooltip="If checked, the Data will be displayed in a panel")
-    	public boolean showJSONInPanel = true;
-//    
-    @Tunable(description="Write JSON to file",groups = { "Create File Settings" },tooltip="If checked, a new JSON file will be created in the same path as the original file",exampleStringValue="true")
-   public boolean writeToFile = false;  
-//    
-//    @Tunable(description="Choose input type", groups={"Input Settings"}, gravity=1.0, required=true)
-//    public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
-//    
-//    @Tunable(description="Choose if heterogeneous", groups={"Additional Input if chosen abudance_table"}, gravity=10.0, required=true)
-//    public boolean heterogeneous=false;
-//    
-//    @Tunable(description="Choose if sensitive", groups={"Additional Input if chosen abudance_table"}, gravity=11.0, required=true)
-//    public boolean sensitive=false;
-// 
-//    @Tunable(description="Choose delimiter", groups={"Input Settings"}, gravity=2.0, required=true)
-//    public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
-//
-//    @Tunable(description="Choose taxonomy Database", groups={"Input Settings"}, gravity=3.0, required=true)
-//    public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("gtdb", "dada2", "other");
-//    
-//    @Tunable(description="PhenDB", longDescription="Choose whether to get PhenDB.", groups={"Input Settings"}, 
-//    		tooltip="Choose whether to get PhenDB values annotations" ,gravity=4.0, exampleStringValue="True, False", required=true)
-//    public boolean phenDB=true;
-//
-//    @Tunable(description="FAPROTAX", longDescription="Choose whether to get FAPROTAX.", groups={"Input Settings"}, 
-//    		tooltip="Choose whether to get FAPROTAX values annotations" , gravity=5.0, exampleStringValue="True, False", required=true)
-//    public boolean faproTax=true; 
-//
-//    @Tunable(description="Pathway Complementarity", longDescription="Choose whether to get the pathway complementarity.", 
-//    		 tooltip="Choose whether to get Pathway Complementarity annotations" ,groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
-//    public boolean pathway_complement=true;
-//    
-//    @Tunable(description="Seed Scores", longDescription="Choose whether to get the Seed Scores.", groups={"Input Settings"}, gravity=7.0, exampleStringValue="True, False", required=true)
-//    public boolean seed_scores= false;
-//    
-//    @Tunable(description="Get_Children", longDescription="Choose whether to get Children(different strains).", groups={"Input Settings"}, 
-//    		tooltip="Choose whether to get strains from the same species" , gravity=8.0, exampleStringValue="True, False", required=true)
-//    public boolean get_children=false; 
-//    
-//    @Tunable(description="Manta", longDescription="Choose whether to get Manta annotations.", groups={"Input Settings"}, 
-//    		tooltip="Choose whether to get Manta annotations" , gravity=9.0, exampleStringValue="True, False", required=true)
-//    public boolean manta=false; 
-    
-    //@Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
-    //public boolean netCmpt= true;
-    
+    // @Tunable(description = "Display Data", groups = { "Display Settings" },
+    //tooltip="If checked, the Data will be displayed in a panel")
+    //	public boolean showJSONInPanel = true;
+    //    
+    // @Tunable(description="Write JSON to file",groups = { "Create File Settings" },
+    //tooltip="If checked, a new JSON file will be created in the same path as the original file",exampleStringValue="true")
+    // public boolean writeToFile = false;  
+    //    
+
     
     
     /**
@@ -145,7 +103,7 @@ public class ImportFileTask extends AbstractTask {
   
     @Override
     public void run(TaskMonitor taskMonitor) {
-    	taskMonitor.setTitle("Importing File");
+    	taskMonitor.setTitle("Importing abudance data file");
         taskMonitor.setStatusMessage("Reading file");
 
         try {
@@ -209,24 +167,7 @@ public class ImportFileTask extends AbstractTask {
 	        
 	        
 	        
-//     // Mapping the arguments from the list to their respective values
-//	        Map<String, Object> argumentsMap = new HashMap<>();
-//	        argumentsMap.put("input_category", input.getSelectedValue());
-//            argumentsMap.put("taxonomy", taxonomy.getSelectedValue());
-//            argumentsMap.put("delimiter", delimiter.getSelectedValue());
-//	        argumentsMap.put("get_children", get_children); // Assuming get_children is a predefined variable
-//	        argumentsMap.put("sensitive", sensitive);       // Assuming sensitive is a predefined variable
-//	        argumentsMap.put("heterogeneous", heterogeneous); // Assuming heterogeneous is a predefined variable
-//	        argumentsMap.put("phenDB", phenDB);             // Assuming phenDB is a predefined variable
-//	        argumentsMap.put("faprotax", faproTax);         // Assuming faproTax is a predefined variable
-//	        argumentsMap.put("pathway_complement", pathway_complement); // Assuming pathway_complement is a predefined variable
-//	        argumentsMap.put("seed_scores", seed_scores);   // Assuming seed_scores is a predefined variable
-//	        argumentsMap.put("manta", manta);               // Assuming manta is a predefined variable
-//
-//	        // Add the argumentsMap directly to the jsonObject as a JSONObject
-//	        jsonObject.put("inputParameters", new JSONObject(argumentsMap));
-	        
-	        
+
 	        
 	     
 	    
@@ -239,26 +180,26 @@ public class ImportFileTask extends AbstractTask {
             mggManager.setJsonObject(jsonObject);
             
           
-            taskMonitor.setStatusMessage("Displaying data in panel");
+         //   taskMonitor.setStatusMessage("Displaying data in panel");
 
           
-            if (writeToFile) {
-            	try {
-            	String jsonFilePath = filePath + ".json";
-                FileWriter writer = new FileWriter(jsonFilePath);
-                writer.write(jsonArray.toJSONString());
-                writer.close();
-            } catch (IOException e) {
-                taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Error while writing the file: " + e.getMessage());
-                e.printStackTrace();
-            }
-            }
+          //  if (writeToFile) {
+            //	try {
+            //	String jsonFilePath = filePath + ".json";
+            //    FileWriter writer = new FileWriter(jsonFilePath);
+            //    writer.write(jsonArray.toJSONString());
+             //   writer.close();
+         //   } catch (IOException e) {
+           //     taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Error while writing the file: " + e.getMessage());
+           //     e.printStackTrace();
+          //  }
+          //  }
             
             
 			  // Show the JSON data in a panel if showJSONInPanel 
-            if (showJSONInPanel) {
-                SwingUtilities.invokeLater(() -> showDataInPanel(jsonObject));
-            }
+            //if (showJSONInPanel) {
+             //   SwingUtilities.invokeLater(() -> showDataInPanel(jsonObject));
+           // }
 			 
 	        
             taskMonitor.setProgress(1.0);

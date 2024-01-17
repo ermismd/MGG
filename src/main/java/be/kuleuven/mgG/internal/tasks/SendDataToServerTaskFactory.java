@@ -12,24 +12,35 @@ import be.kuleuven.mgG.internal.model.MGGManager;
 public class SendDataToServerTaskFactory implements TaskFactory {
     
     private final MGGManager mggManager;
-   
+    
     
     
     
     public SendDataToServerTaskFactory(MGGManager mggManager) {
     	
         this.mggManager=mggManager;
+       
+    	
     }
-
+    
     @Override
     public TaskIterator createTaskIterator() {
         return new TaskIterator(2,new SendDataToServerTask( mggManager),new CreateNetworkTask(mggManager));
         
-        
+        	
     }
-
+    	
     @Override
     public boolean isReady() {
-        return true;
-    }
+        
+    	   if (mggManager.getJsonObject() != null && mggManager.getJsonObject().containsKey("data")) {
+    	        
+    	        //Object data = dataObject.get("data");
+    	        //if (data instanceof JSONArray) {
+    	            
+    	            return true;
+    	        }
+    	    
+    	    return false; 
+    	}
 }

@@ -31,7 +31,7 @@ public class CheckAbudanceFileTask extends AbstractTask {
 	 @Override
 	    public void run(TaskMonitor taskMonitor) throws Exception {
 	        JSONObject dataObject = mggManager.getJsonObject();
-	        taskMonitor.setStatusMessage("Data Send " + dataObject.toJSONString());
+	        //taskMonitor.setStatusMessage("Data Send " + dataObject.toJSONString());
 	        
 	        if (dataObject != null && dataObject.containsKey("data")) {
 	            SwingUtilities.invokeLater(() -> {
