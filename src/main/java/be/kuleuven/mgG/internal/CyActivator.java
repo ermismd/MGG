@@ -52,11 +52,13 @@ import org.slf4j.LoggerFactory;
 
 import be.kuleuven.mgG.internal.tasks.CheckAbudanceFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckMetaDataFileTaskFactory;
+import be.kuleuven.mgG.internal.tasks.CheckNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyle;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyleTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportMetadataTaskFactory;
+import be.kuleuven.mgG.internal.tasks.ImportNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
@@ -124,6 +126,19 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, mggImportMetaDataTaskFactory, TaskFactory.class, metadataprops);
         
         
+        ImportNetworkTaskFactory mggImportNetWorkTaskFactory=new ImportNetworkTaskFactory(MGGManager);
+        Properties networkprops=new Properties();
+        networkprops.setProperty(TITLE, "Import Current Network");
+        networkprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
+        networkprops.setProperty(IN_TOOL_BAR, "FALSE");
+        networkprops.setProperty(IN_MENU_BAR, "TRUE");
+        networkprops.setProperty(MENU_GRAVITY, "3");
+        networkprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        networkprops.setProperty(COMMAND_DESCRIPTION, "Load Network Data");
+        networkprops.setProperty(COMMAND, "Load_Network");
+        
+        registerService(bc, mggImportNetWorkTaskFactory, TaskFactory.class, networkprops);
+        
         CheckAbudanceFileTaskFactory mggCheckAbudanceFileTaskFactory = new CheckAbudanceFileTaskFactory(MGGManager);
         Properties checkdataprops = new Properties();
         checkdataprops.setProperty(TITLE, "Check Abudance Data");
@@ -151,6 +166,21 @@ public class CyActivator extends AbstractCyActivator {
         checkMetaDataprops.setProperty(COMMAND, "Check_MetaData");
 
         registerService(bc, mggCheckMetaDataFileTaskFactory, TaskFactory.class, checkMetaDataprops);
+        
+        CheckNetworkTaskFactory mggCheckNetworkTaskFactory = new CheckNetworkTaskFactory (MGGManager);
+        Properties checkNetworkprops = new Properties();
+        checkNetworkprops.setProperty(TITLE, "Check  Network Data");
+        checkNetworkprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data.Check Data Files");
+        checkNetworkprops.setProperty(IN_TOOL_BAR, "FALSE");
+        checkNetworkprops.setProperty(IN_MENU_BAR, "TRUE");
+        checkNetworkprops.setProperty(MENU_GRAVITY, "3");
+        checkNetworkprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        checkNetworkprops.setProperty(COMMAND_DESCRIPTION, "Check network data");
+        checkNetworkprops.setProperty(COMMAND, "Check_Network_Data");
+
+        registerService(bc, mggCheckNetworkTaskFactory , TaskFactory.class, checkNetworkprops);
+        
+        
         
         //---------------------
         examoleFactory examole = new examoleFactory(MGGManager);
