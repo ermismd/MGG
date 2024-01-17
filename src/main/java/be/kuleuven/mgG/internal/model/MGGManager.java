@@ -100,7 +100,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	private JSONArray serverResponse;
 	
 	private JSONObject metadataObject;
-	
+	private JSONObject networkObject;
 	
 	private boolean highlightNeighbors = false;
 	private boolean showMspecies = false;
@@ -197,6 +197,14 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
         return metadataObject;
     }
     
+    
+    public void setNetworkObject(JSONObject jsonObject) {
+    	this.networkObject=jsonObject;
+    }
+    
+    public JSONObject getNetworkObject() {
+    	return networkObject;
+    }
     
     
     /**

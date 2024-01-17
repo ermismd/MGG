@@ -603,13 +603,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
         // Label 
-        JLabel complementLabel = new JLabel("Input Kegg Module:");
+        JLabel complementLabel = new JLabel("Search KEGG term: ");
         complementLabel.setFont(new Font("Arial", Font.PLAIN, 10));
         inputPanel.add(complementLabel);
 
         // JTextField for input
         JTextField complementField = new JTextField(10); 
-        complementField.setToolTipText("Format should be like K00928 or M00001 "); 
+        complementField.setToolTipText("This term should adhere to the format 'K00928' or 'M00001' "); 
         inputPanel.add(complementField);
 
         // JButton to open the link
@@ -738,16 +738,59 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	table.addMouseListener(new MouseAdapter() {
                 	    public void mouseClicked(MouseEvent e) {
                 	        int row = table.rowAtPoint(e.getPoint());
-                	        int column = table.columnAtPoint(e.getPoint());
-                	        if (table.getColumnClass(column).equals(SwingLink.class)) {
-                	            SwingLink link = (SwingLink) table.getValueAt(row, column);
+                	        int col = table.columnAtPoint(e.getPoint());
+
+                	        if (table.getColumnClass(col).equals(SwingLink.class)) {
+                	            SwingLink link = (SwingLink) table.getValueAt(row, col);
                 	            link.open1(link.getURI());
+                	            
+                	        } else if (row >= 0 && col >= 0) {
+                	            Object cellValue = table.getValueAt(row, col);
+
+                	            if (cellValue instanceof String) {
+                	                String cellText = (String) cellValue;
+                	                String[] elements = cellText.split(";");
+
+                	                // Get the x-coordinate of the click relative to the cell
+                	                int clickX = e.getX() - table.getCellRect(row, col, true).x;
+
+                	                int cumulativeWidth = 0;
+                	                for (String element : elements) {
+                	                    // Calculate the width of the current element
+                	                    int elementWidth = table.getFontMetrics(table.getFont()).stringWidth(element);
+
+                	                    // Check if the click is within the current element
+                	                    if (clickX >= cumulativeWidth && clickX <= cumulativeWidth + elementWidth) {
+                	                        System.out.println("Clicked on: " + element);
+                	                        // Add your logic for the clicked element here
+
+                	                        // Assuming SwingLink is used for each element
+                	                        SwingLink link = new SwingLink(element, "https://www.genome.jp/entry/" + element, openBrowser);
+                	                        link.open1(link.getURI());
+
+                	                        break; // Exit the loop once the clicked element is identified
+                	                    }
+
+                	                    cumulativeWidth += elementWidth;
+                	                }
+                	            }
                 	        }
-                	        
                 	    }
-                	   
-                	      
                 	});
+                	
+//                	table.addMouseListener(new MouseAdapter() {
+//                	    public void mouseClicked(MouseEvent e) {
+//                	        int row = table.rowAtPoint(e.getPoint());
+//                	        int column = table.columnAtPoint(e.getPoint());
+//                	        if (table.getColumnClass(column).equals(SwingLink.class)) {
+//                	            SwingLink link = (SwingLink) table.getValueAt(row, column);
+//                	            link.open1(link.getURI());
+//                	        }
+//                	        
+//                	    }
+//                	   
+//                	      
+//                	});
                 	
             
                 	// size of the scroll pane based on the number of rows
