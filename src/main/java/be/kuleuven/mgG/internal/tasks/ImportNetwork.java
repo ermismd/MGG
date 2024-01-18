@@ -1,6 +1,8 @@
 package be.kuleuven.mgG.internal.tasks;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -77,16 +79,34 @@ public class ImportNetwork extends AbstractTask {
 	    // Creating a new JSONObject for the network
 	    JSONObject networkJsonObject = new JSONObject();
 	    networkJsonObject.put("network", networkData);
-
+	    
+	    JSONObject datajsonObject=new JSONObject();
+	    datajsonObject=mggManager.getJsonObject();
+	    
+	    
+	    
+	    
+	    // Check if source and target node names are in dataJsonObject
+	    if (areNodesInDataJson(networkJsonObject,  datajsonObject)) {
+	        // If all nodes are present, set the network object
+	        mggManager.setNetworkObject(networkJsonObject);
+	        taskMonitor.showMessage(TaskMonitor.Level.INFO ,"Network data loaded correctly");
+	    } else {
+	        // If not all nodes are present, set the network object to null
+	        mggManager.setNetworkObject(null);
+	        taskMonitor.showMessage(TaskMonitor.Level.WARN, 
+	                "Node names in the network are not the same with the names in the abundance table -> network data can't be uploaded");
+	    }
+	    
 	    // Send the network object to mggManager
-	    mggManager.setNetworkObject(networkJsonObject);
+	   // mggManager.setNetworkObject(networkJsonObject);
 	
 		
 		//taskMonitor.setStatusMessage("NetworkArray" + networkData.toString());
 		//taskMonitor.setStatusMessage("networkJsonObjec" + networkJsonObject.toString());
 
 		// Sending the structured network object to mggManager
-		mggManager.setNetworkObject(networkJsonObject);
+		//mggManager.setNetworkObject(networkJsonObject);
 	}
 		
 		
@@ -96,7 +116,27 @@ public class ImportNetwork extends AbstractTask {
 	    return network.getRow(node).get("name", String.class);
 	}
 		
-		
+	private boolean areNodesInDataJson(JSONObject networkJsonObject, JSONObject dataJsonObject) {
+	    // Extract node names from the networkJsonObject
+	    JSONArray networkData = (JSONArray) networkJsonObject.get("network");
+	    Set<String> nodeNamesInNetwork = new HashSet<>();
+	    for (int i = 1; i < networkData.size(); i++) { // skip headers
+	        JSONArray edge = (JSONArray) networkData.get(i);
+	        nodeNamesInNetwork.add((String) edge.get(1)); // Source Node
+	        nodeNamesInNetwork.add((String) edge.get(2)); // Target Node
+	    }
+
+	    // Check if these node names are in the first row of dataJsonObject
+	    if (dataJsonObject.containsKey("data")) {
+	        JSONArray data = (JSONArray) dataJsonObject.get("data");
+	        JSONArray headerRow = (JSONArray) data.get(0); // First row with column names
+	        Set<String> columnNamesInData = new HashSet<>(headerRow);
+
+	        
+	        return columnNamesInData.containsAll(nodeNamesInNetwork);
+	    }
+	    return false;
+	}	
 		
 	}
 

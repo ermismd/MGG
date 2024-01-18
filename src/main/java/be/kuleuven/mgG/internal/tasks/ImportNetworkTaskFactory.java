@@ -2,6 +2,7 @@ package be.kuleuven.mgG.internal.tasks;
 
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
+import org.json.simple.JSONObject;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 
@@ -21,7 +22,8 @@ public class ImportNetworkTaskFactory implements TaskFactory {
 	@Override
 	public boolean isReady() {
 		
-		return true;
+		JSONObject dataJsonObject = mggManager.getJsonObject();
+        return dataJsonObject != null;
 	}
 
 }
