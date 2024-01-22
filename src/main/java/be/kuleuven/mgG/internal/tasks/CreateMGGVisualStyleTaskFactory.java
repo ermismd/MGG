@@ -19,7 +19,7 @@ public class CreateMGGVisualStyleTaskFactory implements TaskFactory {
 	  
 	@Override
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new CreateNetworkTask(manager));
+		return new TaskIterator(new CreateMGGVisualStyleTask(manager));
 	}
 
 	
@@ -27,7 +27,7 @@ public class CreateMGGVisualStyleTaskFactory implements TaskFactory {
 	@Override
 	public boolean isReady() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	

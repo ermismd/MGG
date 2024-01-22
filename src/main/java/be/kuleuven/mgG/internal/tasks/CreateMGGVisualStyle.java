@@ -67,8 +67,8 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 		super("Create MGG Visual Style");
 		this.mggManager = mggManager;
 		
-		setPreferredMenu("Apps.MGG.Create MGG Visual Style");
-		setMenuGravity(4);
+		//setPreferredMenu("Apps.MGG.Create MGG Visual Style");
+		//setMenuGravity(4);
 		useCheckBoxMenuItem = true;
 		insertSeparatorBefore = false;
 		
