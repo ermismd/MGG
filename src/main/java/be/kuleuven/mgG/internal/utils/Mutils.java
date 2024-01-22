@@ -43,9 +43,20 @@ public class Mutils {
     public static boolean isMGGNetwork(CyNetwork network) {
         if (network == null) return false; //this is new
         CyTable nodeTable = network.getDefaultNodeTable();
-        if (nodeTable.getColumn("@id") == null) {
-            return false; // Return false if @id column is missing in node table
-        }
+//        if (nodeTable.getColumn("@id") == null) {
+//            return false; // Return false if @id column is missing in node table
+//        }
+        
+      
+        
+        for (CyColumn column : nodeTable.getColumns()) {
+            String namespace = column.getNamespace();
+            if (namespace != null && namespace.equals("microbetag")) {
+                return true;
+            }}
+
+
+      
 
         CyTable edgeTable = network.getDefaultEdgeTable();
         if (edgeTable.getColumn("weight::weight") == null) {
@@ -56,12 +67,28 @@ public class Mutils {
     }
     
     public static boolean isMGGNetworkMicrobetagDB(CyNetwork network) {
-		// This is a string network only if we have a confidence score in the network table,
-		// "@id" column in the node table, and a "score" column in the edge table
-		if (network == null || network.getRow(network).get("database", String.class) == null)
-			return false;
-		return isMGGNetwork(network);
-	}
+		
+    	// This is a MGG network only if we have microbetag network in the name column in the network table,
+    	
+		//if (network == null || network.getRow(network).get("database", String.class) == null)
+		//	return false;
+		//return isMGGNetwork(network);
+
+        // Get the value of the "name" column for this network
+        String nameValue = network.getRow(network).get("name", String.class);
+
+        // Check if the "name" contains "microbetag network" or any other variations
+        if (nameValue != null && (nameValue.contains("microbetag network") || nameValue.matches(".*microbetag network\\(\\d+\\).*"))) {
+            // If the "name" contains "microbetag network" or similar variations, 
+                return true;
+            }
+        
+        return isMGGNetwork(network);
+        
+    }
+    	
+    	
+    	
 	
     
     
