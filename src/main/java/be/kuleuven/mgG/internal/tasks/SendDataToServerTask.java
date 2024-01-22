@@ -236,10 +236,19 @@ public class SendDataToServerTask extends AbstractTask {
                           }
 
                           HttpEntity responseEntity = response.getEntity();
+                         // if (responseEntity.getContent().instanceof(String))
                          
-                          JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
-                       
+                         try {
+                        	  JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
                           
+                            	  
+                          	    } catch (Exception e) { taskMonitor.showMessage(TaskMonitor.Level.ERROR,
+                          				"Error from server: " + responseEntity.toString());
+                          				e.printStackTrace(System.out);
+                          		}
+                       
+                          		
+                          JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
                           
                            // JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
                            //  JSONObject jsonResponse=(JSONObject) responseEntity ; 
