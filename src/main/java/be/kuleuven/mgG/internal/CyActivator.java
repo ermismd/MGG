@@ -58,11 +58,12 @@ import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyleTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportMetadataTaskFactory;
-import be.kuleuven.mgG.internal.tasks.ImportNetworkTaskFactory;
+import be.kuleuven.mgG.internal.tasks.ImportNetworkDataTaskFactory;
+
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
-import be.kuleuven.mgG.internal.tasks.examoleFactory;
+
 import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 
@@ -97,7 +98,7 @@ public class CyActivator extends AbstractCyActivator {
 
 
 
-        // Register taskfactory
+        // Register taskfactories
 
         ImportFileTaskFactory mggImportFileTaskFactory = new ImportFileTaskFactory(MGGManager);
         Properties props = new Properties();
@@ -126,7 +127,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, mggImportMetaDataTaskFactory, TaskFactory.class, metadataprops);
         
         
-        ImportNetworkTaskFactory mggImportNetWorkTaskFactory=new ImportNetworkTaskFactory(MGGManager);
+        ImportNetworkDataTaskFactory mggImportNetWorkTaskFactory=new ImportNetworkDataTaskFactory(MGGManager);
         Properties networkprops=new Properties();
         networkprops.setProperty(TITLE, "Import Current Network");
         networkprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
@@ -180,35 +181,22 @@ public class CyActivator extends AbstractCyActivator {
 
         registerService(bc, mggCheckNetworkTaskFactory , TaskFactory.class, checkNetworkprops);
         
-        
-        
-        //---------------------
-        examoleFactory examole = new examoleFactory(MGGManager);
-        Properties exaprops1 = new Properties();
-        exaprops1.setProperty(TITLE, "examole");
-        exaprops1.setProperty(PREFERRED_MENU, "Apps.MGG.examole");
-        exaprops1.setProperty(IN_TOOL_BAR, "FALSE");
-        exaprops1.setProperty(IN_MENU_BAR, "TRUE");
-        exaprops1.setProperty(MENU_GRAVITY, "3");
-        exaprops1.setProperty(COMMAND_NAMESPACE, "MGG");
-        exaprops1.setProperty(COMMAND_DESCRIPTION, "examole");
-        exaprops1.setProperty(COMMAND, "examole");
+        CreateMGGVisualStyleTaskFactory mggCreateMGGVisualStyleTaskFactory = new CreateMGGVisualStyleTaskFactory (MGGManager);
+        Properties createMGGvisualprops = new Properties();
+        createMGGvisualprops.setProperty(TITLE, "MGG visual style");
+        createMGGvisualprops.setProperty(PREFERRED_MENU, "Apps.MGG.MGG visual style");
+        createMGGvisualprops.setProperty(IN_TOOL_BAR, "FALSE");
+        createMGGvisualprops.setProperty(IN_MENU_BAR, "TRUE");
+        createMGGvisualprops.setProperty(MENU_GRAVITY, "4");
+        createMGGvisualprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        createMGGvisualprops.setProperty(COMMAND_DESCRIPTION, "Create MGG visual style");
+        createMGGvisualprops.setProperty(COMMAND, "MGG_visual_style");
 
-        registerService(bc, examole, TaskFactory.class, exaprops1);
+        registerService(bc, mggCreateMGGVisualStyleTaskFactory , TaskFactory.class, createMGGvisualprops);
+        
+        
 
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+   
         
         
         // Register taskfactory
@@ -219,7 +207,7 @@ public class CyActivator extends AbstractCyActivator {
         Sendprops.setProperty(PREFERRED_MENU, "Apps.MGG");
         Sendprops.setProperty(IN_TOOL_BAR, "FALSE");
         Sendprops.setProperty(IN_MENU_BAR, "TRUE");
-        Sendprops.setProperty(MENU_GRAVITY, "2");
+        Sendprops.setProperty(MENU_GRAVITY, "1");
         Sendprops.setProperty(COMMAND_NAMESPACE, "MGG");
         Sendprops.setProperty(COMMAND_DESCRIPTION, "Upload data to Microbetag Server and Get the Network");
         Sendprops.setProperty(COMMAND, "Get_Network");
@@ -229,27 +217,11 @@ public class CyActivator extends AbstractCyActivator {
 
 
 
-        //        CreateMGGVisualStyleTaskFactory mggVisualStyleTaskFactory=new  CreateMGGVisualStyleTaskFactory(MGGManager);
-        //        
-        //        Properties Visualprops = new Properties();
-        //        Visualprops.setProperty(TITLE, "Apply MGG Visual Style");
-        //        Visualprops.setProperty(PREFERRED_MENU, "Apps.MGG.Visual Style");
-        //        Visualprops.setProperty(IN_TOOL_BAR, "FALSE");
-        //        Visualprops.setProperty(IN_MENU_BAR, "TRUE");
-        //        Visualprops.setProperty(MENU_GRAVITY, "1");
-        //        Visualprops.setProperty(COMMAND_NAMESPACE, "MGG");
-        //        Visualprops.setProperty(COMMAND_DESCRIPTION, "Get MGG visual Style");
-        //        Visualprops.setProperty(COMMAND, "Get_Style");
-        //	     
-        //        registerService(bc,mggVisualStyleTaskFactory, TaskFactory.class, Visualprops);
-        //        
 
 
+       // CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager);
 
-
-        CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager);
-
-        registerService(bc, createVisualStyleAction, CyAction.class, new Properties());
+       // registerService(bc, createVisualStyleAction, CyAction.class, new Properties());
 
         {
             ShowResultsPanelAction sra = new ShowResultsPanelAction("Show results panel", MGGManager);
@@ -259,7 +231,7 @@ public class CyActivator extends AbstractCyActivator {
             //showResults.reregister();
             MGGManager.setShowResultsPanelTaskFactory(showResults);
 
-            // Now bring up the side panel if the current network is a STRING network
+            // Now bring up the side panel if the current network is a MGG network
             CyNetwork current = MGGManager.getCurrentNetwork();
             if (Mutils.ifHaveMGG(current)) {
                 // It's the current network.  Bring up the results panel
