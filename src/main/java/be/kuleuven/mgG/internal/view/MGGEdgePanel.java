@@ -13,6 +13,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -36,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -43,6 +47,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -59,9 +64,10 @@ import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.work.TaskMonitor;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
-
+import be.kuleuven.mgG.internal.utils.BlueUnderlineHTMLRenderer;
 import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.utils.SwingLink;
 import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
@@ -581,20 +587,20 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
 
         Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation", edgeTable.getColumn("seed::cooperation").getType()) : null;
-        if (cooperationSeedValue != null) {
-            JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
-            ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
-            panel.add(cooperationSeedArea, gbc);
-            gbc.gridy++;
-        }
+       // if (cooperationSeedValue != null) {
+          //  JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
+           // ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
+          //  panel.add(cooperationSeedArea, gbc);
+          //  gbc.gridy++;
+      //  }
 
         Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
-        if (competitionSeedValue != null) {
-            JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
-            ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
-            panel.add(competitionSeedArea, gbc);
-            gbc.gridy++;
-        }
+       // if (competitionSeedValue != null) {
+       //     JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
+       //     ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
+       //     panel.add(competitionSeedArea, gbc);
+       //     gbc.gridy++;
+     //   }
         
         
         
@@ -657,19 +663,19 @@ public class MGGEdgePanel extends AbstractMggPanel {
         Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
         
         
-        if (cooperationSeedValue != null) {
-            JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
-            cooperationLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-            PathwaysPanel.add(cooperationLabel, pathgbc);
-            pathgbc.gridy++;
-        }
+       // if (cooperationSeedValue != null) {
+         //   JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
+        //    cooperationLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        //    PathwaysPanel.add(cooperationLabel, pathgbc);
+        //    pathgbc.gridy++;
+     //   }
 
-        if (competitionSeedValue != null) {
-            JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
-            competitionLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-            PathwaysPanel.add(competitionLabel, pathgbc);
-            pathgbc.gridy++;
-        }
+        //if (competitionSeedValue != null) {
+         //   JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
+         //   competitionLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+         //   PathwaysPanel.add(competitionLabel, pathgbc);
+          //  pathgbc.gridy++;
+      //  }
         
         
         
@@ -689,7 +695,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 		 @Override
                 		    public Class<?> getColumnClass(int columnIndex) {
                 		        switch (columnIndex) {
-                		            case 0: return SwingLink.class; // For Kegg Module links
+                		            //case 0: return SwingLink.class; // For Kegg Module links
                 		            //case 3: return SwingLink.class; // for Complement
                 		            case 5: return SwingLink.class; //for color map links
                 		            default: return Object.class;
@@ -714,17 +720,17 @@ public class MGGEdgePanel extends AbstractMggPanel {
                         	// Handle Kegg Module Link
                         	
                         	 String moduleId = parts[0].trim(); // Trim to remove before and after spaces
-                             moduleId = moduleId.replace("[", "").replace("]", "");; // Remove  unwanted "[" "]" 
-                             SwingLink  link = new SwingLink(moduleId, "https://www.genome.jp/entry/" + moduleId, openBrowser);
+                             moduleId = moduleId.replace("[", "").replace("]", ""); // Remove  unwanted "[" "]" 
+                            // SwingLink  link = new SwingLink(moduleId, "https://www.genome.jp/entry/" + moduleId, openBrowser);
                              
 
                              
                              String colorMapUrlString = parts[5].trim();
-                             colorMapUrlString = colorMapUrlString.replace("[", "").replace("]", "");; 
+                             colorMapUrlString = colorMapUrlString.replace("[", "").replace("]", "");
                              SwingLink  colorMapLink = new SwingLink("Url", colorMapUrlString, openBrowser);
                             
                              //add the rows to the table
-                             tableM.addRow(new Object[]{link, parts[1], parts[2], parts[3], parts[4], colorMapLink});
+                             tableM.addRow(new Object[]{moduleId, parts[1], parts[2], parts[3], parts[4], colorMapLink});
                  
                         }
                     }
@@ -734,63 +740,68 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 
                 	//  custom renderer for SwingLink class
                 	table.setDefaultRenderer(SwingLink.class, new SwingLinkCellRenderer());
+                	table.getColumnModel().getColumn(0).setCellRenderer(new BlueUnderlineHTMLRenderer());
+                	table.getColumnModel().getColumn(3).setCellRenderer(new BlueUnderlineHTMLRenderer());
+                	table.getColumnModel().getColumn(4).setCellRenderer(new BlueUnderlineHTMLRenderer());
+                	
+                	
                 	
                 	table.addMouseListener(new MouseAdapter() {
+                	    private Timer clickTimer = null;
+                	    private final int doubleClickDelay = 400; // ms delay 
+
                 	    public void mouseClicked(MouseEvent e) {
                 	        int row = table.rowAtPoint(e.getPoint());
                 	        int col = table.columnAtPoint(e.getPoint());
-
+                	        Object cellValue = table.getValueAt(row, col);
+                	        
                 	        if (table.getColumnClass(col).equals(SwingLink.class)) {
                 	            SwingLink link = (SwingLink) table.getValueAt(row, col);
-                	            link.open1(link.getURI());
-                	            
-                	        } else if (row >= 0 && col >= 0) {
-                	            Object cellValue = table.getValueAt(row, col);
+                	            link.open1(link.getURI());}
 
-                	            if (cellValue instanceof String) {
-                	                String cellText = (String) cellValue;
-                	                String[] elements = cellText.split(";");
+                	        else if (col == 0 || col == 3 || col == 4) {
+                	            Runnable action = () -> {
+                	                if (cellValue instanceof String) {
+                	                    String cellText = (String) cellValue;
+                	                    String[] elements = cellText.split(";");
 
-                	                // Get the x-coordinate of the click relative to the cell
-                	                int clickX = e.getX() - table.getCellRect(row, col, true).x;
+                	                    // Get the x-cord of the click relative to the cell
+                	                    int clickX = e.getX() - table.getCellRect(row, col, true).x;
 
-                	                int cumulativeWidth = 0;
-                	                for (String element : elements) {
-                	                    // Calculate the width of the current element
-                	                    int elementWidth = table.getFontMetrics(table.getFont()).stringWidth(element);
+                	                    int cumulativeWidth = 0;
+                	                    for (String element : elements) {
+                	                        // Calculate the width of the current element
+                	                        int elementWidth = table.getFontMetrics(table.getFont()).stringWidth(element);
 
-                	                    // Check if the click is within the current element
-                	                    if (clickX >= cumulativeWidth && clickX <= cumulativeWidth + elementWidth) {
-                	                        System.out.println("Clicked on: " + element);
-                	                        // Add your logic for the clicked element here
-
-                	                        // Assuming SwingLink is used for each element
-                	                        SwingLink link = new SwingLink(element, "https://www.genome.jp/entry/" + element, openBrowser);
-                	                        link.open1(link.getURI());
-
-                	                        break; // Exit the loop once the clicked element is identified
+                	                        // Check if the click is within the current element
+                	                        if (clickX >= cumulativeWidth && clickX <= cumulativeWidth + elementWidth) {
+                	                            System.out.println("Clicked on: " + element);
+                	                            
+                	                            SwingLink link = new SwingLink(element, "https://www.genome.jp/entry/" + element, openBrowser);
+                	                            link.open1(link.getURI());
+                	                            break; // Exit the loop 
+                	                        }
+                	                        cumulativeWidth += elementWidth;
                 	                    }
+                	                }
+                	            };
 
-                	                    cumulativeWidth += elementWidth;
+                	            if (e.getClickCount() == 1) {
+                	                if (clickTimer != null && clickTimer.isRunning()) {
+                	                    clickTimer.stop();
+                	                    action.run(); // Execute the action immediately on double-click
+                	                } else {
+                	                    // Start the timer for a single click
+                	                    clickTimer = new Timer(doubleClickDelay, ae -> action.run());
+                	                    clickTimer.setRepeats(false);
+                	                    clickTimer.start();
                 	                }
                 	            }
                 	        }
                 	    }
                 	});
                 	
-//                	table.addMouseListener(new MouseAdapter() {
-//                	    public void mouseClicked(MouseEvent e) {
-//                	        int row = table.rowAtPoint(e.getPoint());
-//                	        int column = table.columnAtPoint(e.getPoint());
-//                	        if (table.getColumnClass(column).equals(SwingLink.class)) {
-//                	            SwingLink link = (SwingLink) table.getValueAt(row, column);
-//                	            link.open1(link.getURI());
-//                	        }
-//                	        
-//                	    }
-//                	   
-//                	      
-//                	});
+
                 	
             
                 	// size of the scroll pane based on the number of rows
@@ -816,7 +827,192 @@ public class MGGEdgePanel extends AbstractMggPanel {
      panel.add(PathwaysCollapsablePanel, gbc);
      gbc.gridy++;
      
-  
+  //----------------------Nested Seed complementarities panel ---------------------------//
+     
+     JPanel SeedComplementaritiesPanel = new JPanel();
+     SeedComplementaritiesPanel.setLayout(new GridBagLayout());
+     GridBagConstraints seedgbc = new GridBagConstraints();
+
+     seedgbc.fill = GridBagConstraints.HORIZONTAL;
+     seedgbc.weightx = 1.0; // use the full horizontal space
+
+     // Set constraints
+     seedgbc.gridx = 0; // Column 0
+     seedgbc.gridy = 0; // Start from row 0
+     seedgbc.anchor = GridBagConstraints.WEST; // Left-align 
+     seedgbc.insets = new Insets(5, 5, 5, 5); // 5pixel marg
+
+       
+     if (cooperationSeedValue != null) {
+         JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
+         cooperationLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+         SeedComplementaritiesPanel.add(cooperationLabel, seedgbc);
+         seedgbc.gridy++;
+     }
+
+     if (competitionSeedValue != null) {
+         JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
+         competitionLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+         SeedComplementaritiesPanel.add(competitionLabel, seedgbc);
+         seedgbc.gridy++;
+     }
+     
+     
+     for (CyColumn column : edgeTable.getColumns()) {
+         if (column.getName().startsWith("seedCompl::")) {
+             Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
+             if (columnValue != null) {
+             	String columnName = column.getName().substring(7); // Extracting column name
+             	String panelTitle = "Genomes: " + columnName.replace(":", " : ");
+             	JPanel newPanel = new JPanel(new BorderLayout());
+             	
+             	
+            	
+            	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
+            	DefaultTableModel tableM = new DefaultTableModel() {
+            		 @Override
+            		    public Class<?> getColumnClass(int columnIndex) {
+            		        switch (columnIndex) {
+            		            //case 2: return SwingLink.class; // For Kegg Module links
+            		           // case 3: return SwingLink.class;
+            		            //case 3: return SwingLink.class; // for Complement
+            		            case 4: return SwingLink.class; //for color map links
+            		            default: return Object.class;
+            		        }
+            		    }
+            		};
+
+            	tableM.addColumn("Category");
+            	tableM.addColumn("KEGG map");
+            	tableM.addColumn("Complements (ModelSeed ids)");
+            	tableM.addColumn("Complements (KEGG ids)");
+            	tableM.addColumn("Color map");
+            	
+            	
+                String[] entries = columnValue.toString().split(",");
+              
+                
+                for (String entry : entries) {
+                    String[] parts = entry.split("\\^");
+                    if (parts.length >= 5) {
+                    	
+                    	
+                    	
+                    	 String moduleId = parts[0].trim(); // Trim to remove before and after spaces
+                         moduleId = moduleId.replace("[", "").replace("]", ""); // Remove  unwanted "[" "]" 
+                         //SwingLink  link = new SwingLink(moduleId, "https://www.genome.jp/entry/" + moduleId, openBrowser);
+                         
+                         String seedIdlink = parts[2].trim(); // Trim to remove before and after spaces
+                        // seedId = seedId.replace("[", "").replace("]", ""); // Remove  unwanted "[" "]" 
+                        // SwingLink  seedlink = new SwingLink(seedId, "https://modelseed.org/biochem/compounds/" + seedId, openBrowser);
+                         
+                         String keggIdlink = parts[3].trim(); // Trim to remove before and after spaces
+                        // keggId = keggId.replace("[", "").replace("]", ""); // Remove  unwanted "[" "]" 
+                       //  SwingLink  kegglink = new SwingLink(keggId, "https://www.kegg.jp/entry/" + keggId, openBrowser);
+                         
+                         
+                         String colorMapUrlString = parts[4].trim();
+                         colorMapUrlString = colorMapUrlString.replace("[", "").replace("]", "");
+                         SwingLink  colorMapLink = new SwingLink("Url", colorMapUrlString, openBrowser);
+                        
+                         //add the rows to the table
+                         tableM.addRow(new Object[]{ moduleId, parts[1], seedIdlink, keggIdlink, colorMapLink});
+             
+                    }
+                }   	
+                
+            	JTable table = new JTable(tableM);
+            	
+            	table.getColumnModel().getColumn(4).setCellRenderer(new SwingLinkCellRenderer());
+            	table.getColumnModel().getColumn(2).setCellRenderer(new BlueUnderlineHTMLRenderer());
+            	table.getColumnModel().getColumn(3).setCellRenderer(new BlueUnderlineHTMLRenderer());
+            	
+            	
+            	table.addMouseListener(new MouseAdapter() {
+            	    private Timer clickTimer = null;
+            	    private final int doubleClickDelay = 400; // delay 
+
+            	    public void mouseClicked(MouseEvent e) {
+            	        int row = table.rowAtPoint(e.getPoint());
+            	        int col = table.columnAtPoint(e.getPoint());
+            	        Object cellValue = table.getValueAt(row, col);
+            	        
+            	        if (table.getColumnClass(col).equals(SwingLink.class)) {
+            	            SwingLink link = (SwingLink) table.getValueAt(row, col);
+            	            link.open1(link.getURI());}
+
+            	            else  if (col == 2 || col == 3) {
+            	            Runnable action = () -> {
+            	                if (cellValue instanceof String) {
+            	                    String cellText = (String) cellValue;
+            	                    String[] elements = cellText.split(";");
+
+            	                    int clickX = e.getX() - table.getCellRect(row, col, true).x;
+            	                    int cumulativeWidth = 0;
+            	                    for (String element : elements) {
+            	                        int elementWidth = table.getFontMetrics(table.getFont()).stringWidth(element);
+            	                        if (clickX >= cumulativeWidth && clickX <= cumulativeWidth + elementWidth) {
+            	                            String url;
+            	                            if (col == 2) {
+            	                                url = "https://modelseed.org/biochem/compounds/" + element;
+            	                            } else {
+            	                                // col == 3
+            	                                url = "https://www.genome.jp/entry/" + element;
+            	                            }
+            	                            SwingLink link = new SwingLink(element, url, openBrowser);
+            	                            link.open1(link.getURI());
+            	                            break;
+            	                        }
+            	                        cumulativeWidth += elementWidth;
+            	                    }
+            	                }
+            	            };
+
+            	            if (e.getClickCount() == 1) {
+            	                if (clickTimer != null && clickTimer.isRunning()) {
+            	                    clickTimer.stop();
+            	                    action.run(); // Execute immediately for double-click
+            	                } else {
+            	                    // Start the timer for a single click
+            	                    clickTimer = new Timer(doubleClickDelay, ae -> action.run());
+            	                    clickTimer.setRepeats(false);
+            	                    clickTimer.start();
+            	                }
+            	            }
+            	        }
+            	    }
+            	});
+
+            	 	
+
+            	
+        
+            	// size of the scroll pane based on the number of rows
+                int rowHeight = table.getRowHeight();
+                int tableHeight = (table.getRowCount() * rowHeight) + table.getTableHeader().getPreferredSize().height;
+                JScrollPane scrollPane = new JScrollPane(table);
+                scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, Math.min(tableHeight, 400))); //  maximum height to 400 pixels
+
+                newPanel.add(scrollPane, BorderLayout.CENTER);
+
+            	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 10);
+            	collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+            	SeedComplementaritiesPanel.add(collapsablePanel, seedgbc);
+            	seedgbc.gridy++;
+            }
+        }
+    }
+    
+    
+
+ CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 10);
+ SeedCollapsablePanel  .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+ panel.add(SeedCollapsablePanel , gbc);
+ gbc.gridy++;
+ 
+     //---------------------------------------------add the panel--------------------------------
+     
+     
         
         String edgeId = (nameValue != null) ? nameValue.toString() : "Selected Edges";
 
@@ -828,7 +1024,12 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
      }
 
-    
+//    private void showSelectableLinkDialog(String linkText) {
+//	    JTextField textField = new JTextField(linkText);
+//	    textField.setEditable(false);
+//	    textField.setBorder(null);
+//	    JOptionPane.showMessageDialog(null, textField, "Copy Link", JOptionPane.INFORMATION_MESSAGE);
+//	}
     
     
 
@@ -949,6 +1150,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
      * d.anchor("west").expandHoriz()); subScorePanel.add(new JPanel(),
      * d.down().anchor("west").expandBoth()); }
      */
+    
+	
 
     public void networkChanged(CyNetwork newNetwork) {
         this.currentNetwork = newNetwork;
