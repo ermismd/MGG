@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -108,16 +109,15 @@ public class ImportFileTask extends AbstractTask {
 
         try {
         	
-            // Call CSVReader from Utils to parse the TSV/CSV file with tab delimiter
+            // Call CSVReader from Utils to parse the TSV/CSV file 
             List<String[]> csvData = CSVReader.readCSV(taskMonitor, filePath);
             
-            // Find the headers(the first row that has more than 1 columns)
             String[] headers = null;
             for (int i = 0; i < csvData.size(); i++) {
                 String[] row = csvData.get(i);
                 if (row.length > 1) {
                     headers = row;
-                    csvData.remove(i);  // remove the header row
+                    csvData.remove(i);  
                     break;
 		            }
 		        }
@@ -125,7 +125,7 @@ public class ImportFileTask extends AbstractTask {
             taskMonitor.setStatusMessage("Processing data");
 
 
-            // Create JSONArray to hold the JSONObjects
+          
             
 	        JSONArray jsonArray = new JSONArray();
 	        
@@ -139,7 +139,7 @@ public class ImportFileTask extends AbstractTask {
 	        jsonArray.add(header);
 	        
 	        
-	        // Iterate each row of CSV 
+	        
 	        for (String[] values : csvData) {
 	            // Skip rows with only one column
 	            if (values.length <= 1) {
@@ -165,46 +165,17 @@ public class ImportFileTask extends AbstractTask {
 	        jsonObject.put("data", jsonArray);
 	        
 	        
-	        
-	        
-
-	        
-	     
-	    
-	  
 	       
-	        
-	        
+       
 	        
 	        // Set the JSON array in the MGGManager
             mggManager.setJsonObject(jsonObject);
             
-          
-         //   taskMonitor.setStatusMessage("Displaying data in panel");
-
-          
-          //  if (writeToFile) {
-            //	try {
-            //	String jsonFilePath = filePath + ".json";
-            //    FileWriter writer = new FileWriter(jsonFilePath);
-            //    writer.write(jsonArray.toJSONString());
-             //   writer.close();
-         //   } catch (IOException e) {
-           //     taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Error while writing the file: " + e.getMessage());
-           //     e.printStackTrace();
-          //  }
-          //  }
-            
-            
-			  // Show the JSON data in a panel if showJSONInPanel 
-            //if (showJSONInPanel) {
-             //   SwingUtilities.invokeLater(() -> showDataInPanel(jsonObject));
-           // }
-			 
-	        
+                  
             taskMonitor.setProgress(1.0);
             taskMonitor.setStatusMessage("Abudance data imported successfully.");
-            
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, 
+    	            "Abudance data loaded correctly", "Information", JOptionPane.INFORMATION_MESSAGE));
                                    
             
             

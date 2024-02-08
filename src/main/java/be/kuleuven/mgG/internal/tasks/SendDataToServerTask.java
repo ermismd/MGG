@@ -49,6 +49,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 
@@ -190,7 +191,7 @@ public class SendDataToServerTask extends AbstractTask {
 	        
     	
     	
-	        taskMonitor.setStatusMessage("Server tried to sent: " +  jsonObject.toString());
+	        //taskMonitor.setStatusMessage("Server tried to sent: " +  jsonObject.toString());
     	
     		
         taskMonitor.setTitle("Sending Data to Server");
@@ -234,52 +235,57 @@ public class SendDataToServerTask extends AbstractTask {
                               taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Got " + statusCode + " code from server");
                               return;
                           }
-
+                          
+                          
+                          
                           HttpEntity responseEntity = response.getEntity();
-                         // if (responseEntity.getContent().instanceof(String))
+                          
+                          String responseString = EntityUtils.toString(responseEntity);
+                         
                          
                          try {
-                        	  JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
-                          
+                        	  JSONArray jsonResponse2=  (JSONArray) new JSONParser().parse(responseString);
+                        	  mggManager.setServerResponse(jsonResponse2);
+                        	  taskMonitor.setStatusMessage("Processing server response");
+                        	  taskMonitor.setStatusMessage("Data sent to server and got the response successfully.");
+                        	  // Set jsonObject and metadataObject to null if the response is successful
+                              if(responseString !=null) {
+                             	 mggManager.setJsonObject(null);
+                             	 mggManager.setMetadataJsonObject(null);
+                             	 mggManager.setNetworkObject(null);
+                              }
+                              
                             	  
-                          	    } catch (Exception e) { taskMonitor.showMessage(TaskMonitor.Level.ERROR,
-                          				"Error from server: " + responseEntity.toString());
-                          				e.printStackTrace(System.out);
-                          		}
+	                  	 } catch (Exception e) {
+	                  		 	
+	                  	    	JSONObject jsonResponseError=  (JSONObject) new JSONParser().parse(responseString);
+	                  	    	taskMonitor.showMessage(TaskMonitor.Level.ERROR,"Error from server: " + jsonResponseError.toString());
+	                  				e.printStackTrace(System.out);
+	                  				
+	                  				// SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, 
+	                  					//	"Error from server: " + jsonResponseError.toString(), "Error", JOptionPane.ERROR_MESSAGE));
+	                  				
+	                  				 // Set jsonObject and metadataObject to null if the response is successful
+	                                if(responseString !=null) {
+	                               	 mggManager.setJsonObject(null);
+	                               	 mggManager.setMetadataJsonObject(null);
+	                               	 mggManager.setNetworkObject(null);
+	                                }
+	                                
+	                  	 }
                        
                           		
-                          JSONArray jsonResponse1= (JSONArray) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
-                          
-                           // JSONObject jsonResponse = (JSONObject) new JSONParser().parse(new InputStreamReader(responseEntity.getContent()));
-                           //  JSONObject jsonResponse=(JSONObject) responseEntity ; 
-                  		   //BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity .getContent()));
-                  		   //JSONObject jsonResponse= (JSONObject) new JSONParser().parse(reader);
+                         
                           
                           
                           
-                          taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
-                          taskMonitor.setStatusMessage("Processing server response");
-                          taskMonitor.setStatusMessage("Data sent to server and retrieved successfully!");
-                    
-                         //  taskMonitor.setStatusMessage("Server Response: " + jsonResponse1.toJSONString());
-                         // taskMonitor.setStatusMessage("Server Response: " + responseEntity);
+                          //taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
                           
-                         mggManager.setServerResponse(jsonResponse1);
-                        
                          
+                     
                          
-                      // Set jsonObject and metadataObject to null if the response is successful
-                         if(responseEntity !=null) {
-                        	 mggManager.setJsonObject(null);
-                        	 mggManager.setMetadataJsonObject(null);
-                        	 mggManager.setNetworkObject(null);
-                         }
+                       
                          
-                         
-                         
-                      
-
-                         taskMonitor.setStatusMessage("Data sent to server and response processed successfully.");
                          
                       } catch (Exception e) {
                     	 
@@ -297,7 +303,7 @@ public class SendDataToServerTask extends AbstractTask {
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }
-                  taskMonitor.setStatusMessage("Data sent to server successfully!");
+                  taskMonitor.setStatusMessage("Process finished");
               
     			
     	}
