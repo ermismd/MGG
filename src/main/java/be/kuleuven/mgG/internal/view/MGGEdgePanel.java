@@ -81,14 +81,18 @@ import be.kuleuven.mgG.internal.utils.ViewUtils;
 public class MGGEdgePanel extends AbstractMggPanel {
 
     JButton fetchEdges;
-    JPanel subScorePanel;
-    JPanel scorePanel;
+    private JPanel subScorePanel = null;
+    //JPanel scorePanel;
     JButton deleteEdges;
     private JPanel WeightPanel = null;
     private boolean showComplEdgesState ;
+    private boolean showSeedComplEdgesState;
     //JPanel seedPanel;
     private Color defaultBackground;
     
+ 
+    private JButton showSeedComplEdgesButton;
+    private JButton showComplEdgesButton;
     
 
     private JPanel edgesSPanel = null;
@@ -100,7 +104,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
     public MGGEdgePanel(final MGGManager manager) {
 
         super(manager);
-        filters.get(currentNetwork).put("weight", new HashMap < > ());
+        filters.get(currentNetwork).put("microbetag", new HashMap < > ());
         //filters.get(currentNetwork).put("seed", new HashMap<>());
         filters.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap<>());
       
@@ -117,6 +121,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         setLayout(new GridBagLayout());
 
         EasyGBC c = new EasyGBC();
+        
 
         JPanel controlPanel = createControlPanel();
         controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
@@ -155,52 +160,68 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         JPanel upperPanel = new JPanel(new GridBagLayout());
         
-//   
-//        JCheckBox showComplEdges = new JCheckBox("Show Edges with Complements");
-//        showComplEdges.setFont(labelFont);
-//        showComplEdges.addItemListener(new ItemListener() {
-//            public void itemStateChanged(ItemEvent e) {
-//                if (e.getStateChange() == ItemEvent.SELECTED) {
-//                    doShowComplEdges(true); // Show edges with Compl values
-//                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-//                    doShowComplEdges(false); // Show all edges
-//                }
-//            }
-//        });
-//        upperPanel.add(showComplEdges);
-        
-     
-        JButton showComplEdgesButton = new JButton("Edges with Pathway Complementarities");
+        // Initialize the showSeedComplEdgesButton
+        showSeedComplEdgesButton = new JButton("Edges with Seed Complementarities");
+        showSeedComplEdgesButton.setFont(labelFont);
+        showSeedComplEdgesButton.setToolTipText("Show/Hide Edges with Seed Complementarities");
+        showSeedComplEdgesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	// Toggle the state
+              showSeedComplEdgesState = !showSeedComplEdgesState;
+//
+//              // Update the button label based on the current state
+              if (showSeedComplEdgesState) {
+                  showSeedComplEdgesButton.setText("All Edges ");
+                  showSeedComplEdgesState=true;
+                  doShowSeedComplEdges(true); // edges with Compl values
+                  showComplEdgesButton.setEnabled(false); // Disable pathway complements button
+                                    
+              } else {
+                  showSeedComplEdgesButton.setText("Edges with Seed Complementarities");
+                  showSeedComplEdgesState=false;
+                  doShowSeedComplEdges(false); // Show all edges
+                  showComplEdgesButton.setEnabled(true); // Enable   pathway complements button
+              }
+            }
+        });
+        upperPanel.add(showSeedComplEdgesButton);
+
+        // Initialize the showComplEdgesButton
+        showComplEdgesButton = new JButton("Edges with Pathway Complementarities");
         showComplEdgesButton.setFont(labelFont);
         showComplEdgesButton.setToolTipText("Show/Hide Edges with Pathway Complementarities");
         showComplEdgesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Toggle the state
-                showComplEdgesState = !showComplEdgesState;
-
-                // Update the button label based on the current state
-                if (showComplEdgesState) {
-                    showComplEdgesButton.setText("All Edges ");
-                    showComplEdgesState=true;
-                    doShowComplEdges(true); // Show edges with Compl values
-                } else {
-                    showComplEdgesButton.setText("Edges with Pathway Complementarities");
-                    showComplEdgesState=false;
-                    doShowComplEdges(false); // Show all edges
-                }
-            }
+            	 // Toggle the state
+              showComplEdgesState = !showComplEdgesState;
+//
+//              // Update the button label 
+              if (showComplEdgesState) {
+                  showComplEdgesButton.setText("All Edges ");
+                  showComplEdgesState=true;
+                  doShowComplEdges(true); // 
+                  showSeedComplEdgesButton.setEnabled(false); // Disable  seed complementarities button
+              } else {
+                  showComplEdgesButton.setText("Edges with Pathway Complementarities");
+                  showComplEdgesState=false;
+                  doShowComplEdges(false); // Show all edges
+                  showSeedComplEdgesButton.setEnabled(true); // Enable  seed complementatities button
+              }}
         });
+        
         upperPanel.add(showComplEdgesButton);
-        
-        upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
+        upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
         controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
-        
-       
+
         controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         controlPanel.setMaximumSize(new Dimension(100, 100));
+
         return controlPanel;
+        
+
     }
     
     
@@ -233,8 +254,39 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
          view.updateView(); 
     }
+    
+    
+    private void doShowSeedComplEdges(boolean show) {
+        CyNetworkView view = manager.getCurrentNetworkView();
+        CyNetwork net = view.getModel();
 
+        // Iterate over all edges
+        for (CyEdge edge : net.getEdgeList()) {
+            View<CyEdge> edgeView = view.getEdgeView(edge);
+            if (edgeView == null) continue;
 
+            boolean hasComplValue = false;
+            for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
+                if (column.getName().startsWith("seedCompl::")) {
+                    Object value = net.getRow(edge).get(column.getName(), column.getType());
+                    if (value != null) {
+                        hasComplValue = true;
+                        break;
+                    }
+                }
+            }
+
+            if (show) {
+                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
+            } else {
+                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
+            }
+        }
+
+         view.updateView(); 
+    }
+
+//------------------------------------Weight Panel-------------------------------------
     private JPanel createWeightPanel() {
 
         WeightPanel = new JPanel();
@@ -244,7 +296,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         List < String > WeightList = Mutils.getWeightList(currentNetwork);
 
         for (String weight: WeightList) {
-            WeightPanel.add(createFilterSlider("weight", weight, currentNetwork, true, 100.0),
+            WeightPanel.add(createFilterSlider("microbetag", weight, currentNetwork, true, 100.0),
                 c.anchor("west").down().expandHoriz());
         }
 
@@ -252,6 +304,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "weight Filters", WeightPanel, false, 10);
         collapsablePanel.setToolTipText("Show edges with Weight bigger than the chosen value");
         collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+        collapsablePanel.setAlwaysExpanded();
         return collapsablePanel;
     }
 
@@ -261,13 +314,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
         EasyGBC c = new EasyGBC();
         List < String > WeightList = Mutils.getWeightList(currentNetwork);
         for (String weight: WeightList) {
-            WeightPanel.add(createFilterSlider("weight", weight, currentNetwork, true, 100.0),
+            WeightPanel.add(createFilterSlider("microbetag", weight, currentNetwork, true, 100.0),
                 c.anchor("west").down().expandHoriz());
         }
         return;
     }
 
-    //------------------------------------------------------------------------------------
+    //---------------------------------Seed Panel----------------------------------------
     private JPanel createSeedPanel() {
 		subScorePanel = new JPanel();
 		subScorePanel.setLayout(new GridBagLayout());
@@ -328,6 +381,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 				scoreSlider.setMinimumSize(new Dimension(100,30));
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
+				
 			}
 			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			subScorePanel.add(filterPanel, c.right().expandBoth());
@@ -335,6 +389,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Seed Scores", subScorePanel, false, 10);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		collapsablePanel.setAlwaysExpanded();
 		return collapsablePanel;
 
 	}
@@ -385,6 +440,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 		}
 
 		{
+			
 			JPanel filterPanel = new JPanel();
 			filterPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
@@ -398,6 +454,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 				scoreSlider.setMinimumSize(new Dimension(100,30));
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
+				
 			}
 			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			subScorePanel.add(filterPanel, c.right().expandBoth());
@@ -586,21 +643,23 @@ public class MGGEdgePanel extends AbstractMggPanel {
         gbc.gridy++;
         
 
+        boolean showseedpanel=true;
+        
         Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation", edgeTable.getColumn("seed::cooperation").getType()) : null;
-       // if (cooperationSeedValue != null) {
-          //  JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
-           // ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
-          //  panel.add(cooperationSeedArea, gbc);
-          //  gbc.gridy++;
-      //  }
+        if (cooperationSeedValue != null && showseedpanel==false) {
+            JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
+            ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
+           panel.add(cooperationSeedArea, gbc);
+            gbc.gridy++;
+        }
 
         Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
-       // if (competitionSeedValue != null) {
-       //     JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
-       //     ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
-       //     panel.add(competitionSeedArea, gbc);
-       //     gbc.gridy++;
-     //   }
+        if (competitionSeedValue != null &&showseedpanel==false) {
+            JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
+           ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
+            panel.add(competitionSeedArea, gbc);
+            gbc.gridy++;
+       }
         
         
         
@@ -678,7 +737,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
       //  }
         
         
-        
+        boolean hasPathwayComplementarities = false; // Flag to track
  
         for (CyColumn column : edgeTable.getColumns()) {
             if (column.getName().startsWith("compl::")) {
@@ -688,7 +747,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	String panelTitle = "Genomes: " + columnName.replace(":", " : ");
                 	JPanel newPanel = new JPanel(new BorderLayout());
 
-                	
+                	  hasPathwayComplementarities = true;
                 	
                 	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
                 	DefaultTableModel tableM = new DefaultTableModel() {
@@ -727,7 +786,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                              
                              String colorMapUrlString = parts[5].trim();
                              colorMapUrlString = colorMapUrlString.replace("[", "").replace("]", "");
-                             SwingLink  colorMapLink = new SwingLink("Url", colorMapUrlString, openBrowser);
+                             SwingLink  colorMapLink = new SwingLink("     Url", colorMapUrlString, openBrowser);
                             
                              //add the rows to the table
                              tableM.addRow(new Object[]{moduleId, parts[1], parts[2], parts[3], parts[4], colorMapLink});
@@ -821,12 +880,14 @@ public class MGGEdgePanel extends AbstractMggPanel {
         }
         
         
-    
+        if (hasPathwayComplementarities) {
      CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 10);
      PathwaysCollapsablePanel .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+     showseedpanel=false;
      panel.add(PathwaysCollapsablePanel, gbc);
      gbc.gridy++;
      
+        }
   //----------------------Nested Seed complementarities panel ---------------------------//
      
      JPanel SeedComplementaritiesPanel = new JPanel();
@@ -858,6 +919,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
      }
      
      
+     boolean hasSeedComplementarities = false;
+     
      for (CyColumn column : edgeTable.getColumns()) {
          if (column.getName().startsWith("seedCompl::")) {
              Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
@@ -866,7 +929,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
              	String panelTitle = "Genomes: " + columnName.replace(":", " : ");
              	JPanel newPanel = new JPanel(new BorderLayout());
              	
-             	
+             	 hasSeedComplementarities = true;
             	
             	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
             	DefaultTableModel tableM = new DefaultTableModel() {
@@ -913,7 +976,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                          
                          String colorMapUrlString = parts[4].trim();
                          colorMapUrlString = colorMapUrlString.replace("[", "").replace("]", "");
-                         SwingLink  colorMapLink = new SwingLink("Url", colorMapUrlString, openBrowser);
+                         SwingLink  colorMapLink = new SwingLink(" Url", colorMapUrlString, openBrowser);
                         
                          //add the rows to the table
                          tableM.addRow(new Object[]{ moduleId, parts[1], seedIdlink, keggIdlink, colorMapLink});
@@ -1004,12 +1067,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
     }
     
     
-
+if(hasSeedComplementarities) {
  CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 10);
  SeedCollapsablePanel  .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
  panel.add(SeedCollapsablePanel , gbc);
  gbc.gridy++;
- 
+	
+}
      //---------------------------------------------add the panel--------------------------------
      
      
@@ -1019,6 +1083,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, edgeId, panel, false, 10);
         
         collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+        collapsablePanel.setAlwaysExpanded();
 
         return collapsablePanel;
 
@@ -1155,6 +1220,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
     public void networkChanged(CyNetwork newNetwork) {
         this.currentNetwork = newNetwork;
+        
+        if (currentNetwork==null) {
+        	if (subScorePanel !=null)
+        		subScorePanel.removeAll();
+        	return;
+        }
+        
         if (currentNetwork == null) {
             if (WeightPanel != null)
                 WeightPanel.removeAll();
@@ -1163,7 +1235,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         if (!filters.containsKey(currentNetwork)) {
             filters.put(currentNetwork, new HashMap < > ());
-            filters.get(currentNetwork).put("weight", new HashMap < > ());
+            filters.get(currentNetwork).put("microbetag", new HashMap < > ());
         }
 
         if (!colors.containsKey(currentNetwork)) {

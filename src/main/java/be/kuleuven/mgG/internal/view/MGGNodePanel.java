@@ -550,8 +550,8 @@ public class MGGNodePanel extends AbstractMggPanel {
         columnModel.getColumn(1).setPreferredWidth(5);
         columnModel.getColumn(2).setPreferredWidth(5);
 
-
-
+        
+        boolean hasTruePresentValues = false; //flag for loop 
 
         for (CyColumn column: nodeTable.getColumns()) {
             String columnName = column.getName();
@@ -565,16 +565,16 @@ public class MGGNodePanel extends AbstractMggPanel {
                 // Check corresponding "Score" column exists under "phendbScore::" 
                 CyColumn scoreColumn = nodeTable.getColumn("phendbScore::" + feature + "Score");
                 if (scoreColumn != null) {
-
-
+                	
                     Object presentObj = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
                     String presentValue = (presentObj == null) ? "null" : presentObj.toString();
 
-
+                    if ("true".equalsIgnoreCase(presentValue)) {//this if added to choose to show only the true in present
+                    	 
                     Object scoreObj = nodeTable.getRow(node.getSUID()).get(scoreColumn.getName(), scoreColumn.getType());
                     String scoreValue = (scoreObj == null) ? "null" : scoreObj.toString();
-
-
+                    hasTruePresentValues = true; // Update the flag
+                    
                     try {
                         double scoreAsDouble = Double.parseDouble(scoreValue);
                         scoreValue = String.format("%.2f", scoreAsDouble);
@@ -587,9 +587,11 @@ public class MGGNodePanel extends AbstractMggPanel {
                         feature,
                         presentValue,
                         scoreValue
-                    });
+                    
+                     });
                 }
             }
+        }
         }
         
         
@@ -621,17 +623,25 @@ public class MGGNodePanel extends AbstractMggPanel {
 
         //  Wrap the phenDBPanel inside a CollapsablePanel
 
-        CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, true, 10);
-        Border etchedBorder = BorderFactory.createEtchedBorder();
-        Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
-        phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+//        CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, true, 10);
+        	Border etchedBorder = BorderFactory.createEtchedBorder();
+        	Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
+//        phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+//        
+//
+//        // Add the phenDBCollapsablePanel to the main panel:
+//
+//        panel.add(phenDBCollapsablePanel, gbc);
+//        gbc.gridy++;
 
-        // Add the phenDBCollapsablePanel to the main panel:
+        if (hasTruePresentValues) {
+            CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, true, 10);
+            phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
-        panel.add(phenDBCollapsablePanel, gbc);
-        gbc.gridy++;
-
-
+            // Add the CollapsablePanel to the main panel
+            panel.add(phenDBCollapsablePanel, gbc);
+            gbc.gridy++;
+        }
         //---------------------------panel for faprotax--------------------------
 
 
@@ -643,6 +653,9 @@ public class MGGNodePanel extends AbstractMggPanel {
         fapGBC.gridy = 0;
         fapGBC.anchor = GridBagConstraints.WEST;
         fapGBC.insets = new Insets(5, 5, 5, 5);
+        
+
+        boolean hasFaprotaxTerms = false;
 
         // Loop throughnodeTable columns for starting faprotax::
         for (CyColumn column: nodeTable.getColumns()) {
@@ -653,7 +666,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
                     String displayName = columnName.split("::")[1];
 
-               
+                    hasFaprotaxTerms = true;
                     JTextArea label = new JTextArea(displayName);
                     ViewUtils.setJTextAreaAttributes(label);
                     faprotaxPanel.add(label, fapGBC);
@@ -662,14 +675,21 @@ public class MGGNodePanel extends AbstractMggPanel {
                 }
             }
         }
+        if (hasFaprotaxTerms) {
+            CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, true, 10);
+            faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
-        // Wrap faprotaxPanel inside  CollapsablePanel
-        CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, true, 10);
-        faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
-
-        // Add  faprotaxCollapsablePanel to  main panel
-        panel.add(faprotaxCollapsablePanel, gbc);
-        gbc.gridy++;
+            // Add the CollapsablePanel to the main panel
+            panel.add(faprotaxCollapsablePanel, gbc);
+            gbc.gridy++;
+        }
+//        // Wrap faprotaxPanel inside  CollapsablePanel
+//        CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, true, 10);
+//        faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+//
+//        // Add  faprotaxCollapsablePanel to  main panel
+//        panel.add(faprotaxCollapsablePanel, gbc);
+//        gbc.gridy++;
 
      
 
@@ -678,6 +698,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
         CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, nodeId, panel, false, 10);
         collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+        collapsablePanel.setAlwaysExpanded();
 
         return collapsablePanel;
         	
@@ -885,21 +906,30 @@ public class MGGNodePanel extends AbstractMggPanel {
     	    
     	    boolean isAndMode = modeToggleCheckbox.isSelected();
     	    boolean anyCheckboxSelected = isAnyCheckboxSelected();
-    	    boolean showMspecies = manager.showMspecies();
-    	    boolean showSingletons = manager.showSingletons();
+    	    boolean showbooleanMspecies = manager.showMspecies();
+    	    boolean showbooleanSingletons = manager.showSingletons();
+    	    
+    	    
+    	 // Check if any phendb filter is selected
+    	    boolean isAnyPhendbFilterSelected = isAnyCheckboxSelected();
+    	    
+    	 // Enable the showMspecies button if no phendb filter is selected,
+    	    
+    	    showMspecies.setEnabled(!isAnyPhendbFilterSelected);
+    	    showSingletons.setEnabled(!isAnyPhendbFilterSelected);
     	    
     	    for (CyNode node : net.getNodeList()) {
     	        View<CyNode> nodeView = view.getNodeView(node);
     	        if (nodeView == null) continue;
 
     	        if (!anyCheckboxSelected) {
-    	            if (showMspecies) {
+    	            if (showbooleanMspecies) {
     	                // If showMspecies is true, apply the doShowMspecies logic
-    	                Mutils.doShowMspecies(view,  manager.showMspecies(), showSingletons,false);
-    	            } else if (showSingletons) {
+    	                Mutils.doShowMspecies(view,  manager.showMspecies(), showbooleanSingletons,false);
+    	            } else if (showbooleanSingletons) {
     	                // If showMspecies is false and showSingletons is true, hide singletons
     	            	  nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
-    	                Mutils.hideSingletons(view, showSingletons);
+    	                Mutils.hideSingletons(view, showbooleanSingletons);
     	            } else {
     	                // If neither showMspecies nor showSingletons is selected, make all nodes visible
     	                nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);

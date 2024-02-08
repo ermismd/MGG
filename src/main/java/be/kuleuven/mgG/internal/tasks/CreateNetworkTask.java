@@ -90,42 +90,91 @@ public class CreateNetworkTask extends AbstractTask {
 
 	@Override
 	public void run(TaskMonitor taskMonitor) {
-		taskMonitor.setTitle("Creating the network");
-		taskMonitor.setStatusMessage("Creating the network...");
-
-		JSONArray jsonResponse = mggManager.getServerResponse();
 		
-		try {
-		      
+		
+		taskMonitor.setTitle("Creating the network");
+	    taskMonitor.setStatusMessage("Creating the network...");
+
+	    JSONArray jsonResponse = mggManager.getServerResponse();
+
+	   
+	    if (jsonResponse == null) {
+	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response to create the network from.");
+	        return; 
+	    }
+
+	    try {
 	        String cxContent = jsonResponse.toJSONString();
-	        
-	        
-	        CloseableHttpClient httpClient = HttpClients.createDefault();
 	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx";
+
 	        
-	        
-	        HttpPost httpPost = new HttpPost(cytoscapeAPIURL);
-	        StringEntity entity = new StringEntity(cxContent);
-	        httpPost.setEntity(entity);
-	        httpPost.setHeader("Accept", "application/json");
-	        httpPost.setHeader("Content-type", "application/json");
-	        
-	        // Execute and get the response
-	        CloseableHttpResponse response = httpClient.execute(httpPost);
-	        HttpEntity responseEntity = response.getEntity();
-	        
-	        if(responseEntity != null) {
-	            String result = EntityUtils.toString(responseEntity);
-	            System.out.println(result);
-	        }
-	        
+	        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+	            HttpPost httpPost = new HttpPost(cytoscapeAPIURL);
+	            StringEntity entity = new StringEntity(cxContent);
+	            httpPost.setEntity(entity);
+	            httpPost.setHeader("Accept", "application/json");
+	            httpPost.setHeader("Content-type", "application/json");
+
+	            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+	                HttpEntity responseEntity = response.getEntity();
+
+	                if (responseEntity != null) {
+	                    String result = EntityUtils.toString(responseEntity);
+	                    System.out.println(result);
+	                    taskMonitor.showMessage(TaskMonitor.Level.INFO, "Network created successfully.");
+	                } else {
+	                   // taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Failed to create network: Empty response from server.");
+	                }
+	            }
+	        } // HttpClient and HttpResponse  close
 	    } catch (IOException e) {
+	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Error while creating the network: " + e.getMessage());
 	        e.printStackTrace();
 	    }
 	}
-		
-                   
 	}
+//		taskMonitor.setTitle("Creating the network");
+//		taskMonitor.setStatusMessage("Creating the network...");
+//
+//		JSONArray jsonResponse = mggManager.getServerResponse();
+//		
+//		// Check if jsonResponse is not null
+//	    if (jsonResponse == null) {
+//	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response to create the network from.");
+//	        return; // Exit the method early as there's no response to process
+//	    }
+//		
+//		try {
+//		      
+//	        String cxContent = jsonResponse.toJSONString();
+//	        
+//	        
+//	        CloseableHttpClient httpClient = HttpClients.createDefault();
+//	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx";
+//	        
+//	        
+//	        HttpPost httpPost = new HttpPost(cytoscapeAPIURL);
+//	        StringEntity entity = new StringEntity(cxContent);
+//	        httpPost.setEntity(entity);
+//	        httpPost.setHeader("Accept", "application/json");
+//	        httpPost.setHeader("Content-type", "application/json");
+//	        
+//	       
+//	        CloseableHttpResponse response = httpClient.execute(httpPost);
+//	        HttpEntity responseEntity = response.getEntity();
+//	        
+//	        if(responseEntity != null) {
+//	            String result = EntityUtils.toString(responseEntity);
+//	            System.out.println(result);
+//	        }
+//	        
+//	    } catch (IOException e) {
+//	        e.printStackTrace();
+//	    }
+//	}
+//		
+//                   
+//	}
 
 	
 	

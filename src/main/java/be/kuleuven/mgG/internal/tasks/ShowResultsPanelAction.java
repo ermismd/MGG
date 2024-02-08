@@ -21,7 +21,7 @@ public class ShowResultsPanelAction extends AbstractCyAction {
 
 		this.manager = manager;
 		setPreferredMenu("Apps.MGG.Show Results panel");
-		setMenuGravity(3);
+		setMenuGravity(9);
 		useCheckBoxMenuItem = true;
 		insertSeparatorBefore = false;
 	}

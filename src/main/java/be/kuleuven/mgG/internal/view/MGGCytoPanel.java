@@ -35,9 +35,9 @@ public class MGGCytoPanel extends JPanel
 
 	final MGGManager manager;
 
-	// Define new colors
+	// Define colors
 	public static final Color[] MY_COLORS = new Color[] { Color.BLACK, Color.RED, Color.BLUE, Color.YELLOW };
-	// Create a Font object
+	//  Font object
 	private static final Font myFont = new Font("Arial", Font.PLAIN, 16);
 
 	private JTabbedPane tabs;
@@ -75,7 +75,7 @@ public class MGGCytoPanel extends JPanel
 			cytoPanel.setState(CytoPanelState.DOCK);
 
 		// Tell tabs
-		 nodePanel.networkChanged(manager.getCurrentNetwork());
+		nodePanel.networkChanged(manager.getCurrentNetwork());
 		edgePanel.networkChanged(manager.getCurrentNetwork());
 	}
 
