@@ -35,10 +35,10 @@ public class ImportMetadataTaskFactory implements TaskFactory {
 
 	 	        return new TaskIterator(new ImportMetadataTask(filePath, mggManager));
 	 	    } else if (option == JFileChooser.CANCEL_OPTION) {
-	 	        // if  the file selection is cancelled, return an empty TaskIterator
+	 	        // if file selection is cancelled, return empty TaskIterator
 	 	        return new TaskIterator();
 	 	    } else {
-	 	        //  no file was selected or error
+	 	        
 	 	        String errorMessage = "Error selecting file";	 	        
 	 	        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
 	 	        // Return an empty TaskIterator 

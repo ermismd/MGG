@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.cytoscape.application.CyApplicationManager;
@@ -71,15 +72,12 @@ public class ImportMetadataTask extends AbstractTask{
 	            mggManager.setMetadataJsonObject(jsonResult);
 	            
 	            
-	            // Show the JSON data in a panel if showJSONInPanel 
-	          //  if (showMetaDataInPanel ) {
-	             //   SwingUtilities.invokeLater(() -> showDataInPanel(jsonResult));
-	          //  }
-	            
-	            
+	         
 	            
 	            taskMonitor.setStatusMessage("Metadata file imported successfully.");
 	            taskMonitor.setProgress(1.0);
+	            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, 
+	    	            "Metadata file loaded correctly", "Information", JOptionPane.INFORMATION_MESSAGE));
 
 	           
 	            
@@ -107,7 +105,7 @@ public class ImportMetadataTask extends AbstractTask{
 	    	    JSONArray mainArray = new JSONArray();
 
 	    	    if (!csvData.isEmpty()) {
-	    	        // First, add the headers
+	    	        //  adding the headers
 	    	        String[] headers = csvData.remove(0);
 	    	        JSONArray headerArray = new JSONArray();
 	    	        for (String header : headers) {
@@ -115,7 +113,7 @@ public class ImportMetadataTask extends AbstractTask{
 	    	        }
 	    	        mainArray.add(headerArray);
 
-	    	        // Then, add each row of data
+	    	        // adding each row of data
 	    	        for (String[] row : csvData) {
 	    	            JSONArray rowArray = new JSONArray();
 	    	            for (String cell : row) {
