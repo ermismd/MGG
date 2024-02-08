@@ -12,7 +12,6 @@ public class BlueUnderlineHTMLRenderer extends DefaultTableCellRenderer {
 	                                                   int row, int column) {
 	        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 	        if (value instanceof String) {
-	            // Use HTML to underline and color the text
 	            String htmlValue = "<html><font color='blue'><u>" + value.toString() + "</u></font></html>";
 	            setText(htmlValue);
 	        }

@@ -47,39 +47,7 @@ public class JSONDisplayPanel extends JPanel  {
         }
     }   
         
-//        // Check if the jsonObject contains an array named "data"
-//        if (jsonObject.containsKey("data")) {
-//            JSONArray dataJsonArray = (JSONArray) jsonObject.get("data");
-//            createTable(dataJsonArray, "Data Table");
-//
-//            //add the button for annotated network
-//           // JButton sendButton = createSendButton(jsonObject);
-//           // add(sendButton, BorderLayout.NORTH);
-//        } else if (jsonObject.containsKey("network")) {
-//            // If there's no "data" but "metadata" exists, display metadata table without button
-//            JSONArray networkJsonArray = (JSONArray) jsonObject.get("network");
-//            createTable(networkJsonArray , "Network Table");}
-//        
-//        else if (jsonObject.containsKey("metadata")) {
-//            // If there's no "data" but "metadata" exists, display metadata table without button
-//            JSONArray metadataJsonArray = (JSONArray) jsonObject.get("metadata");
-//            createTable(metadataJsonArray, "Metadata Table");
-//        }}
 
-    //private JButton createSendButton(JSONObject jsonObject) {
-      //  JButton sendButton = new JButton("Get Annotated Network");
-      //  sendButton.addActionListener(new ActionListener() {
-       //     public void actionPerformed(ActionEvent e) {
-           //     TaskIterator taskIterator = new SendDataToServerTaskFactory( manager).createTaskIterator();
-           //     manager.executeTasks(taskIterator);
-         //   }
-       // });
-
-        
-       // configureButtonAppearance(sendButton);
-
-      //  return sendButton;
-    //}
 
     private void configureButtonAppearance(JButton button) {
         button.setForeground(Color.BLACK);
@@ -119,7 +87,7 @@ public class JSONDisplayPanel extends JPanel  {
     	        }
 
     	        // Add the data to the table model
-    	        int numberOfRows = Math.min(jsonArray.size(), 21); //Limit to 20 rows plus header
+    	        int numberOfRows = Math.min(jsonArray.size(), 41); //Limit to 40 rows plus header
     	        for (int i = 1; i < numberOfRows; i++) {
     	            JSONArray row = (JSONArray) jsonArray.get(i);
     	            Object[] rowData = new Object[row.size()];

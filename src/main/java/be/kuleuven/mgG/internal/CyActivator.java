@@ -50,6 +50,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.kuleuven.mgG.internal.tasks.AboutTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckAbudanceFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckMetaDataFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckNetworkTaskFactory;
@@ -106,7 +107,7 @@ public class CyActivator extends AbstractCyActivator {
         props.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
         props.setProperty(IN_TOOL_BAR, "FALSE");
         props.setProperty(IN_MENU_BAR, "TRUE");
-        props.setProperty(MENU_GRAVITY, "1");
+        props.setProperty(MENU_GRAVITY, "2");
         props.setProperty(COMMAND_NAMESPACE, "MGG");
         props.setProperty(COMMAND_DESCRIPTION, "Load abudance table(TSV/CSV)");
         props.setProperty(COMMAND, "Load_Abudance");
@@ -119,7 +120,7 @@ public class CyActivator extends AbstractCyActivator {
         metadataprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
         metadataprops.setProperty(IN_TOOL_BAR, "FALSE");
         metadataprops.setProperty(IN_MENU_BAR, "TRUE");
-        metadataprops.setProperty(MENU_GRAVITY, "2");
+        metadataprops.setProperty(MENU_GRAVITY, "3");
         metadataprops.setProperty(COMMAND_NAMESPACE, "MGG");
         metadataprops.setProperty(COMMAND_DESCRIPTION, "Load Metadata File");
         metadataprops.setProperty(COMMAND, "Load_MetaData");
@@ -133,7 +134,7 @@ public class CyActivator extends AbstractCyActivator {
         networkprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data");
         networkprops.setProperty(IN_TOOL_BAR, "FALSE");
         networkprops.setProperty(IN_MENU_BAR, "TRUE");
-        networkprops.setProperty(MENU_GRAVITY, "3");
+        networkprops.setProperty(MENU_GRAVITY, "4");
         networkprops.setProperty(COMMAND_NAMESPACE, "MGG");
         networkprops.setProperty(COMMAND_DESCRIPTION, "Load Network Data");
         networkprops.setProperty(COMMAND, "Load_Network");
@@ -146,7 +147,7 @@ public class CyActivator extends AbstractCyActivator {
         checkdataprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data.Check Data Files");
         checkdataprops.setProperty(IN_TOOL_BAR, "FALSE");
         checkdataprops.setProperty(IN_MENU_BAR, "TRUE");
-        checkdataprops.setProperty(MENU_GRAVITY, "1");
+        checkdataprops.setProperty(MENU_GRAVITY, "5");
         checkdataprops.setProperty(COMMAND_NAMESPACE, "MGG");
         checkdataprops.setProperty(COMMAND_DESCRIPTION, "Check abudance data File");
         checkdataprops.setProperty(COMMAND, "Check_Abudance_Data");
@@ -161,7 +162,7 @@ public class CyActivator extends AbstractCyActivator {
         checkMetaDataprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data.Check Data Files");
         checkMetaDataprops.setProperty(IN_TOOL_BAR, "FALSE");
         checkMetaDataprops.setProperty(IN_MENU_BAR, "TRUE");
-        checkMetaDataprops.setProperty(MENU_GRAVITY, "2");
+        checkMetaDataprops.setProperty(MENU_GRAVITY, "6");
         checkMetaDataprops.setProperty(COMMAND_NAMESPACE, "MGG");
         checkMetaDataprops.setProperty(COMMAND_DESCRIPTION, "Check metadata File");
         checkMetaDataprops.setProperty(COMMAND, "Check_MetaData");
@@ -174,7 +175,7 @@ public class CyActivator extends AbstractCyActivator {
         checkNetworkprops.setProperty(PREFERRED_MENU, "Apps.MGG.Import Data.Check Data Files");
         checkNetworkprops.setProperty(IN_TOOL_BAR, "FALSE");
         checkNetworkprops.setProperty(IN_MENU_BAR, "TRUE");
-        checkNetworkprops.setProperty(MENU_GRAVITY, "3");
+        checkNetworkprops.setProperty(MENU_GRAVITY, "7");
         checkNetworkprops.setProperty(COMMAND_NAMESPACE, "MGG");
         checkNetworkprops.setProperty(COMMAND_DESCRIPTION, "Check network data");
         checkNetworkprops.setProperty(COMMAND, "Check_Network_Data");
@@ -187,7 +188,7 @@ public class CyActivator extends AbstractCyActivator {
         createMGGvisualprops.setProperty(PREFERRED_MENU, "Apps.MGG.MGG visual style");
         createMGGvisualprops.setProperty(IN_TOOL_BAR, "FALSE");
         createMGGvisualprops.setProperty(IN_MENU_BAR, "TRUE");
-        createMGGvisualprops.setProperty(MENU_GRAVITY, "4");
+        createMGGvisualprops.setProperty(MENU_GRAVITY, "8");
         createMGGvisualprops.setProperty(COMMAND_NAMESPACE, "MGG");
         createMGGvisualprops.setProperty(COMMAND_DESCRIPTION, "Create MGG visual style");
         createMGGvisualprops.setProperty(COMMAND, "MGG_visual_style");
@@ -216,7 +217,18 @@ public class CyActivator extends AbstractCyActivator {
 
 
 
+        AboutTaskFactory mggAboutTaskFactory = new AboutTaskFactory ();
+        Properties aboutprops = new Properties();
+        aboutprops.setProperty(TITLE, "About MGG");
+        aboutprops.setProperty(PREFERRED_MENU, "Apps.MGG");
+        aboutprops.setProperty(IN_TOOL_BAR, "FALSE");
+        aboutprops.setProperty(IN_MENU_BAR, "TRUE");
+        aboutprops.setProperty(MENU_GRAVITY, "10");
+        aboutprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        aboutprops.setProperty(COMMAND_DESCRIPTION, "Information about MGG");
+        aboutprops.setProperty(COMMAND, "About_MGG");
 
+        registerService(bc, mggAboutTaskFactory, TaskFactory.class,   aboutprops);
 
 
        // CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager);

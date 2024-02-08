@@ -35,7 +35,7 @@ public class Mutils {
     public static String MY_ATTRIBUTE = "id";
     public static String PhenDbSc_NAMESPACE = "phendbScore";
     public static String PhenDb_NAMESPACE = "phendb";
-    public static String Weight_NAMESPACE = "weight";
+    public static String Weight_NAMESPACE = "microbetag";
     public static String Seed_NAMESPACE = "seed";
     public static String Faprotax_NAMESPACE = "faprotax";
 
@@ -44,9 +44,9 @@ public class Mutils {
         if (network == null) return false; //this is new
         CyTable nodeTable = network.getDefaultNodeTable();
 //        if (nodeTable.getColumn("@id") == null) {
-//            return false; // Return false if @id column is missing in node table
+//            return false; //  if @id column is missing in node table
 //        }
-        
+        CyTable edgeTable = network.getDefaultEdgeTable();
       
         
         for (CyColumn column : nodeTable.getColumns()) {
@@ -58,12 +58,12 @@ public class Mutils {
 
       
 
-        CyTable edgeTable = network.getDefaultEdgeTable();
-        if (edgeTable.getColumn("weight::weight") == null) {
-            return false; // Return false if weight::weight column is missing in edge table
+        
+        if (edgeTable.getColumn("microbetag::weight") == null) {
+            return false; 
         }
 
-        return true; // All checks passed, return true
+        return true; 
     }
     
     public static boolean isMGGNetworkMicrobetagDB(CyNetwork network) {
@@ -74,12 +74,16 @@ public class Mutils {
 		//	return false;
 		//return isMGGNetwork(network);
 
-        // Get the value of the "name" column for this network
+    	
+    	if (network==null) {
+    		return false;
+    	}
+        
         String nameValue = network.getRow(network).get("name", String.class);
 
-        // Check if the "name" contains "microbetag network" or any other variations
-        if (nameValue != null && (nameValue.contains("microbetag network") || nameValue.matches(".*microbetag network\\(\\d+\\).*"))) {
-            // If the "name" contains "microbetag network" or similar variations, 
+        // Does the "name" contains "microbetag network" or any other variation
+        if ( nameValue != null && (nameValue.contains("microbetag network") || nameValue.matches(".*microbetag network\\(\\d+\\).*"))) {
+            //  the "name" contains "microbetag network" or similar variations 
                 return true;
             }
         
@@ -322,7 +326,7 @@ public class Mutils {
             // System.out.println("network is null");
             return weight;
         }
-        Collection < CyColumn > columns = network.getDefaultEdgeTable().getColumns(Weight_NAMESPACE);
+        Collection < CyColumn > columns = network.getDefaultEdgeTable().getColumns("microbetag");
         if (columns == null || columns.size() == 0) return weight;
         for (CyColumn col: columns) {
             weight.add(col.getNameOnly());
@@ -378,7 +382,7 @@ public class Mutils {
         Map<String, String> attributeCategoryMap = new HashMap<>();
 
         // Add mappings for each attribute to its category
-        // Example: attributeCategoryMap.put("aSaccharolytic", "Lifestyle: Energy Source");
+    
 
         // Lifestyle
         String[] lifestyleAttributes = {
@@ -520,7 +524,7 @@ public class Mutils {
         return attributeCategoryMap.getOrDefault(attribute, "Unknown");
     }
   
-    // Method to get all categories
+    // to get all categories
     public static List<String> getCategories() {
     	return Arrays.asList(
     	        "Lifestyle",

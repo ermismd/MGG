@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -210,7 +211,7 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 							     
 							// Create a continuous mapping for edge color based on the "weight" attribute
 							   ContinuousMapping<Double, Paint> edgeColorMapping = (ContinuousMapping<Double, Paint>) manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)")
-							            .createVisualMappingFunction("weight::weight", Double.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+							            .createVisualMappingFunction("microbetag::weight", Double.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
 
 							 /// Define the points at which the color changes
 							    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(Color.PINK, Color.PINK, Color.PINK); // for values from -1 to -0.01
@@ -233,7 +234,8 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 	
 			   
 			    
-			    
+	 
+	 
 				private CyNode getNodeById(CyNetwork network, String nodeId) {
 				    for (CyNode node : network.getNodeList()) {
 				        String id = network.getRow(node).get(CyNetwork.NAME, String.class);

@@ -474,35 +474,68 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
          *
          * @param e The SessionAboutToBeSavedEvent.
          */
-    	
-	@Override
-	public void handleEvent(SessionAboutToBeSavedEvent e) {
-		String tmpDir = System.getProperty("java.io.tmpdir");
-	    File jsonFile = new File(tmpDir, SERVER_RESPONSE_FILE);
+    	@Override
+    	public void handleEvent(SessionAboutToBeSavedEvent e) {
+    	    String tmpDir = System.getProperty("java.io.tmpdir");
+    	    File jsonFile = new File(tmpDir, SERVER_RESPONSE_FILE);
 
-	    try {
-	        FileOutputStream fos = new FileOutputStream(jsonFile);
-	        OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
-	        BufferedWriter writer = new BufferedWriter(osw);
+    	    try {
+    	        // Check if serverResponse is not null and not empty
+    	        if (serverResponse != null && !serverResponse.isEmpty()) {
+    	            FileOutputStream fos = new FileOutputStream(jsonFile);
+    	            OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
+    	            BufferedWriter writer = new BufferedWriter(osw);
 
-	        writer.write(serverResponse.toJSONString());
-	        writer.close();
-	        osw.close();
-	        fos.close();
+    	            // Write the JSON string representation of serverResponse to file
+    	            writer.write(serverResponse.toJSONString());
+    	            writer.close();
+    	            osw.close();
+    	            fos.close();
 
-	        List<File> files = new ArrayList<File>();
-	        files.add(jsonFile);
+    	            List<File> files = new ArrayList<>();
+    	            files.add(jsonFile);
 
-	        try {
-	            e.addAppFiles(APP_NAME, files);
-	        } catch (Exception add) {
-	            add.printStackTrace();
-	        }
-	    } catch (Exception jsonException) {
-	        jsonException.printStackTrace();
-	    }
-		
-	}
+    	            try {
+    	                e.addAppFiles(APP_NAME, files);
+    	            } catch (Exception add) {
+    	                add.printStackTrace();
+    	            }
+    	        } else {
+    	            // Handle the case where serverResponse is null or empty
+    	            System.err.println("serverResponse is null or empty, not writing to file.");
+    	        }
+    	    } catch (Exception jsonException) {
+    	        jsonException.printStackTrace();
+    	    }
+    	}
+//	@Override
+//	public void handleEvent(SessionAboutToBeSavedEvent e) {
+//		String tmpDir = System.getProperty("java.io.tmpdir");
+//	    File jsonFile = new File(tmpDir, SERVER_RESPONSE_FILE);
+//
+//	    try {
+//	        FileOutputStream fos = new FileOutputStream(jsonFile);
+//	        OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
+//	        BufferedWriter writer = new BufferedWriter(osw);
+//
+//	        writer.write(serverResponse.toJSONString());
+//	        writer.close();
+//	        osw.close();
+//	        fos.close();
+//
+//	        List<File> files = new ArrayList<File>();
+//	        files.add(jsonFile);
+//
+//	        try {
+//	            e.addAppFiles(APP_NAME, files);
+//	        } catch (Exception add) {
+//	            add.printStackTrace();
+//	        }
+//	    } catch (Exception jsonException) {
+//	        jsonException.printStackTrace();
+//	    }
+//		
+//	}
 
 
 

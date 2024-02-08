@@ -57,18 +57,18 @@ public class JsonResultPanel extends JPanel implements CytoPanelComponent {
       
         this.manager = manager;
 	
-        // Set the scroll bar policies
+        // scroll bar policies
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-        // Set the preferred size of the scroll pane
+        //  preferred size of the scroll pane
         scrollPane.setPreferredSize(new Dimension(800, 600));
         
         // Add the scroll pane to the center of the JSONDisplayPanel
         add(scrollPane, BorderLayout.CENTER);
         
         
-        // Add the button that will execute the SendDataToServerTask when clicked
+        //button for SendDataToServerTask 
         JButton sendButton = new JButton("Get Annotated Network ");
         sendButton.addActionListener(new ActionListener() {  
             public void actionPerformed(ActionEvent e) {
@@ -84,31 +84,31 @@ public class JsonResultPanel extends JPanel implements CytoPanelComponent {
         
     });
      // Set button appearance
-        sendButton.setForeground(Color.BLACK); // Set the text color of the button
-        sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 14f)); // Set the font style and size of the button text
-        sendButton.setBackground(new Color(144, 238, 144)); // Set the background color of the button
-        sendButton.setFocusPainted(false); // Remove the focus border around the button
-        sendButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Add padding to the button
+        sendButton.setForeground(Color.BLACK); //  text color of the button
+        sendButton.setFont(sendButton.getFont().deriveFont(Font.BOLD, 14f)); //  font style and size of the button text
+        sendButton.setBackground(new Color(144, 238, 144)); //  background color of the button
+        sendButton.setFocusPainted(false); // Remove the focus border 
+        sendButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Add padding 
 
-        // Create a rounded border for the button
+        // rounded border for the button
         int borderRadius = 20;
         int borderThickness = 2;
         sendButton.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, borderThickness),
                 BorderFactory.createEmptyBorder(borderRadius, borderRadius, borderRadius, borderRadius)));
 
-        // Add hover effect for the button
+        // hover effect for the button
         sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                sendButton.setBackground(Color.GREEN); // Set the background color when mouse enters the button
+                sendButton.setBackground(Color.GREEN); //  background color when mouse enters 
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                sendButton.setBackground(new Color(144, 238, 144)); // Set the background color when mouse exits the button
+                sendButton.setBackground(new Color(144, 238, 144)); //  background color when mouse exits 
             }
         });
         
-        // Add the button to the JSONDisplayPanel
+        // Add  button to JSONDisplayPanel
         add(sendButton, BorderLayout.NORTH);
     
     }
@@ -117,13 +117,13 @@ public class JsonResultPanel extends JPanel implements CytoPanelComponent {
         DefaultTableModel tableModel = new DefaultTableModel();
         table = new JTable(tableModel);
 
-        // Set the column names
+        // Set column names
         JSONArray headers = (JSONArray) jsonArray.get(0);
         for (Object header : headers) {
             tableModel.addColumn(header.toString());
         }
 
-        // Add the data to the table model
+        // Add  data to table model
         for (int i = 1; i < jsonArray.size(); i++) {
             JSONArray row = (JSONArray) jsonArray.get(i);
             Object[] rowData = new Object[row.size()];
@@ -146,7 +146,7 @@ public class JsonResultPanel extends JPanel implements CytoPanelComponent {
 
     @Override
     public CytoPanelName getCytoPanelName() {
-        return CytoPanelName.EAST;  // Or where you would like to dock this panel
+        return CytoPanelName.EAST;  
     }
 
     @Override
@@ -156,6 +156,6 @@ public class JsonResultPanel extends JPanel implements CytoPanelComponent {
 
     @Override
     public Icon getIcon() {
-        return null;  // Optionally, return an Icon to be displayed
+        return null;  
     }
 }

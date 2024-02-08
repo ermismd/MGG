@@ -34,9 +34,7 @@ import org.cytoscape.application.CyUserLog;
 import org.cytoscape.work.TaskMonitor;
 
 public class HTTPUtils {
-	public static final String WS_URL = "https://webservices.rbvi.ucsf.edu/scnetviz/api/v1/";
-	public static final String WS_URL_V2 = "https://webservices.rbvi.ucsf.edu/scnetviz/api/v2/";
-	// public static final String WS_URL = "http://localhost:8000/scnetviz/api/v1/";
+	
 
 	public static JSONObject getJSON(String uri, CloseableHttpClient httpclient, TaskMonitor monitor) throws Exception {
 		HttpGet httpGet = new HttpGet(uri);
@@ -174,27 +172,5 @@ public class HTTPUtils {
 		return stream;
 	}
 
-	/*
-	 * public static String getWebServicesURL(String command, Experiment exp, String
-	 * args) {
-	 * 
-	 * String url =
-	 * WS_URL+command+"?source="+exp.getSource().getName()+"&accession="+
-	 * exp.getMetadata().get(Metadata.ACCESSION).toString();
-	 * 
-	 * String url = WS_URL_V2+command+"/"+exp.getSource().getName()+"/"+
-	 * exp.getMetadata().get(Metadata.ACCESSION).toString(); if (args != null) { url
-	 * += "?"+args; } return url; }
-	 */
-
-	// public static void showWebPage(ScNVManager manager, String uri, TaskMonitor
-	// monitor) {
-	// Map<String, Object> args = new HashMap<>();
-	// args.put("newTab", "true");
-	// args.put("id", "GXA");
-	// args.put("url", uri);
-
-	// manager.executeCommand("cybrowser", "dialog", args);
-
-	// }
+	
 }

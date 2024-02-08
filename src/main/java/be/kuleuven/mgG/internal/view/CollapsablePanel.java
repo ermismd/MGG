@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 public class CollapsablePanel extends JPanel {
 	private static String RIGHT_ARROW = "\uF0DA";
 	private static String DOWN_ARROW = "\uF0D7";
+	private static String CIRCLE = "\u2022"; 
+	
 	Font awesomeFont;
 
 	JPanel contentPanel_;
@@ -129,22 +131,24 @@ public class CollapsablePanel extends JPanel {
 	    headerPanel_.expanded = true;
 	    contentPanel_.setVisible(true);
 	    headerPanel_.expandButton.setEnabled(false); // Disable the expand/collapse button
-	    headerPanel_.setButton(DOWN_ARROW); // Set to the down arrow symbol
-	    headerPanel_.expandButton.setToolTipText(""); // Remove tooltip
+	    headerPanel_.setButton(CIRCLE); // Set to the circle symbol
+	    headerPanel_.expandButton.setToolTipText(""); // 
 	}
 	
 	public void toggleSelection() {
-		 if (headerPanel_.expanded) {
+		 
+		if (headerPanel_.expanded) {
 		        // If the panel is always expanded, do nothing
+			 
 		        return;
-		    }
+		   }
 		if (contentPanel_.isShowing()) {
-			headerPanel_.setButton(RIGHT_ARROW);
+			headerPanel_.setButton(RIGHT_ARROW);//Right arrow
 			headerPanel_.expandButton.setToolTipText("Click to expand"); // Update tooltip
 			contentPanel_.setVisible(false);
 		} else {
 			contentPanel_.setVisible(true);
-			headerPanel_.setButton(DOWN_ARROW);
+			headerPanel_.setButton(DOWN_ARROW);//down arrow
 			 headerPanel_.expandButton.setToolTipText("Click to collapse"); // Update tooltip
 		}
 
