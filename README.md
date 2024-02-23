@@ -8,7 +8,7 @@
 [cytoscape App Store]:https://apps.cytoscape.org
 [documentation]:https://hariszaf.github.io/microbetag/docs/cytoApp/
 
-MGG,  Cytoscape APP
+MGG
 =======================================
 
   MGG is a cytoscape app that enables the straightforward and user-friendly way to perform the [microbetag][Microbetag] workflow and to visualise microbetag-annotated networks.
