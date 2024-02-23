@@ -77,17 +77,18 @@ public class SendDataToServerTask extends AbstractTask {
      @Tunable(description="Choose input type", groups={"Input Parameters"}, gravity=1.0, required=true)
      public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
      
-     @Tunable(description="heterogeneous",tooltip="Consider confounding factors" , groups={"Additional Parameter if Input is Abudance Table"}, gravity=10.0, required=true)
+     @Tunable(description="heterogeneous",tooltip="Consider confounding factors" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=10.0, required=true)
      public boolean heterogeneous=false;
      
-     @Tunable(description="Sensitive",tooltip="Use full abundance information (default: discretized)" , groups={"Additional Parameter if Input is Abudance Table"}, gravity=11.0, required=true)
+     @Tunable(description="Sensitive",tooltip="Use full abundance information (default: discretized)" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=11.0, required=true)
      public boolean sensitive=false;
   
      @Tunable(description="Choose delimiter", groups={"Input Parameters"},tooltip="Delimiter used in your taxonomy" ,gravity=2.0, required=true)
      public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
 
-     @Tunable(description="Choose taxonomy Database", groups={"Input Parameters"}, gravity=3.0, required=true)
-     public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("GTDB", "Silva(as in DADA2)","microbetag_prep", "other");
+     @Tunable(description="Choose taxonomy Database",tooltip="Choose the taxonomy in the abudance table among GTDB,"
+     		+ " Silva(as in Dada2), microbetag_prep or other", groups={"Input Parameters"}, gravity=3.0, required=true)
+     public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("GTDB", "Silva","microbetag_prep", "other");
      
      @Tunable(description="PhenDB annotations", longDescription="Choose whether to get PhenDB information.",
     		 groups={"Input Parameters"}, 

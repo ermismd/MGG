@@ -386,7 +386,7 @@ public class Mutils {
 
         // Lifestyle
         String[] lifestyleAttributes = {
-            "aSaccharolytic", "autoCo2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative",
+            "aerobe","anaerobe","aSaccharolytic", "autoCo2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative",
             "phototrophy","psychrophilic","saccharolytic","symbiont","thermophilic","methylotrophy","chitinolysis","knallgas bacteria",
             "cellulolysis","xylanolysis","plant pathogen","ligninolysis","fermentation","aerobic chemoheterotrophy","invertebrate parasites",
             "human pathogens septicemia","intracellular parasites","predatory or exoparasitic","human pathogens pneumonia","human pathogens nosocomia",

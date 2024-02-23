@@ -57,6 +57,7 @@ import be.kuleuven.mgG.internal.tasks.CheckNetworkTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyle;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyleTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
+import be.kuleuven.mgG.internal.tasks.GetTermsFromNetworkEnrichmentTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportMetadataTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportNetworkDataTaskFactory;
@@ -66,6 +67,7 @@ import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
 
 import be.kuleuven.mgG.internal.utils.Mutils;
+import be.kuleuven.mgG.internal.view.EnrichmentAnalysisTaskFactory;
 import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
@@ -229,6 +231,21 @@ public class CyActivator extends AbstractCyActivator {
         aboutprops.setProperty(COMMAND, "About_MGG");
 
         registerService(bc, mggAboutTaskFactory, TaskFactory.class,   aboutprops);
+        
+        
+
+        EnrichmentAnalysisTaskFactory mggEnrichmentTaskFactory = new EnrichmentAnalysisTaskFactory(MGGManager);
+        Properties enrichmentprops = new Properties();
+        enrichmentprops.setProperty(TITLE, "MGG Enrichment");
+        enrichmentprops.setProperty(PREFERRED_MENU, "Apps.MGG Enrichment");
+        enrichmentprops.setProperty(IN_TOOL_BAR, "FALSE");
+        enrichmentprops.setProperty(IN_MENU_BAR, "TRUE");
+        enrichmentprops.setProperty(MENU_GRAVITY, "11");
+        enrichmentprops.setProperty(COMMAND_NAMESPACE, "MGG");
+        enrichmentprops.setProperty(COMMAND_DESCRIPTION, "Enrichment Analysis");
+        enrichmentprops.setProperty(COMMAND, "MGG_Enrichment");
+
+        registerService(bc, mggEnrichmentTaskFactory, TaskFactory.class,   enrichmentprops);
 
 
        // CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager);

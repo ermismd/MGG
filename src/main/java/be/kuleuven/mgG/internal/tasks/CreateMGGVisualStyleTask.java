@@ -215,16 +215,18 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 
 							 /// Define the points at which the color changes
 							    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(Color.PINK, Color.PINK, Color.PINK); // for values from -1 to -0.01
-							    BoundaryRangeValues<Paint> neutralRange = new BoundaryRangeValues<>(Color.BLACK, Color.BLACK, Color.BLACK); // for values from 0 to 0.3
+							    BoundaryRangeValues<Paint> neutralRange = new BoundaryRangeValues<>(Color.LIGHT_GRAY,Color.LIGHT_GRAY,Color.LIGHT_GRAY); // for values from 0 to 0.3
 							    BoundaryRangeValues<Paint> positiveRange = new BoundaryRangeValues<>(Color.GREEN, Color.GREEN, Color.GREEN); // for values from 0.3 to 1
 
 							    // Set the boundary points and associated colors
 							    edgeColorMapping.addPoint(-1.0, negativeRange); // values from -1 to -0.01 are Red
-							    edgeColorMapping.addPoint(-0.01, negativeRange); // this ensures that the Red continues until -0.01
-							   // edgeColorMapping.addPoint(0.0, neutralRange); // values from 0 to 0.3 are Black
-							    //edgeColorMapping.addPoint(0.3, neutralRange); // this ensures that the Black continues until 0.3
-							    edgeColorMapping.addPoint(0.3, positiveRange); // values from 0.3 to 1 are Green
+							    edgeColorMapping.addPoint(-0.1, negativeRange); // this ensures that the Red continues until -0.01
+							    edgeColorMapping.addPoint(-0.1, neutralRange); // values from 0 to 0.3 are Black
+							    edgeColorMapping.addPoint(0.1, neutralRange); // this ensures that the Black continues until 0.3
+							    edgeColorMapping.addPoint(0.1, positiveRange); // values from 0.3 to 1 are Green
 							    edgeColorMapping.addPoint(1.0, positiveRange); // this ensures that the Green continues up to 1
+							    
+							 
 							    
 							    // Add the mapping function to the visual style
 							    style.addVisualMappingFunction(edgeColorMapping);        

@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -105,6 +106,9 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	private boolean highlightNeighbors = false;
 	private boolean showMspecies = false;
 	private boolean showSingletons = false;
+	
+	private String[] EnrichmentAttributeString;
+	
 	
 	
 	private Map<String, Color> channelColors;
@@ -230,6 +234,24 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     
     
     
+    //Setters for phendb and faprotax
+   // public void setPhendbAttributeList(String[] phendbAttributeList) {
+    	
+    //	this.phendbAttributeList = phendbAttributeList;
+   // }
+    
+    public void setEnrichmentAttributeString(String[]termOptions) {
+    	this.EnrichmentAttributeString=termOptions;
+    }
+    
+   // //getters for phendb and faprotax attributes
+   // public String[] getPhendbAttributeList(){
+   // 	return phendbAttributeList;
+   // }
+    
+    public String [] getEnrichmentAttributeString(){
+    	return EnrichmentAttributeString;
+    }
     
     
     
