@@ -24,7 +24,7 @@ Requirements to use
 * Internet connection to allow App to connect to remote services
 
 
-Installation via from Cytoscape
+Installation via Cytoscape
 ======================================
 
 MGG will be in the [Cytoscape App Store][cytoscape App Store] soon!!
