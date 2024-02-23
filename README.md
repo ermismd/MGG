@@ -11,7 +11,7 @@
 MGG,  Cytoscape APP
 =======================================
 
-  MGG is a cytoscape app that enables the straightforward, user-friendly way, to perform the [microbetag][Microbetag] workflow and to visualise microbetag-annotated networks.
+  MGG is a cytoscape app that enables the straightforward and user-friendly way to perform the [microbetag][Microbetag] workflow and to visualise microbetag-annotated networks.
   MGG was built based on the [scNetViz][scnetviz] source code. MGG allows users to import their data, retrieve the important annotations and investigate
   them. It provides a visual style to distinguish annotated nodes, it utilizes CyPanels for node and edge filtering and visualization of important annotations,
   and supports enrichment analysis based on assigned phenotypic traits and clusters.
