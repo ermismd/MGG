@@ -182,9 +182,9 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 				        currentNetworkView.updateView();
 				    }
 
-				    // Check if the node table does not contain the manta::cluster column
-				    if (nodeTable.getColumn("manta::cluster") == null) {
-				        // Apply force-directed layout as this column is not present
+				    // Check if the node table does not contain the microbetag::cluster column
+				    if (nodeTable.getColumn("microbetag::cluster") == null) {
+				        // Apply force-directed layout 
 				        if (views != null && !views.isEmpty()) {
 				            CyNetworkView currentNetworkView = views.iterator().next();
 
@@ -201,7 +201,7 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 				        }
 								    } else {
 								        // The manta::cluster column is present, do not apply force-directed layout
-								        //  add alternative layout  here 
+								       
 								    }
 								}
 								        

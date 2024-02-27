@@ -38,20 +38,18 @@ public class AboutTask extends AbstractTask {
 	        aboutDialog.setTitle("About MGG");
 	        
 	     
-	     // make dialog  modal
+	     
 	        aboutDialog.setModalityType(JDialog.ModalityType.APPLICATION_MODAL);
 	        
-	        //  dialog always on top
-	        //aboutDialog.setAlwaysOnTop(true);
-
+	        
 	        // Add AboutPanel 
 	        AboutPanel aboutPanel = new AboutPanel();
 	        aboutDialog.add(aboutPanel);
 
 	        //  dialog props
 	        aboutDialog.pack();
-	        aboutDialog.setSize(200, 200); // Set the desired width and height
-	        aboutDialog.setLocationRelativeTo(null); // Center on screen
+	        aboutDialog.setSize(200, 200); 
+	        aboutDialog.setLocationRelativeTo(null);
 	        aboutDialog.setVisible(true);
 	        
 	    }

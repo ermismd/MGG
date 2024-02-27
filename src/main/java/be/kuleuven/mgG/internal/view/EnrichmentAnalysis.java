@@ -93,15 +93,15 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 	            
 	            
 	            CyTable nodeTable = currentNetwork.getDefaultNodeTable();
-	            CyColumn mantaClusterColumn = nodeTable.getColumn("manta::cluster");
+	           // CyColumn mantaClusterColumn = nodeTable.getColumn("manta::cluster");
 	            CyColumn microbetagClusterColumn = nodeTable.getColumn("microbetag::cluster");
 	            
 	            // Check if manta::cluster or microbetag::cluster columns exists.If they dont exist enrichment doesnt proceed
 	            
-	            if (mantaClusterColumn == null && microbetagClusterColumn == null) {	           
-	                taskMonitor.setStatusMessage("There is no manta::cluster or microbetag::cluster column, "
+	            if (microbetagClusterColumn == null) {	           
+	                taskMonitor.setStatusMessage("There is no microbetag::cluster column, "
 	                		+ "cannot perform enrichment/depletion analysis.");
-	                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "There is no manta::cluster or microbetag::cluster column, cannot perform "
+	                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "There is no microbetag::cluster column, cannot perform "
 	                		+ "enrichment/depletion analysis.", "Information", JOptionPane.INFORMATION_MESSAGE));
 	                return; 
 	            }
@@ -381,19 +381,19 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 	    private int getTotalClusterCount(CyNetwork currentNetwork) {
 	        Set<Integer> clusters = new HashSet<>();
 	        CyTable nodeTable = currentNetwork.getDefaultNodeTable();
-            CyColumn mantaClusterColumn = nodeTable.getColumn("manta::cluster");
+            //CyColumn mantaClusterColumn = nodeTable.getColumn("manta::cluster");
             CyColumn microbetagClusterColumn = nodeTable.getColumn("microbetag::cluster");
 
-            if (mantaClusterColumn != null) {
-                for (CyNode node : currentNetwork.getNodeList()) {
-                    Integer mantaCluster = currentNetwork.getRow(node).get("manta::cluster", Integer.class);
-                    if (mantaCluster == null) {
-                        // If mantaCluster is null, NaN, or empty, consider it as cluster -1
-                        mantaCluster = -1;
-                    }
-                    clusters.add(mantaCluster);
-                }
-            } else if (microbetagClusterColumn != null) {
+//            if (mantaClusterColumn != null) {
+//                for (CyNode node : currentNetwork.getNodeList()) {
+//                    Integer mantaCluster = currentNetwork.getRow(node).get("manta::cluster", Integer.class);
+//                    if (mantaCluster == null) {
+//                        // If mantaCluster is null, NaN, or empty, consider it as cluster -1
+//                        mantaCluster = -1;
+//                    }
+//                    clusters.add(mantaCluster);
+//                }}
+             if (microbetagClusterColumn != null) {
                 for (CyNode node : currentNetwork.getNodeList()) {
                     Integer microbetagCluster = currentNetwork.getRow(node).get("microbetag::cluster", Integer.class);
                     if (microbetagCluster == null) {

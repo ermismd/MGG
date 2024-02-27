@@ -3,6 +3,7 @@ package be.kuleuven.mgG.internal.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.work.util.ListMultipleSelection;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.view.MGGNodePanel;
@@ -39,6 +41,8 @@ public class Mutils {
     public static String Seed_NAMESPACE = "seed";
     public static String Faprotax_NAMESPACE = "faprotax";
 
+    
+    public static final String NONEATTRIBUTE = "--None--";
 
     public static boolean isMGGNetwork(CyNetwork network) {
         if (network == null) return false; //this is new
@@ -368,12 +372,52 @@ public class Mutils {
 
 
     
+    public static ListMultipleSelection<String> updateAttributeList(CyNetwork network, 
+            ListMultipleSelection<String> attributes) {
+if (network == null)
+return new ListMultipleSelection<String>();
+
+List<String> attributeArray = getAllAttributes(network, network.getDefaultNodeTable());
+attributeArray.addAll(getAllAttributes(network, network.getDefaultEdgeTable()));
+ListMultipleSelection<String> newAttribute = new ListMultipleSelection<String>(attributeArray);	
+if (attributeArray.size() > 0){
+if (attributes != null) {
+newAttribute.setSelectedValues(attributes.getSelectedValues());
+} else {
+newAttribute.setSelectedValues(Collections.singletonList(attributeArray.get(0)));
+}
+return newAttribute;
+}
+return new ListMultipleSelection<String>("--None--");
+}
 
     
-    
+    private static List<String> getAllAttributes(CyNetwork network, CyTable table) {
+		String[] attributeArray = new String[1];
+		// Create the list by combining node and edge attributes into a single list
+		List<String> attributeList = new ArrayList<String>();
+		attributeList.add(NONEATTRIBUTE);
+		getAttributesList(attributeList, table);
+		String[] attrArray = attributeList.toArray(attributeArray);
+		if (attrArray.length > 1) 
+			Arrays.sort(attrArray);
+		return Arrays.asList(attrArray);
+	}
     
  
-    
+    private static void getAttributesList(List<String>attributeList, CyTable attributes) {
+		if (attributes == null)
+			return;
+
+		Collection<CyColumn> names = attributes.getColumns();
+		java.util.Iterator<CyColumn> itr = names.iterator();
+		for (CyColumn column: attributes.getColumns()) {
+			if (column.getType() == Double.class ||
+					column.getType() == Integer.class) {
+					attributeList.add(column.getName());
+			}
+		}
+	}
     
     // Method to determine the category for an attribute
     public static String getCategoryForAttribute(String attribute) {

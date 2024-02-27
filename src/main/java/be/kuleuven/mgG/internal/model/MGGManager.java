@@ -456,7 +456,23 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 
     			
     //------------------------------------------------------------------------------------------------------------------------
-    
+    //has functionality
+    			
+    			
+    			public boolean haveClusterMaker() {
+    				return availableCommands.getNamespaces().contains("cluster");
+    			}			
+    			
+    			
+    			
+    			
+    			
+    			
+    			
+    			
+    			
+   //------------------------------------------------------------------------------------------ 			
+    			
     	/**
     	 * Handles the SessionLoadedEvent.
     	 * This method is called when a session is loaded in Cytoscape.

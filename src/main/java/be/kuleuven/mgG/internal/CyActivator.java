@@ -61,7 +61,7 @@ import be.kuleuven.mgG.internal.tasks.GetTermsFromNetworkEnrichmentTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportMetadataTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportNetworkDataTaskFactory;
-
+import be.kuleuven.mgG.internal.tasks.MCLClusterTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
@@ -246,7 +246,25 @@ public class CyActivator extends AbstractCyActivator {
         enrichmentprops.setProperty(COMMAND, "MGG_Enrichment");
 
         registerService(bc, mggEnrichmentTaskFactory, TaskFactory.class,   enrichmentprops);
-
+        
+        
+//        MCLClusterTaskFactory mggMCLClusterTaskFactory = new MCLClusterTaskFactory (MGGManager);
+//        Properties clusterprops = new Properties();
+//        clusterprops.setProperty(TITLE, " Leiden Clustering(clusterMaker)");
+//        clusterprops.setProperty(PREFERRED_MENU, "Apps.MGG Clustering");
+//        clusterprops.setProperty(IN_TOOL_BAR, "FALSE");
+//        clusterprops.setProperty(IN_MENU_BAR, "TRUE");
+//        clusterprops.setProperty(MENU_GRAVITY, "11");
+//        clusterprops.setProperty(COMMAND_NAMESPACE, "MGG");
+//        clusterprops.setProperty(COMMAND_DESCRIPTION, "Leiden Clustering");
+//        clusterprops.setProperty(COMMAND, "MGG_Clustering");
+//
+//        registerService(bc, mggMCLClusterTaskFactory, TaskFactory.class,   clusterprops);
+        
+        
+        
+        
+        
 
        // CreateMGGVisualStyle createVisualStyleAction = new CreateMGGVisualStyle(MGGManager);
 
