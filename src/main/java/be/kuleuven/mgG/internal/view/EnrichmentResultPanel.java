@@ -33,7 +33,7 @@ import be.kuleuven.mgG.internal.utils.EnrichmentsTableModel;
 
 public class EnrichmentResultPanel extends JPanel {
     private JTable table;
-    private List<EnrichmentResult> results; // Assume this is filled with your analysis results
+    private List<EnrichmentResult> results; 
     final MGGManager manager;
     private JButton exportButton;
     final Font iconFont;
@@ -45,7 +45,7 @@ public class EnrichmentResultPanel extends JPanel {
     	IconManager iconManager = manager.getService(IconManager.class);
     	iconFont = iconManager.getIconFont(22.0f);
     	this.manager = manager;
-        List<EnrichmentResult> results = new ArrayList<>(); // Populate this list with your results
+        List<EnrichmentResult> results = new ArrayList<>(); 
         table = new JTable(new EnrichmentsTableModel(results));
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
@@ -77,39 +77,13 @@ public class EnrichmentResultPanel extends JPanel {
     }
 
     
-    
-   
-//    public void updateResults(List<EnrichmentResult> newResults) {
-//        EnrichmentsTableModel model = (EnrichmentsTableModel) this.table.getModel();
-//       
-//        model.setResults(newResults);
-//        model.fireTableDataChanged(); // Notify the table model to refresh the table data
-//    }
-    
+     
     public void updateResults(List<EnrichmentResult> newResults) {
         EnrichmentsTableModel model = (EnrichmentsTableModel) table.getModel();
         model.setResults(newResults);
     }
     
     
-
-//    static class DecimalFormatRenderer extends DefaultTableCellRenderer {
-//        private static final DecimalFormat formatter = new DecimalFormat("0.#####E0");
-//
-//        @Override
-//        public Component getTableCellRendererComponent(JTable table, Object value,
-//                boolean isSelected, boolean hasFocus, int row, int column) {
-//            try {
-//                if (value != null && (double) value < 0.001) {
-//                    value = formatter.format((Number) value);
-//                }
-//            } catch (Exception ex) {
-//                // ignore and return original value
-//            }
-//            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//        }
-//	}
-//    
     
     
     static class DecimalFormatRenderer extends DefaultTableCellRenderer {

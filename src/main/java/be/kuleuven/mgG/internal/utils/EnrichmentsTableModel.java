@@ -63,7 +63,7 @@ public class EnrichmentsTableModel extends AbstractTableModel {
                 if (termComparison != 0) {
                     return termComparison; // sort by term
                 } else {
-                    return Double.compare(o1.getPValue(), o2.getPValue()); // sort by P-value
+                    return Double.compare(o1.getFdrValue(), o2.getFdrValue()); // sort by P-value
                 }
             }
         });
