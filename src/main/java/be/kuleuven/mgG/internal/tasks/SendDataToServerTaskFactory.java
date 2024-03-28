@@ -25,7 +25,7 @@ public class SendDataToServerTaskFactory implements TaskFactory {
     
     @Override
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(2,new SendDataToServerTask( mggManager),new CreateNetworkTask(mggManager));
+        return new TaskIterator(3,new SendDataToServerTask( mggManager),new CreateNetworkTask(mggManager),new CreateMGGVisualStyleTask(mggManager));
         
         	
     }
