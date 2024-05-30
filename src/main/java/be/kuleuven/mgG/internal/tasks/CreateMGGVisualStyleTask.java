@@ -22,9 +22,11 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.LineTypeVisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
+import org.cytoscape.view.presentation.property.values.LineType;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
@@ -39,10 +41,6 @@ import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
-
-
-
-
 
 
 
@@ -64,10 +62,12 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 	final CyLayoutAlgorithmManager layoutAlgorithmManager;
 
 	final PaletteProviderManager paletteManager;
+
+
 	
 	public static final String MY_NAMESPACE = "MGGid";
 	public static final String MY_ATTRIBUTE = "id";
-	
+
 	
 	
 	public CreateMGGVisualStyleTask(MGGManager manager) {
@@ -122,13 +122,17 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 
 				// VisualProperty for node fill color
 				VisualProperty<?> vp = BasicVisualLexicon.NODE_FILL_COLOR;
+				VisualProperty<?> et = BasicVisualLexicon.EDGE_LINE_TYPE;
 
-				style.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
 
 				// Node Borders
+				style.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_WIDTH, 2.0);
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.DARK_GRAY);
 				style.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, 2.0); // Set default edge width
+				style.setDefaultValue(BasicVisualLexicon.EDGE_STROKE_SELECTED_PAINT, Color.ORANGE); // Set default color for when selecting an edge
+				
+				// style.setDefaultValue(BasicVisualLexicon.EDGE_LINE_TYPE, LineTypeVisualProperty.EQUAL_DASH); 
 				
 				
 				// Node shape mapping based on "taxonomy-level"
@@ -141,26 +145,40 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 		            shapeMapping.putMapValue(entry.getKey(), entry.getValue());
 		        }
 		        style.addVisualMappingFunction(shapeMapping);
-				
-			
-		        
+
+
 				// Node Labels
 				style.setDefaultValue(BasicVisualLexicon.NODE_LABEL, "");
 				PassthroughMapping<String, String> labelMapping = (PassthroughMapping<String, String>) vmfFactoryP
 						.createVisualMappingFunction("name", String.class, BasicVisualLexicon.NODE_LABEL);
 				style.addVisualMappingFunction(labelMapping);
 
-				System.out.println("o ermis einai mpamias");
+
 				// discrete mapping function(species-colors)
 				DiscreteMapping<String, Paint> colorMapping = (DiscreteMapping<String, Paint>) discreteMappingFactory
 				                    .createVisualMappingFunction(columnName, String.class, vp);
+
 				Map<String, Paint> speciesColorMap = getSpeciesColorMap();
 				for (Map.Entry<String, Paint> entry : speciesColorMap.entrySet()) {
 				    colorMapping.putMapValue(entry.getKey(), entry.getValue());
 				}
 				style.addVisualMappingFunction(colorMapping); // Add the mapping function to the visual style
+							
 				
+				//	EDGES
+				String columnEdgeType = "shared interaction";
+				DiscreteMapping<String, LineType> edgeTypeMapping = (DiscreteMapping<String, LineType>) discreteMappingFactory
+	                    .createVisualMappingFunction(columnEdgeType, String.class, et);
+				
+				
+				Map<String, LineType> edgeTypeMap = getEdgeTypeMap();
+				for (Map.Entry<String, LineType> entry : edgeTypeMap.entrySet()) {
+					edgeTypeMapping.putMapValue(entry.getKey(), entry.getValue());
+				}
+				style.addVisualMappingFunction(edgeTypeMapping);
 
+				
+				
 				// Get the current network
 				//CyNetwork currentNetwork = ((MGGManager) networkManager).getCurrentNetwork();
 				CyNetwork currentNetwork= manager.getCurrentNetwork();
@@ -199,43 +217,47 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 
 				            currentNetworkView.updateView();
 				        }
-								    } else {
-								        // The manta::cluster column is present, do not apply force-directed layout
-								       
-								    }
-								}
+					} else {
+				        // The manta::cluster column is present, do not apply force-directed layout
+				       
+				    }
+				}
 								        
-								   
-							           
-							               
-							     
-							// Create a continuous mapping for edge color based on the "weight" attribute
-							   ContinuousMapping<Double, Paint> edgeColorMapping = (ContinuousMapping<Double, Paint>) manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)")
-							            .createVisualMappingFunction("microbetag::weight", Double.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+			               
+			     
+			   // Create a continuous mapping for edge color based on the "weight" attribute
+			   ContinuousMapping<Double, Paint> edgeColorMapping = (ContinuousMapping<Double, Paint>) 
+					   manager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)")
+			            .createVisualMappingFunction("microbetag::weight", 
+			            		Double.class, 
+			            		BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT
+			            		);
 
-							 /// Define the points at which the color changes
-							    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(Color.PINK, Color.PINK, Color.PINK); // for values from -1 to -0.01
-							    BoundaryRangeValues<Paint> neutralRange = new BoundaryRangeValues<>(Color.LIGHT_GRAY,Color.LIGHT_GRAY,Color.LIGHT_GRAY); // for values from 0 to 0.3
-							    BoundaryRangeValues<Paint> positiveRange = new BoundaryRangeValues<>(Color.GREEN, Color.GREEN, Color.GREEN); // for values from 0.3 to 1
-
-							    // Set the boundary points and associated colors
-							    edgeColorMapping.addPoint(-1.0, negativeRange); // values from -1 to -0.01 are Red
-							    edgeColorMapping.addPoint(-0.1, negativeRange); // this ensures that the Red continues until -0.01
-							    edgeColorMapping.addPoint(-0.1, neutralRange); // values from 0 to 0.3 are Black
-							    edgeColorMapping.addPoint(0.1, neutralRange); // this ensures that the Black continues until 0.3
-							    edgeColorMapping.addPoint(0.1, positiveRange); // values from 0.3 to 1 are Green
-							    edgeColorMapping.addPoint(1.0, positiveRange); // this ensures that the Green continues up to 1
-							    
-							 
-							    
-							    // Add the mapping function to the visual style
-							    style.addVisualMappingFunction(edgeColorMapping);        
-								        
-								    
-					}
-	
-			   
+			    // Define the points at which the color changes
+			    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(
+					    new Color(219, 076, 119),
+					    new Color(219, 076, 119),
+					    new Color(219, 076, 119)
+			    		); // for values from -1 to -0.01
+			    BoundaryRangeValues<Paint> neutralRange = new BoundaryRangeValues<>(Color.BLACK, Color.BLACK, Color.BLACK); // for values from 0 to 0.3
+			    BoundaryRangeValues<Paint> positiveRange = new BoundaryRangeValues<>(
+			    		new Color(016,85,154), 
+			    		new Color(016,85,154),
+			    		new Color(016,85,154)
+			    		); // for values from 0.3 to 1
 			    
+			    // Set the boundary points and associated colors
+			    edgeColorMapping.addPoint(-1.0, negativeRange); // values from -1 to -0.01 are Red
+			    edgeColorMapping.addPoint(-0.1, negativeRange); // this ensures that the Red continues until -0.01
+			    edgeColorMapping.addPoint(-0.1, neutralRange); // values from 0 to 0.3 are Black
+			    edgeColorMapping.addPoint(0.1, neutralRange); // this ensures that the Black continues until 0.3
+			    edgeColorMapping.addPoint(0.1, positiveRange); // values from 0.3 to 1 are Green
+			    edgeColorMapping.addPoint(1.0, positiveRange); // this ensures that the Green continues up to 1
+							    
+			    style.addVisualMappingFunction(edgeColorMapping);
+
+	}
+
 	 
 	 
 				private CyNode getNodeById(CyNetwork network, String nodeId) {
@@ -248,8 +270,15 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 				    return null;
 				}
 				
-				
 			
+
+				private Map<String, LineType> getEdgeTypeMap(){
+					Map<String, LineType> edgeTypeMap = new HashMap<>();
+					edgeTypeMap.put("comp_coop", LineTypeVisualProperty.LONG_DASH);
+					edgeTypeMap.put("cooccurrence/depletion", LineTypeVisualProperty.SOLID);
+					return edgeTypeMap;
+				}
+				
 				private Map<String, NodeShape> getTaxonomyShapeMap() {
 					Map<String, NodeShape> taxonomyShapeMap = new HashMap<>();
 					taxonomyShapeMap.put("genus", NodeShapeVisualProperty.ELLIPSE);
@@ -257,6 +286,7 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 					taxonomyShapeMap.put("mspecies", NodeShapeVisualProperty.ELLIPSE);
 					taxonomyShapeMap.put("null", NodeShapeVisualProperty.ELLIPSE);
 					taxonomyShapeMap.put("species", NodeShapeVisualProperty.ELLIPSE);
+					taxonomyShapeMap.put("envVar", NodeShapeVisualProperty.HEXAGON);
 					// Add more taxonomy-level to shape mappings as needed
 					return taxonomyShapeMap;
 				}

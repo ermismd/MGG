@@ -63,6 +63,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 	
 	
 	
+	
 	public CreateMGGVisualStyle(MGGManager mggManager){
 		super("Create MGG Visual Style");
 		this.mggManager = mggManager;
@@ -77,21 +78,14 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 		this.networkViewFactory = mggManager.getService(CyNetworkViewFactory.class);
 		this.networkViewManager = mggManager.getService(CyNetworkViewManager.class);
 		this.visualStyleFactory = mggManager.getService(VisualStyleFactory.class);
-		this.discreteMappingFactory = mggManager.getService(VisualMappingFunctionFactory.class,
-				"(mapping.type=discrete)");
-
+		this.discreteMappingFactory = mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 		this.vmfFactoryP = mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
 		this.vmmServiceRef = mggManager.getService(VisualMappingManager.class);
-
 		this.layoutAlgorithmManager = mggManager.getService(CyLayoutAlgorithmManager.class);
 		this.paletteManager = mggManager.getService(PaletteProviderManager.class);
 	}
 	
-	/**
-	 *  DOCUMENT ME!
-	 *
-	 * @param e DOCUMENT ME!
-	 */
+
 	public void actionPerformed(ActionEvent e) {
 
 		// If the style already existed, remove it first
@@ -124,6 +118,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_WIDTH, 2.0);
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.DARK_GRAY);
 				style.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, 2.0); // Set default edge width
+				style.setDefaultValue(BasicVisualLexicon.EDGE_STROKE_SELECTED_PAINT, Color.ORANGE); // Set default color for when selecting an edge
 				
 				// Node shape mapping based on "taxonomy-level"
 		        String columnName = "microbetag::ncbi-tax-level";
@@ -197,19 +192,25 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				        //  add alternative layout  here 
 				    }
 				}
-				        
-				   
-			           
-			               
-			     
-			// Create a continuous mapping for edge color based on the "weight" attribute
-			   ContinuousMapping<Double, Paint> edgeColorMapping = (ContinuousMapping<Double, Paint>) mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)")
+
+
+			   // Create a continuous mapping for edge color based on the "weight" attribute
+			   ContinuousMapping<Double, Paint> edgeColorMapping = (ContinuousMapping<Double, Paint>) 
+					   mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=continuous)")
 			            .createVisualMappingFunction("microbetag::weight", Double.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
 
-			 /// Define the points at which the color changes
-			    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(Color.PINK, Color.PINK, Color.PINK); // for values from -1 to -0.01
+         		// Define the points at which the color changes
+			    BoundaryRangeValues<Paint> negativeRange = new BoundaryRangeValues<>(
+					    new Color(219, 076, 119),
+					    new Color(219, 076, 119),
+					    new Color(219, 076, 119)
+			    		); // for values from -1 to -0.01
 			    BoundaryRangeValues<Paint> neutralRange = new BoundaryRangeValues<>(Color.BLACK, Color.BLACK, Color.BLACK); // for values from 0 to 0.3
-			    BoundaryRangeValues<Paint> positiveRange = new BoundaryRangeValues<>(Color.GREEN, Color.GREEN, Color.GREEN); // for values from 0.3 to 1
+			    BoundaryRangeValues<Paint> positiveRange = new BoundaryRangeValues<>(
+			    		new Color(016,85,154), 
+			    		new Color(016,85,154),
+			    		new Color(016,85,154)
+			    		); // for values from 0.3 to 1
 
 			    // Set the boundary points and associated colors
 			    edgeColorMapping.addPoint(-1.0, negativeRange); // values from -1 to -0.01 are Red
@@ -222,13 +223,25 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 			    // Add the mapping function to the visual style
 			    style.addVisualMappingFunction(edgeColorMapping);        
 				        
-				    
+
+
+			    
+			    
+
+			 // Create a DiscreteMapping for null weights
+			 DiscreteMapping<String, Paint> edgeNullWeightMapping = (DiscreteMapping<String, Paint>)
+			     mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)")
+			               .createVisualMappingFunction("microbetag::weight", String.class, BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT);
+
+			 // Map null to a specific color, e.g., gray
+			 edgeNullWeightMapping.putMapValue(null, Color.MAGENTA);
+
+			 // Add the discrete mapping to the visual style
+			 style.addVisualMappingFunction(edgeNullWeightMapping);
+			    
+			    
 	}
-	
-			    
-			    
-			
-				
+
 			
 			private Map<String, NodeShape> getTaxonomyShapeMap() {
 				Map<String, NodeShape> taxonomyShapeMap = new HashMap<>();
@@ -237,6 +250,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				taxonomyShapeMap.put("mspecies", NodeShapeVisualProperty.ELLIPSE);
 				taxonomyShapeMap.put("null", NodeShapeVisualProperty.ELLIPSE);
 				taxonomyShapeMap.put("species", NodeShapeVisualProperty.ELLIPSE);
+				taxonomyShapeMap.put("envVar", NodeShapeVisualProperty.HEXAGON);
 				// Add more taxonomy-level to shape mappings as needed
 				return taxonomyShapeMap;
 			}
