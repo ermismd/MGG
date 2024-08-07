@@ -3,8 +3,7 @@ package be.kuleuven.mgG.internal.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-//import java.awt.Cursor;
-//import java.awt.Desktop;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -12,10 +11,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-//import java.awt.LayoutManager;
-//import java.awt.Toolkit;
-//import java.awt.datatransfer.Clipboard;
-//import java.awt.datatransfer.StringSelection;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -23,38 +19,29 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-//import java.net.MalformedURLException;
-//import java.net.URI;
-//import java.net.URISyntaxException;
-//import java.net.URL;
-//import java.net.URLEncoder;
-//import java.nio.charset.StandardCharsets;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-//import javax.swing.BoxLayout;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-//import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-//import javax.swing.JSlider;
+
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-//import javax.swing.SwingUtilities;
+
 import javax.swing.Timer;
 import javax.swing.border.Border;
-//import javax.swing.event.ChangeEvent;
-//import javax.swing.event.ChangeListener;
+
 import javax.swing.table.DefaultTableModel;
-//import javax.swing.table.TableColumnModel;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
@@ -66,7 +53,6 @@ import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-//import org.cytoscape.work.TaskMonitor;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.BlueUnderlineHTMLRenderer;
@@ -74,6 +60,32 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.utils.SwingLink;
 import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
 import be.kuleuven.mgG.internal.utils.ViewUtils;
+
+
+// are they needed? 
+//import java.awt.LayoutManager;
+//import java.awt.Toolkit;
+//import java.awt.datatransfer.Clipboard;
+//import java.awt.datatransfer.StringSelection;
+//import java.awt.Cursor;
+//import java.awt.Desktop;
+//import java.net.MalformedURLException;
+//import java.net.URI;
+//import java.net.URISyntaxException;
+//import java.net.URL;
+//import java.net.URLEncoder;
+//import java.nio.charset.StandardCharsets;
+//import javax.swing.BoxLayout;
+//import javax.swing.JOptionPane;
+//import javax.swing.SwingUtilities;
+//import javax.swing.JSlider;
+//import javax.swing.event.ChangeEvent;
+//import javax.swing.event.ChangeListener;
+//import javax.swing.table.TableColumnModel;
+//import org.cytoscape.work.TaskMonitor;
+
+
+
 
 
 
@@ -759,7 +771,12 @@ public class MGGEdgePanel extends AbstractMggPanel {
             if (column.getName().startsWith("compl::")) {
 
             	Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
-                String[] entries = columnValue.toString().split(",");
+
+                if (columnValue == null) {
+                    continue; // Skip to the next iteration if columnValue is null
+                }
+            	
+            	String[] entries = columnValue.toString().split(",");
                 boolean keggNotEmpty = false;
                 keggNotEmpty = isNotEmpty(entries);
                 
@@ -943,6 +960,12 @@ public class MGGEdgePanel extends AbstractMggPanel {
     	 if (column.getName().startsWith("seedCompl::")) {
         	         	 
              Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
+             
+             
+             if (columnValue == null) {
+                 continue; // Skip to the next iteration if columnValue is null
+             }
+             
              
              String[] entries = columnValue.toString().split(",");
 
