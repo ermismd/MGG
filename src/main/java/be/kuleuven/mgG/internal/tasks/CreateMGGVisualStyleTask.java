@@ -286,7 +286,7 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 					taxonomyShapeMap.put("mspecies", NodeShapeVisualProperty.ELLIPSE);
 					taxonomyShapeMap.put("null", NodeShapeVisualProperty.ELLIPSE);
 					taxonomyShapeMap.put("species", NodeShapeVisualProperty.ELLIPSE);
-					taxonomyShapeMap.put("envVar", NodeShapeVisualProperty.HEXAGON);
+					taxonomyShapeMap.put("metavar", NodeShapeVisualProperty.HEXAGON);
 					// Add more taxonomy-level to shape mappings as needed
 					return taxonomyShapeMap;
 				}

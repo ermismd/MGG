@@ -39,6 +39,9 @@ import org.cytoscape.work.TaskManager;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 
+
+
+
 public class CreateMGGVisualStyle extends AbstractCyAction {
 
 	final MGGManager mggManager;
@@ -250,7 +253,7 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				taxonomyShapeMap.put("mspecies", NodeShapeVisualProperty.ELLIPSE);
 				taxonomyShapeMap.put("null", NodeShapeVisualProperty.ELLIPSE);
 				taxonomyShapeMap.put("species", NodeShapeVisualProperty.ELLIPSE);
-				taxonomyShapeMap.put("envVar", NodeShapeVisualProperty.HEXAGON);
+				taxonomyShapeMap.put("metavar", NodeShapeVisualProperty.HEXAGON);
 				// Add more taxonomy-level to shape mappings as needed
 				return taxonomyShapeMap;
 			}
