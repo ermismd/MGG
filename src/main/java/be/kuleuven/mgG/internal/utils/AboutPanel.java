@@ -21,7 +21,7 @@ public class AboutPanel extends JPanel {
 	        // Main content
 	        JPanel contentPanel = new JPanel();
 	        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-	        contentPanel.add(new JLabel("App Version: 1.0.0"));
+	        contentPanel.add(new JLabel("App Version: 1.0.1"));
 	        // 
 	        add(contentPanel, BorderLayout.CENTER);
 
