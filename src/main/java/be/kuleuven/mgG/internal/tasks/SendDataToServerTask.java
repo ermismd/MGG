@@ -80,7 +80,7 @@ public class SendDataToServerTask extends AbstractTask {
      @Tunable(description="heterogeneous",tooltip="Consider confounding factors" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=10.0, required=true)
      public boolean heterogeneous=false;
      
-     @Tunable(description="Sensitive",tooltip="Use full abundance information (default: discretized)" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=11.0, required=true)
+     @Tunable(description="sensitive",tooltip="Use full abundance information (default: discretized)" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=11.0, required=true)
      public boolean sensitive=false;
   
      @Tunable(description="Choose delimiter", groups={"Input Parameters"},tooltip="Delimiter used in your taxonomy" ,gravity=2.0, required=true)

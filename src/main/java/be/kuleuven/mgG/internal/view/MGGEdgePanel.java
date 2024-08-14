@@ -1,10 +1,9 @@
-	package be.kuleuven.mgG.internal.view;
+package be.kuleuven.mgG.internal.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Desktop;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -12,47 +11,37 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
+
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+
 import javax.swing.Timer;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
@@ -64,7 +53,6 @@ import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.work.TaskMonitor;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.BlueUnderlineHTMLRenderer;
@@ -72,6 +60,30 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.utils.SwingLink;
 import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
 import be.kuleuven.mgG.internal.utils.ViewUtils;
+
+
+// are they needed? 
+//import java.awt.LayoutManager;
+//import java.awt.Toolkit;
+//import java.awt.datatransfer.Clipboard;
+//import java.awt.datatransfer.StringSelection;
+//import java.awt.Cursor;
+//import java.awt.Desktop;
+//import java.net.MalformedURLException;
+//import java.net.URI;
+//import java.net.URISyntaxException;
+//import java.net.URL;
+//import java.net.URLEncoder;
+//import java.nio.charset.StandardCharsets;
+//import javax.swing.BoxLayout;
+//import javax.swing.JOptionPane;
+//import javax.swing.SwingUtilities;
+//import javax.swing.JSlider;
+//import javax.swing.event.ChangeEvent;
+//import javax.swing.event.ChangeListener;
+//import javax.swing.table.TableColumnModel;
+//import org.cytoscape.work.TaskMonitor;
+
 
 
 
@@ -88,20 +100,36 @@ public class MGGEdgePanel extends AbstractMggPanel {
     private boolean showComplEdgesState ;
     private boolean showSeedComplEdgesState;
     //JPanel seedPanel;
-    private Color defaultBackground;
-    
- 
+    private Color defaultBackground; 
     private JButton showSeedComplEdgesButton;
     private JButton showComplEdgesButton;
-    
 
     private JPanel edgesSPanel = null;
-
-
     private Map < CyNetwork, Map < String, Boolean >> colors;
 
+    // Function to check whether a column is []   
+	public boolean isNotEmpty(String [] entries) {
+	    for (String entry : entries) {
+	        // Check if the current element is not equal to "[ ]"
+	        if (!entry.equals("[]")) {
+	            // If at least one element is not "[ ]", return true
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+    
+	// Function to check if an edge is not empty 
+	public boolean checkIfEdgeIsNotEmpty(CyNetwork net, CyEdge edge, CyColumn column) {
+	    Object value = net.getRow(edge).get(column.getName(), column.getType());
+	    String[] entries = value.toString().split(",");
+	    boolean isIt = false;
+	    isIt = isNotEmpty(entries);
+    return isIt;
+	}
 
-    public MGGEdgePanel(final MGGManager manager) {
+	
+	public MGGEdgePanel(final MGGManager manager) {
 
         super(manager);
         filters.get(currentNetwork).put("microbetag", new HashMap < > ());
@@ -121,7 +149,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
         setLayout(new GridBagLayout());
 
         EasyGBC c = new EasyGBC();
-        
 
         JPanel controlPanel = createControlPanel();
         controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
@@ -144,33 +171,28 @@ public class MGGEdgePanel extends AbstractMggPanel {
         add(scrollPane, c.down().anchor("west").expandBoth());
     }
 
-
-
-
-
-
-
     private JPanel createControlPanel() {
         JPanel controlPanel = new JPanel();
         GridLayout layout = new GridLayout(2, 2);
         EasyGBC d = new EasyGBC();
         //layout.setVgap(0);
         controlPanel.setLayout(layout);
-        
-        
+
         JPanel upperPanel = new JPanel(new GridBagLayout());
         
         // Initialize the showSeedComplEdgesButton
         showSeedComplEdgesButton = new JButton("Edges with Seed Complementarities");
         showSeedComplEdgesButton.setFont(labelFont);
         showSeedComplEdgesButton.setToolTipText("Show/Hide Edges with Seed Complementarities");
+
         showSeedComplEdgesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	// Toggle the state
+
+              // Toggle the state
               showSeedComplEdgesState = !showSeedComplEdgesState;
-//
-//              // Update the button label based on the current state
+
+              // Update the button label based on the current state
               if (showSeedComplEdgesState) {
                   showSeedComplEdgesButton.setText("All Edges ");
                   showSeedComplEdgesState=true;
@@ -226,7 +248,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
     
     
     private void doShowComplEdges(boolean show) {
-        CyNetworkView view = manager.getCurrentNetworkView();
+
+    	CyNetworkView view = manager.getCurrentNetworkView();
         CyNetwork net = view.getModel();
 
         // Iterate over all edges
@@ -237,14 +260,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
             boolean hasComplValue = false;
             for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
                 if (column.getName().startsWith("compl::")) {
-                    Object value = net.getRow(edge).get(column.getName(), column.getType());
-                    if (value != null) {
+
+                    if (checkIfEdgeIsNotEmpty(net, edge, column)) {
                         hasComplValue = true;
                         break;
                     }
                 }
             }
-
             if (show) {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
             } else {
@@ -254,8 +276,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
          view.updateView(); 
     }
-    
-    
+
+
     private void doShowSeedComplEdges(boolean show) {
         CyNetworkView view = manager.getCurrentNetworkView();
         CyNetwork net = view.getModel();
@@ -268,14 +290,12 @@ public class MGGEdgePanel extends AbstractMggPanel {
             boolean hasComplValue = false;
             for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
                 if (column.getName().startsWith("seedCompl::")) {
-                    Object value = net.getRow(edge).get(column.getName(), column.getType());
-                    if (value != null) {
+                    if (checkIfEdgeIsNotEmpty(net, edge, column)) {
                         hasComplValue = true;
                         break;
                     }
                 }
             }
-
             if (show) {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
             } else {
@@ -534,8 +554,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
     }
 
 
-
-
     private void updateEdgesPanel() {
         if (edgesSPanel == null) return;
         edgesSPanel.removeAll();
@@ -554,7 +572,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
         return;
     }
 
-    
     
     //  method to get taxon name from node table
     private String getTaxonName(CyTable nodeTable, CyNode node) {
@@ -590,11 +607,11 @@ public class MGGEdgePanel extends AbstractMggPanel {
         CyTable nodeTable = currentNetwork.getDefaultNodeTable();
         //String name = null;
         
-     // Retrieve source and target node of the edge
+        // Retrieve source and target node of the edge
         CyNode sourceNode = edge.getSource();
         CyNode targetNode = edge.getTarget();
         
-     // Get taxon names for source and target nodes
+        // Get taxon names for source and target nodes
         String sourceTaxon = getTaxonName(nodeTable, sourceNode);
         String targetTaxon = getTaxonName(nodeTable, targetNode);
         
@@ -653,7 +670,17 @@ public class MGGEdgePanel extends AbstractMggPanel {
             gbc.gridy++;
         }
 
-        Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
+//        Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
+        Object competitionSeedValue;
+        if (edgeTable.getColumn("seed::competition") != null) {
+
+            competitionSeedValue = edgeTable.getRow(edge.getSUID())
+                                           .get("seed::competition", edgeTable.getColumn("seed::competition").getType());
+        } else {
+            competitionSeedValue = null;
+        }
+
+        
         if (competitionSeedValue != null &&showseedpanel==false) {
             JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
            ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
@@ -740,14 +767,26 @@ public class MGGEdgePanel extends AbstractMggPanel {
         boolean hasPathwayComplementarities = false; // Flag to track
  
         for (CyColumn column : edgeTable.getColumns()) {
+
             if (column.getName().startsWith("compl::")) {
-                Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
-                if (columnValue != null) {
+
+            	Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
+
+                if (columnValue == null) {
+                    continue; // Skip to the next iteration if columnValue is null
+                }
+            	
+            	String[] entries = columnValue.toString().split(",");
+                boolean keggNotEmpty = false;
+                keggNotEmpty = isNotEmpty(entries);
+                
+                if (keggNotEmpty) {
+
                 	String columnName = column.getName().substring(7); // Extracting column name
                 	String panelTitle = "Genomes: " + columnName.replace(":", " : ");
                 	JPanel newPanel = new JPanel(new BorderLayout());
 
-                	  hasPathwayComplementarities = true;
+                	hasPathwayComplementarities = true;
                 	
                 	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
                 	DefaultTableModel tableM = new DefaultTableModel() {
@@ -768,10 +807,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	tableM.addColumn("Complement");
                 	tableM.addColumn("Module Alternative");
                 	tableM.addColumn("Color Map");
-                	
-                    String[] entries = columnValue.toString().split(",");
-                  
-                    
+
                     for (String entry : entries) {
                         String[] parts = entry.split("\\^");
                         if (parts.length >= 6) {
@@ -802,8 +838,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	table.getColumnModel().getColumn(0).setCellRenderer(new BlueUnderlineHTMLRenderer());
                 	table.getColumnModel().getColumn(3).setCellRenderer(new BlueUnderlineHTMLRenderer());
                 	table.getColumnModel().getColumn(4).setCellRenderer(new BlueUnderlineHTMLRenderer());
-                	
-                	
                 	
                 	table.addMouseListener(new MouseAdapter() {
                 	    private Timer clickTimer = null;
@@ -881,11 +915,11 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         
         if (hasPathwayComplementarities) {
-     CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 10);
-     PathwaysCollapsablePanel .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
-     showseedpanel=false;
-     panel.add(PathwaysCollapsablePanel, gbc);
-     gbc.gridy++;
+			CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 10);
+			PathwaysCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+			showseedpanel=false;
+			panel.add(PathwaysCollapsablePanel, gbc);
+			gbc.gridy++;
      
         }
   //----------------------Nested Seed complementarities panel ---------------------------//
@@ -922,14 +956,29 @@ public class MGGEdgePanel extends AbstractMggPanel {
      boolean hasSeedComplementarities = false;
      
      for (CyColumn column : edgeTable.getColumns()) {
-         if (column.getName().startsWith("seedCompl::")) {
+
+    	 if (column.getName().startsWith("seedCompl::")) {
+        	         	 
              Object columnValue = edgeTable.getRow(edge.getSUID()).get(column.getName(), column.getType());
-             if (columnValue != null) {
-             	String columnName = column.getName().substring(7); // Extracting column name
+             
+             
+             if (columnValue == null) {
+                 continue; // Skip to the next iteration if columnValue is null
+             }
+             
+             
+             String[] entries = columnValue.toString().split(",");
+
+             boolean seedsNotEmpty = false;
+             seedsNotEmpty = isNotEmpty(entries);
+	          
+	          if (seedsNotEmpty) {             
+
+            	String columnName = column.getName().substring(7); // Extracting column name
              	String panelTitle = "Genomes: " + columnName.replace(":", " : ");
              	JPanel newPanel = new JPanel(new BorderLayout());
              	
-             	 hasSeedComplementarities = true;
+             	hasSeedComplementarities = true;
             	
             	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
             	DefaultTableModel tableM = new DefaultTableModel() {
@@ -950,16 +999,10 @@ public class MGGEdgePanel extends AbstractMggPanel {
             	tableM.addColumn("Complements (ModelSeed ids)");
             	tableM.addColumn("Complements (KEGG ids)");
             	tableM.addColumn("Color map");
-            	
-            	
-                String[] entries = columnValue.toString().split(",");
-              
-                
+
                 for (String entry : entries) {
                     String[] parts = entry.split("\\^");
                     if (parts.length >= 5) {
-                    	
-                    	
                     	
                     	 String moduleId = parts[0].trim(); // Trim to remove before and after spaces
                          moduleId = moduleId.replace("[", "").replace("]", ""); // Remove  unwanted "[" "]" 
@@ -989,8 +1032,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
             	table.getColumnModel().getColumn(4).setCellRenderer(new SwingLinkCellRenderer());
             	table.getColumnModel().getColumn(2).setCellRenderer(new BlueUnderlineHTMLRenderer());
             	table.getColumnModel().getColumn(3).setCellRenderer(new BlueUnderlineHTMLRenderer());
-            	
-            	
+
             	table.addMouseListener(new MouseAdapter() {
             	    private Timer clickTimer = null;
             	    private final int doubleClickDelay = 400; // delay 
@@ -1045,10 +1087,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
             	        }
             	    }
             	});
-
-            	 	
-
-            	
         
             	// size of the scroll pane based on the number of rows
                 int rowHeight = table.getRowHeight();
@@ -1065,19 +1103,18 @@ public class MGGEdgePanel extends AbstractMggPanel {
             }
         }
     }
+
     
-    
-if(hasSeedComplementarities) {
- CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 10);
- SeedCollapsablePanel  .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
- panel.add(SeedCollapsablePanel , gbc);
- gbc.gridy++;
-	
-}
-     //---------------------------------------------add the panel--------------------------------
-     
-     
-        
+	if(hasSeedComplementarities) {
+		CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 10);
+		SeedCollapsablePanel  .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+		panel.add(SeedCollapsablePanel , gbc);
+		gbc.gridy++;
+		
+	}
+
+	//---------------------------------------------add the panel--------------------------------
+   
         String edgeId = (nameValue != null) ? nameValue.toString() : "Selected Edges";
 
         CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, edgeId, panel, false, 10);
