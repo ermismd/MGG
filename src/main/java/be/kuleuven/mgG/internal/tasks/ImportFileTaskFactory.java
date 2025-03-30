@@ -1,5 +1,6 @@
 package be.kuleuven.mgG.internal.tasks;
 
+
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -12,6 +13,7 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
+
 
 public class ImportFileTaskFactory implements TaskFactory {
     
@@ -33,19 +35,32 @@ public class ImportFileTaskFactory implements TaskFactory {
 	        File selectedFile = fileChooser.getSelectedFile();
 	        String filePath = selectedFile.getAbsolutePath();
 
-	        return new TaskIterator(new ImportFileTask(filePath, mggManager));
-	    } else if (option == JFileChooser.CANCEL_OPTION) {
-	        
-	        return new TaskIterator();
-	    } else {
-	        
-	        String errorMessage = "Error selecting file";
-	        
-	        JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
-	       
-	        return new TaskIterator();
-	    }
-	}
+	        // Check if file has valid extension (.csv or .tsv)
+            if (filePath.endsWith(".csv") || filePath.endsWith(".tsv")) {
+                return new TaskIterator(new ImportFileTask(filePath, mggManager));
+            } else {
+                // Show error message if it's not .csv or .tsv
+                String errorMessage = "Invalid file type. Please select a .csv or .tsv file.";
+                JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+                // Return a dummy task to avoid "hasNext() is false" error
+                return new TaskIterator(new DummyErrorTask(errorMessage));
+            }
+        } else if (option == JFileChooser.CANCEL_OPTION) {
+            // cancellation
+            String errorMessage = "File selection was canceled.";
+            JOptionPane.showMessageDialog(null, errorMessage, "Canceled", JOptionPane.WARNING_MESSAGE);
+            // Return a dummy task to avoid "hasNext() is false" error
+            return new TaskIterator(new DummyErrorTask(errorMessage));
+        } else {
+            String errorMessage = "Error selecting file";
+            JOptionPane.showMessageDialog(null, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+            // Return a dummy task to avoid "hasNext() is false" error
+            return new TaskIterator(new DummyErrorTask(errorMessage));
+        }
+    }
+
+
+
 	
 
     @Override
