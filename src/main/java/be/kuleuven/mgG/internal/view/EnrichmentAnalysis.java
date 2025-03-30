@@ -220,12 +220,15 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 
 	        for (Integer mantaCluster : clusterToSuids.keySet()) {
 	        	int totalNodesInCluster = clusterToSuids.get(mantaCluster).size();
-	        	
+	        	System.out.println("totalNodesInCluster: " + totalNodesInCluster);
+
 	        	int totalAttributesTested = uniqueAttributeNames.size();
 	        	          
 	            
 	            //int total = samples; //  = number of environments
 	            int nodesWithPropertyXInCluster = termClusterCounts.getOrDefault(mantaCluster, 0);
+	            System.out.println("nodesWithPropertyXInCluster: " + nodesWithPropertyXInCluster);
+
 	            int totalNodesWithPropertyX = getTotalNodesWithPropertyX(currentNetwork, attributeName);
 
 	                            

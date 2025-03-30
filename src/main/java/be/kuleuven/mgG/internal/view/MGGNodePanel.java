@@ -380,7 +380,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
 
 
-        Object taxonValue = (nodeTable.getColumn("microbetag::taxon name") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxon name", nodeTable.getColumn("microbetag::taxon name").getType()) : null;
+        Object taxonValue = (nodeTable.getColumn("taxonomy::species") != null) ? nodeTable.getRow(node.getSUID()).get("taxonomy::species", nodeTable.getColumn("taxonomy::species").getType()) : null;
         JTextArea taxonArea = new JTextArea("Taxon Name: " + (taxonValue != null ? taxonValue.toString() : "null"));
         ViewUtils.setJTextAreaAttributes(taxonArea);
         panel.add(taxonArea, gbc);

@@ -575,8 +575,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
     
     //  method to get taxon name from node table
     private String getTaxonName(CyTable nodeTable, CyNode node) {
-        if (nodeTable.getColumn("microbetag::taxon name") != null) {
-            Object taxonValue = nodeTable.getRow(node.getSUID()).get("microbetag::taxon name", String.class);
+        if (nodeTable.getColumn("taxonomy::species") != null) {
+            Object taxonValue = nodeTable.getRow(node.getSUID()).get("taxonomy::species", String.class);
             return taxonValue != null ? taxonValue.toString() : null;
         }
         return null;
@@ -608,8 +608,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
         //String name = null;
         
         // Retrieve source and target node of the edge
-        CyNode sourceNode = edge.getSource();
-        CyNode targetNode = edge.getTarget();
+        CyNode sourceNode = edge.getTarget(); // edge.getSource();
+        CyNode targetNode = edge.getSource(); //edge.getTarget();
         
         // Get taxon names for source and target nodes
         String sourceTaxon = getTaxonName(nodeTable, sourceNode);
@@ -633,7 +633,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         //gbc.gridy++;
 
         // Split the name to get Donor and Beneficiary
-        String[] nameParts = nameValue != null ? nameValue.toString().split(" \\(completes/competes with\\) | \\(cooccurss with\\) ") : new String[] {
+        String[] nameParts = nameValue != null ? nameValue.toString().split(" \\(completed by\\) | \\(cooccurs with\\) | \\(depletes\\)") : new String[] {
             "",
             ""
         };

@@ -430,7 +430,7 @@ return new ListMultipleSelection<String>("--None--");
 
         // Lifestyle
         String[] lifestyleAttributes = {
-            "aerobe","anaerobe","aSaccharolytic", "autoCo2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative",
+            "aerobe","anaerobe","aSaccharolytic","a_saccharolytic", "autoCo2", "auto_co2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative", "non_fermentative",
             "phototrophy","psychrophilic","saccharolytic","symbiont","thermophilic","methylotrophy","chitinolysis","knallgas bacteria",
             "cellulolysis","xylanolysis","plant pathogen","ligninolysis","fermentation","aerobic chemoheterotrophy","invertebrate parasites",
             "human pathogens septicemia","intracellular parasites","predatory or exoparasitic","human pathogens pneumonia","human pathogens nosocomia",
@@ -438,7 +438,7 @@ return new ListMultipleSelection<String>("--None--");
             "photosynthetic cyanobacteria","fish parasites","aerobic anoxygenic phototrophy","anoxygenic photoautotrophy H2 oxidizing",
             "anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing","anoxygenic photoautotrophy",
             "human gut","human associated","mammal gut","chemoheterotrophy","animal parasites or symbionts","oxygenic photoautotrophy",
-            "photoautotrophy","phototrophy","photoheterotrophy","dGlucose"
+            "photoautotrophy","phototrophy","photoheterotrophy","d_Glucose", "dGlucose"
         };
         
         
@@ -452,18 +452,18 @@ return new ListMultipleSelection<String>("--None--");
             "phototrophy", "aerobic chemoheterotrophy", "nonphotosynthetic cyanobacteria",       
             "photosynthetic cyanobacteria","aerobic anoxygenic phototrophy","anoxygenic photoautotrophy H2 oxidizing",
             "anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing","anoxygenic photoautotrophy",
-            "chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","phototrophy","photoheterotrophy","dGlucose" };
+            "chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","phototrophy","photoheterotrophy","dGlucose", "d_glucose"};
         
         for (String attr : energySourceAttributes) {
             attributeCategoryMap.put(attr, "Lifestyle: Energy Source");
         }
         
-        String[] carbonSourceAttributes = {"autoCo2","aSaccharolytic","fermentative","methanotroph","methanotrophy","nonFermentative",
-        		"phototrophy","saccharolytic","methylotrophy","chitinolysis","cellulolysis","xylanolysis","ligninolysis","fermentation",
+        String[] carbonSourceAttributes = {"autoCo2","auto_co2","aSaccharolytic", "a_saccharolytic", "fermentative","methanotroph","methanotrophy","nonFermentative",
+        		"phototrophy","saccharolytic", "methylotrophy","chitinolysis","cellulolysis","xylanolysis","ligninolysis","fermentation",
         		"aerobic chemoheterotrophy","nonphotosynthetic cyanobacteria","photosynthetic cyanobacteria","aerobic anoxygenic phototrophy",
         		"anoxygenic photoautotrophy H2 oxidizing","anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing",
         		"anoxygenic photoautotrophy","chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","photoheterotrophy",
-        		"dGlucose"};
+        		"dGlucose", "d_glucose"};
         
         for (String attr : carbonSourceAttributes) {
             attributeCategoryMap.put(attr, "Lifestyle: Carbon Source");
@@ -481,8 +481,8 @@ return new ListMultipleSelection<String>("--None--");
         }		
         
         
-        String[] biogeochemical_processesAttributes = { "NOB","nitrogen fixation","aob","dark sulfite oxidation","fixingN2",
-        		"nitrate ammonification","sulfateReducer","sulfite respiration","arsenate detoxification","nitrite ammonification",
+        String[] biogeochemical_processesAttributes = { "NOB","nitrogen fixation","aob", "AOB", "dark sulfite oxidation","fixingN2", "fixing_n2",
+        		"nitrate ammonification","sulfateReducer", "sulfate_reducer", "sulfite respiration","arsenate detoxification","nitrite ammonification",
         		"acetoclastic methanogenesis","thiosulfate respiration","arsenate respiration","nitrite respiration",
         		"methanogenesis by disproportionation of methyl groups","respiration of sulfur compounds","dissimilatory arsenate reduction",
         		"dark sulfide oxidation","methanogenesis using formate","oil bioremediation","arsenite oxidation detoxification",
@@ -494,7 +494,7 @@ return new ListMultipleSelection<String>("--None--");
         		"dark iron oxidation","nitrous oxide denitrification","nitrate respiration","aerobic ammonia oxidation",
         		"nitrate reduction","denitrification","nitrogen respiration","aerobic nitrite oxidation","chlorate reducers",
         		"sulfate respiration","nitrification","dark hydrogen oxidation","iron respiration","sulfur respiration","plastic degradation",
-        		"reductive acetogenesis","ureolysis"     };
+        		"reductive acetogenesis","ureolysis"};
 
         
         for (String attr : biogeochemical_processesAttributes) {
@@ -516,7 +516,7 @@ return new ListMultipleSelection<String>("--None--");
         }	
         
         
-        String[] nitrogenCycleattributes = {"NOB","aob","fixingN2","anammox","nitrate denitrification","nitrite denitrification",
+        String[] nitrogenCycleattributes = {"NOB","aob", "AOB", "fixingN2", "fixing_n2", "anammox","nitrate denitrification","nitrite denitrification",
         		"nitrous oxide denitrification","aerobic ammonia oxidation","denitrification","aerobic nitrite oxidation",
         		"nitrogen fixation","nitrate ammonification","nitrite ammonification","nitrite respiration","nitrate respiration",
         		"nitrate reduction","nitrogen respiration","nitrification","ureolysis" };
@@ -526,7 +526,7 @@ return new ListMultipleSelection<String>("--None--");
             attributeCategoryMap.put(attr, "Biogeochemical processes: Nitrogen Cycle");
         }	
         
-        String[] sulfurCycleAttributes  = {"sulfateReducer","sulfate respiration","sulfur respiration","dark sulfite oxidation",
+        String[] sulfurCycleAttributes  = {"sulfateReducer", "sulfate_reducer", "sulfate respiration","sulfur respiration","dark sulfite oxidation",
         		"sulfite respiration","thiosulfate respiration","respiration of sulfur compounds","dark sulfide oxidation",
         		"dark sulfur oxidation","dark thiosulfate oxidation","dark oxidation of sulfur compounds" };
 
@@ -547,8 +547,8 @@ return new ListMultipleSelection<String>("--None--");
             
         	
         
-        String[] metaboliteProducedAttributes= {"aceticAcid","butanol","butyricAcid","dLacticAcid","ethanol",
-        		"hydrogen","indole","isobutyricAcid","isovalericAcid","lLacticAcid","formicAcid","rAcetoin","succinicAcid"};
+        String[] metaboliteProducedAttributes= {"aceticAcid", "acetic_acid", "butanol","butyricAcid", "butyric_acid", "dLacticAcid", "d_lactic_acid", "ethanol",
+        		"hydrogen","indole","isobutyricAcid", "isobutyric_acid", "isovalericAcid", "isovaleric_acid", "lLacticAcid", "l_lactic_acid", "formicAcid", "formic_acid", "rAcetoin", "r_acetoin", "succinicAcid", "succinic_acid"};
 
         
         for (String attr : metaboliteProducedAttributes) {
