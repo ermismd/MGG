@@ -74,46 +74,65 @@ public class SendDataToServerTask extends AbstractTask {
  	// @Tunables part 
      
     
-     @Tunable(description="Choose input type", groups={"Input Parameters"}, gravity=1.0, required=true)
-     public ListSingleSelection<String> input = new ListSingleSelection<>("abundance_table", "network");
+     @Tunable(
+    		 description="Choose input type", 
+    		 groups={"Input Parameters"}, 
+    		 gravity=1.0, 
+    		 required=true
+    )
+     public ListSingleSelection<String> INPUT = new ListSingleSelection<>("abundance table", "network");
      
-     @Tunable(description="heterogeneous",tooltip="Consider confounding factors" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=10.0, required=true)
-     public boolean heterogeneous=false;
+     @Tunable(
+    		 description="heterogeneous",
+    		 tooltip="Consider confounding factors" , 
+    		 groups={"Additional Parameter if Input is Abudance Table"}, 
+    		 dependsOn = "INPUT=abundance table", 
+    		 gravity=10.0, 
+    		 required=true
+    )
+     public boolean HETEROGENEOUS=false;
      
-     @Tunable(description="sensitive",tooltip="Use full abundance information (default: discretized)" , groups={"Additional Parameter if Input is Abudance Table"},dependsOn = "input=abundance_table", gravity=11.0, required=true)
-     public boolean sensitive=false;
+     @Tunable(
+    		 description="sensitive",
+    		 tooltip="Use full abundance information (default: discretized)" , 
+    		 groups={"Additional Parameter if Input is Abudance Table"}, 
+    		 dependsOn = "INPUT=abundance table", 
+    		 gravity=11.0, 
+    		 required=true
+    )
+     public boolean SENSITIVE=false;
   
      @Tunable(description="Choose delimiter", groups={"Input Parameters"},tooltip="Delimiter used in your taxonomy" ,gravity=2.0, required=true)
-     public ListSingleSelection<String> delimiter = new ListSingleSelection<>(";", "|","__","_");
+     public ListSingleSelection<String> DELIMITER = new ListSingleSelection<>(";", "|","__","_");
 
      @Tunable(description="Choose taxonomy Database",tooltip="Choose the taxonomy in the abudance table among GTDB,"
      		+ " Silva(as in Dada2), microbetag_prep or other", groups={"Input Parameters"}, gravity=3.0, required=true)
-     public ListSingleSelection<String> taxonomy = new ListSingleSelection<>("GTDB", "Silva","microbetag_prep", "other");
+     public ListSingleSelection<String> TAXONOMY = new ListSingleSelection<>("GTDB", "Silva","microbetag_prep", "other");
      
-     @Tunable(description="PhenDB annotations", longDescription="Choose whether to get PhenDB information.",
+     @Tunable(description="Phenotrex-based annotations", longDescription="Choose whether to get PHEN_TRAITS information.",
     		 groups={"Input Parameters"}, 
      		tooltip="Choose whether to get Phenotypic traits based on genomic information" ,gravity=4.0, exampleStringValue="True, False", required=true)
-     public boolean phenDB=true;
+     public boolean PHEN_TRAITS=true;
 
      @Tunable(description="FAPROTAX annotations", longDescription="Choose whether to get FAPROTAX information.", groups={"Input Parameters"}, 
      		tooltip="Choose whether to get Phenotypic traits based on literature" , gravity=5.0, exampleStringValue="True, False", required=true)
-     public boolean faproTax=true; 
+     public boolean FAPROTAX=true; 
 
      @Tunable(description="Pathway Complementarity", longDescription="Choose whether to get the pathway complementarity.", 
      		 tooltip="Choose whether to get Pathway Complementarity annotations" ,groups={"Input Parameters"}, gravity=6.0, exampleStringValue="True, False", required=true)
-     public boolean pathway_complement=true;
+     public boolean PATH_COMPLEMENTS=true;
      
      @Tunable(description="Seed scores and complements", tooltip="Choose whether to get the Seed Scores and it's complements.",
     		 longDescription="Choose whether to get the Seed Scores and  complements.", groups={"Input Parameters"}, gravity=7.0, exampleStringValue="True, False", required=true)
-     public boolean seed_scores= false;
+     public boolean SEED_COMPLEMENTS= false;
      
      @Tunable(description="Consider Children taxa", groups={"Input Parameters"}, 
      		tooltip="Use strain genomes in case no type species genome supported" , gravity=8.0, exampleStringValue="True, False", required=true)
-     public boolean get_children=false; 
+     public boolean GET_CHILDREN=false; 
      
-     @Tunable(description="Network clustering", longDescription="Choose whether to get Manta clustering", groups={"Input Parameters"}, 
-     		tooltip="Choose whether to get Manta clustering" , gravity=9.0, exampleStringValue="True, False", required=true)
-     public boolean manta=false; 
+     @Tunable(description="Network clustering", longDescription="Choose whether to get NETWORK_CLUSTERING clustering", groups={"Input Parameters"}, 
+     		tooltip="Choose whether to get NETWORK_CLUSTERING clustering" , gravity=9.0, exampleStringValue="True, False", required=true)
+     public boolean NETWORK_CLUSTERING=false; 
      
      //@Tunable(description="NetCmpt", longDescription="Choose whether to use NetCmpt.", groups={"Input Settings"}, gravity=6.0, exampleStringValue="True, False", required=true)
      //public boolean netCmpt= true;
@@ -129,10 +148,10 @@ public class SendDataToServerTask extends AbstractTask {
     
     public SendDataToServerTask(MGGManager mggManager) {
     	
-		this.mggManager=mggManager;
-    	this.dataObject = mggManager.getJsonObject();
-    	this.metaDataObject=mggManager.getMetadataJsonObject();
-    	this.networkObject=mggManager.getNetworkObject();
+		this.mggManager     = mggManager;
+    	this.dataObject     = mggManager.getJsonObject();
+    	this.metaDataObject = mggManager.getMetadataJsonObject();
+    	this.networkObject  = mggManager.getNetworkObject();
     }
 
     
@@ -155,40 +174,39 @@ public class SendDataToServerTask extends AbstractTask {
         // Add the 'data' JSONArray from dataObject
         if (dataObject != null && dataObject.containsKey("data")) {
             JSONArray dataJsonArray = (JSONArray) dataObject.get("data");
-            jsonObject.put("data", dataJsonArray);
+            jsonObject.put("MGG_DATA", dataJsonArray);
         }
 
         // Add the 'metadata' JSONArray from metaDataObject
         if (metaDataObject != null && metaDataObject.containsKey("metadata")) {
             JSONArray metaDataJsonArray = (JSONArray) metaDataObject.get("metadata");
-            jsonObject.put("metadata", metaDataJsonArray);
+            jsonObject.put("MGG_METADATA", metaDataJsonArray);
         }
         
         // Add the 'network data' JSONArray from networkObject
         if (networkObject != null && networkObject.containsKey("network")) {
             JSONArray networkJsonArray = (JSONArray) networkObject.get("network");
-            jsonObject.put("network", networkJsonArray);
+            jsonObject.put("MGG_NETWORK", networkJsonArray);
         }
     	
         // Create a new JSONArray for the input parameters
 	       JSONArray inputParameters = new JSONArray();
 	        
 	 
-	        inputParameters.add("input:" + input.getSelectedValue());
-	        inputParameters.add("taxonomy:" + taxonomy.getSelectedValue());
-	        inputParameters.add("delimiter:" + delimiter.getSelectedValue()); 
-	        inputParameters.add("sensitive:" + sensitive);
-	        inputParameters.add("heterogeneous:" + heterogeneous);
-	        inputParameters.add("phenDB:" + phenDB);
-	        inputParameters.add("faproTax:" + faproTax);
-	        inputParameters.add("pathway_complement:" + pathway_complement);
-	        inputParameters.add("seed_scores:" + seed_scores);
-	        inputParameters.add("manta:" + manta);
-	        	
-	 
+	        inputParameters.add("MGG_INPUT:" + INPUT.getSelectedValue());
+	        inputParameters.add("MGG_TAXONOMY:" + TAXONOMY.getSelectedValue());
+	        inputParameters.add("MGG_DELIMITER:" + DELIMITER.getSelectedValue()); 
+	        inputParameters.add("MGG_SENSITIVE:" + SENSITIVE);
+	        inputParameters.add("MGG_HETEROGENEOUS:" + HETEROGENEOUS);
+	        inputParameters.add("MGG_PHEN_TRAITS:" + PHEN_TRAITS);
+	        inputParameters.add("MGG_FAPROTAX:" + FAPROTAX);
+	        inputParameters.add("MGG_PATH_COMPLEMENTS:" + PATH_COMPLEMENTS);
+	        inputParameters.add("MGG_SEED_COMPLEMENTS:" + SEED_COMPLEMENTS);
+	        inputParameters.add("MGG_NETWORK_CLUSTERING:" + NETWORK_CLUSTERING);
+	        inputParameters.add("MGG_GET_CHILDREN:" + GET_CHILDREN);	
 	        
 	        // Add the input parameters to the jsonObject
-	        jsonObject.put("inputParameters", inputParameters);
+	        jsonObject.put("MGG_PARAMS", inputParameters);
 	        
     	
     	
@@ -218,7 +236,8 @@ public class SendDataToServerTask extends AbstractTask {
               
               try {
                       String jsonQuery = jsonObject.toJSONString();
-                      String serverURL = "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table-dev";
+//                      String serverURL = "https://msysbio.gbiomed.kuleuven.be/upload-abundance-table-dev";
+                      String serverURL = "http://localhost:1337/upload-abundance-table-dev";
 
                       HttpPost httpPost = new HttpPost(serverURL);
                       httpPost.setConfig(config);
@@ -236,8 +255,6 @@ public class SendDataToServerTask extends AbstractTask {
                               taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Got " + statusCode + " code from server");
                               return;
                           }
-                          
-                          
                           
                           HttpEntity responseEntity = response.getEntity();
                           
@@ -274,19 +291,8 @@ public class SendDataToServerTask extends AbstractTask {
 	                                }
 	                                
 	                  	 }
-                       
-                          		
-                         
-                          
-                          
-                          
+                                                 
                           //taskMonitor.setStatusMessage("Server sent: " + jsonQuery);
-                          
-                         
-                     
-                         
-                       
-                         
                          
                       } catch (Exception e) {
                     	 
