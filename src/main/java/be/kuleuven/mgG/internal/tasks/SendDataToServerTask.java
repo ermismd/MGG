@@ -1,26 +1,18 @@
 package be.kuleuven.mgG.internal.tasks;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
+
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
-import org.cytoscape.application.CyUserLog;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.view.model.CyNetworkView;
+
+import java.io.IOException;
 import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskFactory;
-import org.cytoscape.work.TaskIterator;
+
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.util.ListSingleSelection;
@@ -29,30 +21,37 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import be.kuleuven.mgG.internal.model.MGGManager;
-import be.kuleuven.mgG.internal.utils.HTTPUtils;
+import be.kuleuven.mgG.internal.utils.LogUtils;
 
-import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-
+//import org.apache.http.HttpResponse;
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.entity.ByteArrayEntity;
+//import org.apache.http.entity.FileEntity;
+//import be.kuleuven.mgG.internal.utils.HTTPUtils;
+//import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+//import org.cytoscape.application.CyUserLog;
+//import org.cytoscape.model.CyNetwork;
+//import org.cytoscape.model.CyNetworkManager;
+//import org.cytoscape.view.model.CyNetworkView;
+//import org.cytoscape.work.TaskFactory;
+//import org.cytoscape.work.TaskIterator;
+//import java.io.BufferedReader;
+//import java.io.BufferedWriter;
+//import java.io.File;
+//import java.io.FileWriter;
+//import java.io.InputStreamReader;
+//import java.io.OutputStream;
+//import java.net.HttpURLConnection;
+//import java.net.SocketTimeoutException;
+//import java.net.URL;
+//import java.nio.charset.StandardCharsets;
+//import java.nio.file.Files;
+//import java.nio.file.Paths;
+//import java.util.Collections;
+//import javax.swing.JFrame;
+//import javax.swing.JOptionPane;
+//import javax.swing.SwingUtilities;
 
 /**
  * This class represents a task for sending data to a server.
@@ -61,7 +60,7 @@ import javax.swing.SwingUtilities;
 
 
 public class SendDataToServerTask extends AbstractTask {
- 
+ 	
 	private  String serverResponse; // Stores the server response
 	private final JSONObject dataObject; // The JSON array to send to the server
 	private final JSONObject metaDataObject;
@@ -214,12 +213,10 @@ public class SendDataToServerTask extends AbstractTask {
     	
     		
         taskMonitor.setTitle("Sending Data to Server");
-        taskMonitor.setStatusMessage("Processing Data on Server( May take some time... )");
-          
+        taskMonitor.setStatusMessage("Processing Data on Server( May take some time... )");       
+        
         //taskMonitor.setStatusMessage("Server Send " + jsonObject.toJSONString());
        
-
-        	
         
         RequestConfig config = RequestConfig.custom()
         	    .setConnectTimeout(600 * 1000)  // time to establish the connection 

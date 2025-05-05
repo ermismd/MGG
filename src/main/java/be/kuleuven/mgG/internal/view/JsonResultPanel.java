@@ -31,16 +31,19 @@ import java.awt.event.ActionListener;
 import java.util.Properties;
 
 public class JsonResultPanel extends JPanel implements CytoPanelComponent {
-    private JTable table;
+
+	private JTable table;
     final MGGManager manager;
     private boolean registered = false;
     
     public JsonResultPanel(final MGGManager manager,JSONObject jsonObject) {
-        super(new BorderLayout());
+
+    	super(new BorderLayout());
         
         
         CySwingApplication swingApplication = manager.getService(CySwingApplication.class);
         CytoPanel cytoPanel = swingApplication.getCytoPanel(CytoPanelName.EAST);
+        
         if (!registered) {
 			manager.registerService(this, CytoPanelComponent.class, new Properties());
 			registered = true;
