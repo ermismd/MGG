@@ -105,7 +105,7 @@ public class CreateNetworkTask extends AbstractTask {
 
 	    try {
 	        String cxContent = jsonResponse.toJSONString();
-	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx";
+	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx2";    // changed cx to cx2
 
 	        
 	        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -132,51 +132,4 @@ public class CreateNetworkTask extends AbstractTask {
 	        e.printStackTrace();
 	    }
 	}
-	}
-//		taskMonitor.setTitle("Creating the network");
-//		taskMonitor.setStatusMessage("Creating the network...");
-//
-//		JSONArray jsonResponse = mggManager.getServerResponse();
-//		
-//		// Check if jsonResponse is not null
-//	    if (jsonResponse == null) {
-//	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response to create the network from.");
-//	        return; // Exit the method early as there's no response to process
-//	    }
-//		
-//		try {
-//		      
-//	        String cxContent = jsonResponse.toJSONString();
-//	        
-//	        
-//	        CloseableHttpClient httpClient = HttpClients.createDefault();
-//	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx";
-//	        
-//	        
-//	        HttpPost httpPost = new HttpPost(cytoscapeAPIURL);
-//	        StringEntity entity = new StringEntity(cxContent);
-//	        httpPost.setEntity(entity);
-//	        httpPost.setHeader("Accept", "application/json");
-//	        httpPost.setHeader("Content-type", "application/json");
-//	        
-//	       
-//	        CloseableHttpResponse response = httpClient.execute(httpPost);
-//	        HttpEntity responseEntity = response.getEntity();
-//	        
-//	        if(responseEntity != null) {
-//	            String result = EntityUtils.toString(responseEntity);
-//	            System.out.println(result);
-//	        }
-//	        
-//	    } catch (IOException e) {
-//	        e.printStackTrace();
-//	    }
-//	}
-//		
-//                   
-//	}
-
-	
-	
-
-
+}
