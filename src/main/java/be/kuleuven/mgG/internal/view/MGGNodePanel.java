@@ -414,92 +414,90 @@ public class MGGNodePanel extends AbstractMggPanel {
         	    "microbetag::ncbi-tax-level"
         	};
 
-        	for (String attribute : attributes) {
-        	    if (nodeTable.getColumn(attribute) != null) {
-        	        Object attrValue = nodeTable.getRow(node.getSUID()).get(attribute, nodeTable.getColumn(attribute).getType());
-        	        String attributeName = attribute.split("::")[1];
+    	for (String attribute : attributes) {
+    	    if (nodeTable.getColumn(attribute) != null) {
+    	        Object attrValue = nodeTable.getRow(node.getSUID()).get(attribute, nodeTable.getColumn(attribute).getType());
+    	        String attributeName = attribute.split("::")[1];
 
-        	        if (attribute.equals("microbetag::ncbi-tax-id") && attrValue != null) {
-        	            // Parse values as lists
-        	            List<String> taxIds = new ArrayList<>();
-        	            List<String> taxLevels = new ArrayList<>();
-        	            List<String> genomeGroups = new ArrayList<>();
+    	        if (attribute.equals("microbetag::ncbi-tax-id") && attrValue != null) {
+    	            // Parse values as lists
+    	            List<String> taxIds = new ArrayList<>();
+    	            List<String> taxLevels = new ArrayList<>();
+    	            List<String> genomeGroups = new ArrayList<>();
 
-        	            Object taxIdObj = nodeTable.getRow(node.getSUID()).get("microbetag::ncbi-tax-id", Object.class);
-        	            if (taxIdObj instanceof List<?>) {
-        	                for (Object id : (List<?>) taxIdObj) taxIds.add(id.toString());
-        	            }
+    	            Object taxIdObj = nodeTable.getRow(node.getSUID()).get("microbetag::ncbi-tax-id", Object.class);
+    	            if (taxIdObj instanceof List<?>) {
+    	                for (Object id : (List<?>) taxIdObj) taxIds.add(id.toString());
+    	            }
 
-        	            Object taxLevelObj = nodeTable.getRow(node.getSUID()).get("microbetag::ncbi-tax-level", Object.class);
-        	            if (taxLevelObj instanceof List<?>) {
-        	                for (Object level : (List<?>) taxLevelObj) taxLevels.add(level.toString());
-        	            }
+    	            Object taxLevelObj = nodeTable.getRow(node.getSUID()).get("microbetag::ncbi-tax-level", Object.class);
+    	            if (taxLevelObj instanceof List<?>) {
+    	                for (Object level : (List<?>) taxLevelObj) taxLevels.add(level.toString());
+    	            }
 
-        	            Object genomeGroupObj = nodeTable.getRow(node.getSUID()).get("microbetag::gtdb-genomes", Object.class);
-        	            if (genomeGroupObj instanceof List<?>) {
-        	                for (Object genome : (List<?>) genomeGroupObj) genomeGroups.add(genome.toString());
-        	            }
+    	            Object genomeGroupObj = nodeTable.getRow(node.getSUID()).get("microbetag::gtdb-genomes", Object.class);
+    	            if (genomeGroupObj instanceof List<?>) {
+    	                for (Object genome : (List<?>) genomeGroupObj) genomeGroups.add(genome.toString());
+    	            }
 
-//        	            // Logging for debugging
-//        	            LogUtils.info("taxIds: " + taxIds);
-//        	            LogUtils.info("taxLevels: " + taxLevels);
-//        	            LogUtils.info("genomeGroups: " + genomeGroups);
+    	            // Parse through the NCBI data     	            
+    	            for (int i = 0; i < taxIds.size(); i++) {
+    	                String taxId = taxIds.get(i);
+    	                String taxLevel = (i < taxLevels.size()) ? taxLevels.get(i) : "unknown";
+    	                LogUtils.info(taxLevel);
+    	                
+    	                String genomesRaw = (i < genomeGroups.size()) ? genomeGroups.get(i) : "";
 
-        	            for (int i = 0; i < taxIds.size(); i++) {
-        	                String taxId = taxIds.get(i);
-        	                String taxLevel = (i < taxLevels.size()) ? taxLevels.get(i) : "unknown";
-        	                String genomesRaw = (i < genomeGroups.size()) ? genomeGroups.get(i) : "";
+    	                JPanel subPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    	                subPanel.setOpaque(false);
 
-        	                JPanel subPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        	                subPanel.setOpaque(false);
+    	                JLabel idLabel = new JLabel("NCBI Tax ID | rank | GTDB: ");
+    	                idLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+    	                subPanel.add(idLabel);
 
-        	                JLabel idLabel = new JLabel("NCBI Tax ID | rank | GTDB: ");
-        	                idLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        	                subPanel.add(idLabel);
+    	                if (!taxId.equals("<NA>")) {
+    	                    String url = "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + taxId;
+    	                    SwingLink link = new SwingLink(taxId, url, openBrowser);
+    	                    subPanel.add(link);
+    	                } else {
+    	                    JLabel naLabel = new JLabel(taxId);
+    	                    naLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+    	                    subPanel.add(naLabel);
+    	                }
 
-        	                if (!taxId.equals("<NA>")) {
-        	                    String url = "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=" + taxId;
-        	                    SwingLink link = new SwingLink(taxId, url, openBrowser);
-        	                    subPanel.add(link);
-        	                } else {
-        	                    JLabel naLabel = new JLabel(taxId);
-        	                    naLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        	                    subPanel.add(naLabel);
-        	                }
+    	                JLabel levelLabel = new JLabel(taxLevel);
+    	                levelLabel.setFont(new Font("Arial", Font.ITALIC, 10));
+    	                subPanel.add(levelLabel);
 
-        	                JLabel levelLabel = new JLabel(taxLevel);
-        	                levelLabel.setFont(new Font("Arial", Font.ITALIC, 10));
-        	                subPanel.add(levelLabel);
+    	                if (!genomesRaw.equals("")) {
+    	                    String[] genomeIds = genomesRaw.split(",");
+    	                    for (String genomeId : genomeIds) {
+    	                        genomeId = genomeId.trim();
+    	                        if (!genomeId.isEmpty() && !genomeId.equals("NA")) {
+    	                            String genomeUrl = "https://gtdb.ecogenomic.org/genome?gid=" + genomeId;
+    	                            SwingLink genomeLink = new SwingLink(genomeId, genomeUrl, openBrowser);
+    	                            subPanel.add(genomeLink);
+    	                        }
+    	                    }
+    	                }
 
-        	                if (!genomesRaw.equals("")) {
-        	                    String[] genomeIds = genomesRaw.split(",");
-        	                    for (String genomeId : genomeIds) {
-        	                        genomeId = genomeId.trim();
-        	                        if (!genomeId.isEmpty() && !genomeId.equals("NA")) {
-        	                            String genomeUrl = "https://gtdb.ecogenomic.org/genome?gid=" + genomeId;
-        	                            SwingLink genomeLink = new SwingLink(genomeId, genomeUrl, openBrowser);
-        	                            subPanel.add(genomeLink);
-        	                        }
-        	                    }
-        	                }
+    	                gbc.gridwidth = GridBagConstraints.REMAINDER;
+    	                panel.add(subPanel, gbc);
+    	                gbc.gridy++;
+    	                gbc.gridwidth = 1;
+    	            }
 
-        	                gbc.gridwidth = GridBagConstraints.REMAINDER;
-        	                panel.add(subPanel, gbc);
-        	                gbc.gridy++;
-        	                gbc.gridwidth = 1;
-        	            }
-
-        	        } else if (!attribute.equals("microbetag::gtdb-genomes") && !attribute.equals("microbetag::ncbi-tax-level")) {
-        	            // Display other attributes normally
-        	            JTextArea attributeArea = new JTextArea(attributeName + ": " + (attrValue != null ? attrValue.toString() : "null"));
-        	            ViewUtils.setJTextAreaAttributes(attributeArea);
-        	            gbc.gridwidth = 2;
-        	            panel.add(attributeArea, gbc);
-        	            gbc.gridy++;
-        	            gbc.gridwidth = 1;
-        	        }
-        	    }
-        	}
+    	        } else if (!attribute.equals("microbetag::gtdb-genomes") && !attribute.equals("microbetag::ncbi-tax-level")) {
+    	            // Display other attributes normally
+    	            JTextArea attributeArea = new JTextArea(attributeName + ": " + (attrValue != null ? attrValue.toString() : "null"));
+    	            ViewUtils.setJTextAreaAttributes(attributeArea);
+    	            gbc.gridwidth = 2;
+    	            panel.add(attributeArea, gbc);
+    	            gbc.gridy++;
+    	            gbc.gridwidth = 1;
+    	        }
+    	    }
+    	}
 
 
         // ----------------------For the nested phenDB CollapsablePanel------------------
@@ -507,6 +505,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
         JPanel phenDBPanel = new JPanel(new BorderLayout());
 
+        LogUtils.info("Before entering the phen table...");
 
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -514,6 +513,7 @@ public class MGGNodePanel extends AbstractMggPanel {
                 return false; //    cells uneditable
             }
         };
+
         model.addColumn("Feature");
         model.addColumn("Present");
         model.addColumn("Score");
@@ -523,6 +523,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
         // Adjust column widths
         TableColumnModel columnModel = table.getColumnModel();
+
         // Modify the widths 
         columnModel.getColumn(0).setPreferredWidth(5);
         columnModel.getColumn(1).setPreferredWidth(5);
@@ -536,18 +537,22 @@ public class MGGNodePanel extends AbstractMggPanel {
 
             // Check if column starts with "phendb" and NOT "phendbScore" 
             if (columnName.startsWith("phendb::") && !columnName.contains("phendbScore::")) {
-
+            	
                 // Extract  name
                 String feature = columnName.replace("phendb::", "");
 
                 // Check corresponding "Score" column exists under "phendbScore::" 
-                CyColumn scoreColumn = nodeTable.getColumn("phendbScore::" + feature + "Score");
+                CyColumn scoreColumn = nodeTable.getColumn("phendbScore::" + feature);
+                
                 if (scoreColumn != null) {
-                	
+                	                	
                     Object presentObj = nodeTable.getRow(node.getSUID()).get(columnName, column.getType());
                     String presentValue = (presentObj == null) ? "null" : presentObj.toString();
-
-                    if ("true".equalsIgnoreCase(presentValue)) {//this if added to choose to show only the true in present
+                    
+                    //  Phen trait from microbetag comes binary (True/False) 
+                    if ("true".equalsIgnoreCase(presentValue)) {
+                    
+                    //this if added to choose to show only the true in present
                     	 
                     Object scoreObj = nodeTable.getRow(node.getSUID()).get(scoreColumn.getName(), scoreColumn.getType());
                     String scoreValue = (scoreObj == null) ? "null" : scoreObj.toString();
@@ -559,7 +564,6 @@ public class MGGNodePanel extends AbstractMggPanel {
                     } catch (NumberFormatException e) {
 
                     }
-
 
                     model.addRow(new Object[] {
                         feature,
