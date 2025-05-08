@@ -125,8 +125,14 @@ public class SendDataToServerTask extends AbstractTask {
     		 longDescription="Choose whether to get the Seed Scores and  complements.", groups={"Input Parameters"}, gravity=7.0, exampleStringValue="True, False", required=true)
      public boolean SEED_COMPLEMENTS= false;
      
-     @Tunable(description="Consider Children taxa", groups={"Input Parameters"}, 
-     		tooltip="Use strain genomes in case no type species genome supported" , gravity=8.0, exampleStringValue="True, False", required=true)
+     @Tunable(
+    		 description="Consider Children taxa", 
+    		 groups={"Input Parameters"},
+			 dependsOn = "TAXONOMY=other",
+    		 tooltip="Use strain genomes in case no type species genome supported", 
+    		 gravity=8.0, 
+    		 exampleStringValue="True, False", 
+    		 required=true)
      public boolean GET_CHILDREN=false; 
      
      @Tunable(description="Network clustering", longDescription="Choose whether to get NETWORK_CLUSTERING clustering", groups={"Input Parameters"}, 
