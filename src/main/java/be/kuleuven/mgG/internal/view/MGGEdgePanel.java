@@ -60,33 +60,7 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.utils.SwingLink;
 import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
 import be.kuleuven.mgG.internal.utils.ViewUtils;
-
-
-// are they needed? 
-//import java.awt.LayoutManager;
-//import java.awt.Toolkit;
-//import java.awt.datatransfer.Clipboard;
-//import java.awt.datatransfer.StringSelection;
-//import java.awt.Cursor;
-//import java.awt.Desktop;
-//import java.net.MalformedURLException;
-//import java.net.URI;
-//import java.net.URISyntaxException;
-//import java.net.URL;
-//import java.net.URLEncoder;
-//import java.nio.charset.StandardCharsets;
-//import javax.swing.BoxLayout;
-//import javax.swing.JOptionPane;
-//import javax.swing.SwingUtilities;
-//import javax.swing.JSlider;
-//import javax.swing.event.ChangeEvent;
-//import javax.swing.event.ChangeListener;
-//import javax.swing.table.TableColumnModel;
-//import org.cytoscape.work.TaskMonitor;
-
-
-
-
+import be.kuleuven.mgG.internal.utils.LogUtils;
 
 
 
@@ -121,11 +95,29 @@ public class MGGEdgePanel extends AbstractMggPanel {
     
 	// Function to check if an edge is not empty 
 	public boolean checkIfEdgeIsNotEmpty(CyNetwork net, CyEdge edge, CyColumn column) {
+	    
 	    Object value = net.getRow(edge).get(column.getName(), column.getType());
-	    String[] entries = value.toString().split(",");
-	    boolean isIt = false;
-	    isIt = isNotEmpty(entries);
-    return isIt;
+	    
+	    if (value == null) {
+	        return false;
+	    }
+
+	    // Check if value is indeed a List
+	    if (value instanceof List) {
+	        List<?> list = (List<?>) value;
+	        
+	        // Iterate over list items and process each item (which is a String)
+	        for (Object entry : list) {
+	            String[] entries = entry.toString().split(",");
+	            boolean isIt = isNotEmpty(entries);
+	            String strIsIt = Boolean.toString(isIt);
+	            return isIt;
+	        }
+	    }
+
+	    // In case it's not a list or something else goes wrong
+	    LogUtils.info("The value is not a list.");
+	    return false;		
 	}
 
 	
@@ -221,7 +213,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 //
 //              // Update the button label 
               if (showComplEdgesState) {
-                  showComplEdgesButton.setText("All Edges ");
+                  showComplEdgesButton.setText("All Edges");
                   showComplEdgesState=true;
                   doShowComplEdges(true); // 
                   showSeedComplEdgesButton.setEnabled(false); // Disable  seed complementarities button
@@ -268,6 +260,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 }
             }
             if (show) {
+//            	LogUtils.info("I AM IN THE SHOW");
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
             } else {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
@@ -290,6 +283,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
             boolean hasComplValue = false;
             for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
                 if (column.getName().startsWith("seedCompl::")) {
+                	LogUtils.info("about to check iif edge is empty");
                     if (checkIfEdgeIsNotEmpty(net, edge, column)) {
                         hasComplValue = true;
                         break;
@@ -297,6 +291,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 }
             }
             if (show) {
+//            	LogUtils.info("I AM IN THE  seed  SHOW");
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
             } else {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);

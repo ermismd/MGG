@@ -442,9 +442,9 @@ public class MGGNodePanel extends AbstractMggPanel {
 
     	            // Parse through the NCBI data     	            
     	            for (int i = 0; i < taxIds.size(); i++) {
-    	                String taxId = taxIds.get(i);
+
+    	            	String taxId = taxIds.get(i);
     	                String taxLevel = (i < taxLevels.size()) ? taxLevels.get(i) : "unknown";
-    	                LogUtils.info(taxLevel);
     	                
     	                String genomesRaw = (i < genomeGroups.size()) ? genomeGroups.get(i) : "";
 
@@ -504,8 +504,6 @@ public class MGGNodePanel extends AbstractMggPanel {
 
 
         JPanel phenDBPanel = new JPanel(new BorderLayout());
-
-        LogUtils.info("Before entering the phen table...");
 
         DefaultTableModel model = new DefaultTableModel() {
             @Override
