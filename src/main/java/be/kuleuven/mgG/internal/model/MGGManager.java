@@ -519,6 +519,7 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 
     	    try {
     	        // Check if serverResponse is not null and not empty
+    	    	// The empty string is a string with zero length. The null value is not having a string at all.
     	        if (serverResponse != null && !serverResponse.isEmpty()) {
     	            FileOutputStream fos = new FileOutputStream(jsonFile);
     	            OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");

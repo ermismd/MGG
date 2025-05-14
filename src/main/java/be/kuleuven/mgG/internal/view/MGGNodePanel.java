@@ -249,7 +249,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 		{
 		showMspecies = new JButton("Show Species");
 		showMspecies.setToolTipText("Press to show only the species taxon level, "
-				+ "Microbetag Species (MSpecies)");
+				+ "Microbetag Species (mspecies)");
 		showMspecies.setFont(labelFont);
 		showMspecies.addActionListener(new ActionListener() {
 		    private boolean isShown = false; // track current state	   

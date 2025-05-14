@@ -104,7 +104,7 @@ public class CreateNetworkTask extends AbstractTask {
 
 	   
 	    if (jsonResponse == null) {
-	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response to create the network from.");
+	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response. Conctact microbetag group.");
 	        return; 
 	    }
 

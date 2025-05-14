@@ -33,12 +33,12 @@ import be.kuleuven.mgG.internal.view.MGGNodePanel;
 public class Mutils {
 
     // Namespaces
-    public static String MY_NAMESPACE = "MGGid";
-    public static String MY_ATTRIBUTE = "id";
+    public static String MY_NAMESPACE       = "MGGid";
+    public static String MY_ATTRIBUTE       = "id";
     public static String PhenDbSc_NAMESPACE = "phendbScore";
-    public static String PhenDb_NAMESPACE = "phendb";
-    public static String Weight_NAMESPACE = "microbetag";
-    public static String Seed_NAMESPACE = "seed";
+    public static String PhenDb_NAMESPACE   = "phendb";
+    public static String Weight_NAMESPACE   = "microbetag";
+    public static String Seed_NAMESPACE     = "seed";
     public static String Faprotax_NAMESPACE = "faprotax";
 
     
@@ -94,12 +94,7 @@ public class Mutils {
         return isMGGNetwork(network);
         
     }
-    	
-    	
-    	
-	
-    
-    
+
 
     // This method will tell us if we have the new side panel functionality (i.e. namespaces)
     public static boolean ifHaveMGG(CyNetwork network) {
@@ -111,7 +106,7 @@ public class Mutils {
         return false;          
     }
 
-    
+
     public static void hideSingletons(CyNetworkView view, boolean show) {
 		CyNetwork net = view.getModel();
 		for (View<CyNode> nv: view.getNodeViews()) {
@@ -124,6 +119,7 @@ public class Mutils {
 				nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
 		}
 	}
+
     
     public static void doShowMspecies(CyNetworkView view, boolean show, boolean showSingletons,boolean phendbselected) {
     	
@@ -135,9 +131,7 @@ public class Mutils {
     
         //CyNetworkView view = manager.getCurrentNetworkView();
         CyNetwork net = view.getModel();
-
         String columnName = "microbetag::ncbi-tax-level";
-        //String targetValue = "mspecies";
 
         // Check if the column exists
        if (net.getDefaultNodeTable().getColumn(columnName) == null) {
@@ -152,17 +146,15 @@ public class Mutils {
             if (nodeView == null) continue;
             CyNode node=nodeView.getModel();
             if (show) {
-                CyRow nodeRow = net.getRow(node);
-                String attributeValue = nodeRow.get(columnName, String.class);
-               boolean isVisible = "mspecies".equals(attributeValue);
-               
+                
+            	CyRow nodeRow = net.getRow(node);
+                
+            	@SuppressWarnings("unchecked")  //  the compiler cannot verify that it is a List<String> at runtime 
+                List<String> attributeValues = nodeRow.get(columnName, List.class);
+                boolean isVisible = attributeValues != null && attributeValues.contains("mspecies");
+                
                 nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, isVisible);}
-//            else
-//            	nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
-//            } //else {
-//                // If 'show' is false, set all nodes to visible
-//               //nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
-//            }   
+
             else {
                 // When show is false
                 if (showSingletons==false) {
@@ -177,10 +169,7 @@ public class Mutils {
             }
         }
     }
-          
-    	
-    
-    
+
 
     public static void clearHighlight(MGGManager manager, CyNetworkView view) {
         // if (node == null) return;
@@ -256,9 +245,7 @@ public class Mutils {
         return null;
     }
 
-    
-    
-    
+
     public static List < String > getPhenDbScList(CyNetwork network) {
         List < String > phendbScores = new ArrayList < > ();
         if (network == null) {
@@ -374,22 +361,25 @@ public class Mutils {
     
     public static ListMultipleSelection<String> updateAttributeList(CyNetwork network, 
             ListMultipleSelection<String> attributes) {
-if (network == null)
-return new ListMultipleSelection<String>();
 
-List<String> attributeArray = getAllAttributes(network, network.getDefaultNodeTable());
-attributeArray.addAll(getAllAttributes(network, network.getDefaultEdgeTable()));
-ListMultipleSelection<String> newAttribute = new ListMultipleSelection<String>(attributeArray);	
-if (attributeArray.size() > 0){
-if (attributes != null) {
-newAttribute.setSelectedValues(attributes.getSelectedValues());
-} else {
-newAttribute.setSelectedValues(Collections.singletonList(attributeArray.get(0)));
-}
-return newAttribute;
-}
-return new ListMultipleSelection<String>("--None--");
-}
+    	if (network == null)
+    		return new ListMultipleSelection<String>();
+		
+		List<String> attributeArray = getAllAttributes(network, network.getDefaultNodeTable());
+		attributeArray.addAll(getAllAttributes(network, network.getDefaultEdgeTable()));
+		ListMultipleSelection<String> newAttribute = new ListMultipleSelection<String>(attributeArray);	
+		
+		if (attributeArray.size() > 0){
+			if (attributes != null) {
+				newAttribute.setSelectedValues(attributes.getSelectedValues());
+			} else {
+				newAttribute.setSelectedValues(Collections.singletonList(attributeArray.get(0)));
+			}
+			return newAttribute;
+		}
+		
+		return new ListMultipleSelection<String>("--None--");
+    }
 
     
     private static List<String> getAllAttributes(CyNetwork network, CyTable table) {
