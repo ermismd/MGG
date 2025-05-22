@@ -1,40 +1,35 @@
-	package be.kuleuven.mgG.internal.view;
+package be.kuleuven.mgG.internal.view;
 	
-	import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-	import java.util.Map;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.JFrame;
-	import javax.swing.JOptionPane;
-	import javax.swing.SwingUtilities;
-	
-	import org.cytoscape.application.swing.CytoPanelName;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
-	import org.cytoscape.model.CyNode;
-	import org.cytoscape.model.CyRow;
+import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.work.AbstractTask;
-	import org.cytoscape.work.TaskMonitor;
-	import org.cytoscape.work.Tunable;
-	import org.cytoscape.work.TaskMonitor.Level;
-	import org.cytoscape.work.util.ListSingleSelection;
-	import org.hipparchus.distribution.discrete.HypergeometricDistribution;
-	
-	import be.kuleuven.mgG.internal.model.MGGManager;
-import be.kuleuven.mgG.internal.tasks.GetTermsFronNetworkEnrichment;
+import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
+import org.cytoscape.work.util.ListSingleSelection;
+
+import org.hipparchus.distribution.discrete.HypergeometricDistribution;
+
+import be.kuleuven.mgG.internal.model.MGGManager;
 import be.kuleuven.mgG.internal.utils.AnalysisContext;
 import be.kuleuven.mgG.internal.utils.EnrichmentResult;
 import be.kuleuven.mgG.internal.utils.Mutils;
-
 
 
 
@@ -61,51 +56,56 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 		private List<EnrichmentResult> enrichmentResults;
 		 	
 		
-		 @Tunable(description="Choose the method for FDR correction (Bonferroni or Benjamini-Hochberg)",groups={"Enrichment Parameters"},
-		            longDescription="Select whether to use (Bonferroni or Benjamini-Hochberg for significance testing.",
-		            exampleStringValue="Bonferroni ",tooltip="Choose between Bonferroni or Benjamini-Hochberg for Significance",
-		            gravity=1.0,
-		            required=true)
-		  public ListSingleSelection<String> cutoffType = new ListSingleSelection<>("Bonferroni","Benjamini_Hochberg");
+		 @Tunable(
+				 description="Choose the method for FDR correction (Bonferroni or Benjamini-Hochberg)",
+				 groups={"Enrichment Parameters"},
+	             longDescription="Select whether to use (Bonferroni or Benjamini-Hochberg for significance testing.",
+	             exampleStringValue="Bonferroni ",
+	             tooltip="Choose between Bonferroni or Benjamini-Hochberg for Significance",
+	             gravity=1.0,
+	             required=true
+	     )
+		 public ListSingleSelection<String> cutoffType = new ListSingleSelection<>("Bonferroni", "Benjamini_Hochberg");
 		   
-		 @Tunable(description=" Cutoff value ",groups={" Enrichment Parameters "},
-		              longDescription="Specify the False Discovery Rate (FDR) cutoff to consider a result significant.",
-		              exampleStringValue="0,05",tooltip="Choose the FDR Cutoff for Significance",
-		              gravity=2.0)
+		 @Tunable(
+				 description=" Cutoff value ",
+				 groups={" Enrichment Parameters "},
+		         longDescription="Specify the False Discovery Rate (FDR) cutoff to consider a result significant.",
+		         exampleStringValue="0,05",
+		         tooltip="Choose the FDR Cutoff for Significance",
+		         gravity=2.0
+		  )
 		  public Double Cutoff = 0.05;
 		    
-		    
-
 
 	    public EnrichmentAnalysis(MGGManager mggManager) {
 	    	 this.mggManager = mggManager;            
 	         this.enrichmentResults = new ArrayList<>();	         
 	    }
 	
-	
-	    	    	 	 	  	   	    
+		    	    	 	 	  	   	    
 	    @Override
-	    public void run(TaskMonitor taskMonitor) throws Exception {
-	    	 uniqueAttributeNames.clear();
+	    public void run(TaskMonitor taskMonitor) {  // throws Exception
+	
+	    	uniqueAttributeNames.clear();
+	    	
 	    	try {
-	    		
-	    		
 	    		
 	    		CyNetwork currentNetwork=mggManager.getCurrentNetwork();
 	    		
 	    		// Retrieve all Faprotax and Phendb terms for the network
 	            List<String> faprotaxTerms = Mutils.getFaprotaxAttributes(currentNetwork);
 	            List<String> phendbTerms = Mutils.getPhendbAttributes(currentNetwork); 
-	            
-	            
-	           
 
 	            // Combine all terms into a single list 
 	            List<String> allTerms = new ArrayList<>();
 	            allTerms.addAll(faprotaxTerms);
 	            allTerms.addAll(phendbTerms);
 	            
-	            
+	            // for (String term : phendbTerms) {
+	            //	taskMonitor.showMessage(TaskMonitor.Level.INFO, "Term: " + term);
+	            //}	            
+
 	            CyTable nodeTable = currentNetwork.getDefaultNodeTable();
 	            CyColumn microbetagClusterColumn = nodeTable.getColumn("microbetag::cluster");
 	            
@@ -145,8 +145,6 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 	       Collections.sort(DepletedContexts, Comparator.comparingDouble(AnalysisContext::getPvalue));
 	       Collections.sort(allPValuesEnriched);
 	       Collections.sort(allPValuesDepleted);
-	       
-	       
 	       
 	   	       /**
 	   	        * if cutoff type is bonferroni, do bonferroni correction else do BH
@@ -400,99 +398,6 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 	        }
 	    }
 	    
-//	    private void applyBenjaminiHochbergCorrection() {
-//	    	
-//	  
-//	    	    
-//	        int totalTestsEnriched = allPValuesEnriched.size();
-//	        int totalTestsDepleted = allPValuesDepleted.size();
-//
-//	        List<Double> sortedPValuesEnriched = new ArrayList<>(allPValuesEnriched);
-//	        List<Double> sortedPValuesDepleted = new ArrayList<>(allPValuesDepleted);
-//
-//	        // Sort p-values in ascending order
-//	        sortedPValuesEnriched.sort(Double::compareTo);
-//	        sortedPValuesDepleted.sort(Double::compareTo);
-//
-//	        double[] adjustedPValuesEnriched = new double[totalTestsEnriched];
-//	        double[] adjustedPValuesDepleted = new double[totalTestsDepleted];
-//	        
-//	       
-//	     
-//	        for (int i = 0; i < totalTestsEnriched; i++) {
-//	            //double originalPValue = sortedPValuesEnriched.get(i);
-//	            double adjustedPValue = (Cutoff*(i+1))/ (double) totalTestsEnriched ;
-//	            adjustedPValuesEnriched[i] = adjustedPValue;
-//	        }
-//	        
-//	        // Calculate Benjamini-Hochberg adjusted p-values for depleted results
-//	        for (int i = 0; i < totalTestsDepleted; i++) {
-//	           //double originalPValue = sortedPValuesDepleted.get(i);
-//	            double adjustedPValue = (Cutoff*(i+1))/ (double) totalTestsDepleted ;
-//	            adjustedPValuesDepleted[i] = adjustedPValue;
-//	        }
-//
-//	                
-//	        // Find the largest p-value that is smaller than the critical value
-//	        double largestPValueEnriched = 0.0;
-//	        double largestPValueDepleted = 0.0;
-//
-//	        for (int i = totalTestsEnriched - 1; i >= 0; i--) {
-//	            double pValueEnriched = sortedPValuesEnriched.get(i);
-//	            double adjustedPValue = adjustedPValuesEnriched[i];
-//
-//	            if (pValueEnriched <= adjustedPValue) {
-//	                largestPValueEnriched = pValueEnriched;
-//	                break;
-//	            }
-//	        }
-//
-//	        for (int i = totalTestsDepleted - 1; i >= 0; i--) {
-//	            double pValueDepleted = sortedPValuesDepleted.get(i);
-//	            double adjustedPValue = adjustedPValuesDepleted[i];
-//
-//	            if (pValueDepleted <= adjustedPValue) {
-//	                largestPValueDepleted = pValueDepleted;
-//	                break;
-//	            }
-//	        }
-//
-//	        // Mark all original p-values smaller than or equal to the largest significant p-value as significant
-//	        for (int i = 0; i < allPValuesEnriched.size(); i++) {
-//	            double pValueEnriched = allPValuesEnriched.get(i);
-//	            if (pValueEnriched <= largestPValueEnriched) {
-//	                double adjustedPValue = adjustedPValuesEnriched[i];
-//	            	
-//	            	//  int sortIndex = IntStream.range(0, sortedPValuesEnriched.size())
-//                         //    .filter(j -> sortedPValuesEnriched.get(j) == pValueEnriched)
-//                          //    .findFirst()
-//                         //     .orElse(-1);
-//	            	//  if (sortIndex != -1) {
-//	            	//	  double adjustedPValue = adjustedPValuesEnriched[sortIndex];
-//	            	
-//	                addEnrichmentResult(EnrichedContexts.get(i), pValueEnriched, adjustedPValue);
-//	            }
-//	        }
-//
-//	        for (int i = 0; i < allPValuesDepleted.size(); i++) {
-//	            double pValueDepleted = allPValuesDepleted.get(i);
-//	            if (pValueDepleted <= largestPValueDepleted) {
-//	                double adjustedPValue = adjustedPValuesDepleted[i];
-//	            	
-//	            	// int sortIndex = IntStream.range(0, sortedPValuesDepleted.size())
-//                     //        .filter(j -> sortedPValuesDepleted.get(j) == pValueDepleted )
-//                     //        .findFirst()
-//                       //      .orElse(-1);
-//	            //	  if (sortIndex != -1) {
-//	            	//	  double adjustedPValue = adjustedPValuesDepleted[sortIndex];
-//	                addEnrichmentResult(DepletedContexts.get(i), pValueDepleted, adjustedPValue);
-//	            }
-//	        }
-//	    }
-//	    
-//	    
-	    
-	    
 	    
 	    /**
 	     * Gets the total nodes with a specific property in the current network.
@@ -570,7 +475,3 @@ import be.kuleuven.mgG.internal.utils.Mutils;
 	    }
 	}
 	    
-
-	    
-	    
-    

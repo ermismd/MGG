@@ -506,10 +506,12 @@ public class Mutils {
         }	
         
         
-        String[] nitrogenCycleattributes = {"NOB","aob", "AOB", "fixingN2", "fixing_n2", "anammox","nitrate denitrification","nitrite denitrification",
+        String[] nitrogenCycleattributes = {
+        		"NOB","aob", "AOB", "fixingN2", "fixing_n2", "anammox","nitrate denitrification","nitrite denitrification",
         		"nitrous oxide denitrification","aerobic ammonia oxidation","denitrification","aerobic nitrite oxidation",
         		"nitrogen fixation","nitrate ammonification","nitrite ammonification","nitrite respiration","nitrate respiration",
-        		"nitrate reduction","nitrogen respiration","nitrification","ureolysis" };
+        		"nitrate reduction","nitrogen respiration", "nitrification","ureolysis", "nitrogen_fixation" 
+        };
 
         		
         for (String attr : nitrogenCycleattributes) {
