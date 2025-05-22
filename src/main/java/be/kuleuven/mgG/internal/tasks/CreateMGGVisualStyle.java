@@ -26,6 +26,10 @@ import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
+
+import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.ArrowShape;
+
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
@@ -71,26 +75,30 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 		super("Create MGG Visual Style");
 		this.mggManager = mggManager;
 		
-		//setPreferredMenu("Apps.MGG.Create MGG Visual Style");
+		setPreferredMenu("Apps.MGG");
+		setMenuGravity(4.0f);
+//		setPreferredMenu("Apps.MGG.Create MGG Visual Style");
 		//setMenuGravity(4);
 		useCheckBoxMenuItem = true;
 		insertSeparatorBefore = false;
 		
-		this.networkFactory = mggManager.getService(CyNetworkFactory.class);
-		this.networkManager = mggManager.getService(CyNetworkManager.class);
-		this.networkViewFactory = mggManager.getService(CyNetworkViewFactory.class);
-		this.networkViewManager = mggManager.getService(CyNetworkViewManager.class);
-		this.visualStyleFactory = mggManager.getService(VisualStyleFactory.class);
+		this.networkFactory         = mggManager.getService(CyNetworkFactory.class);
+		this.networkManager         = mggManager.getService(CyNetworkManager.class);
+		this.networkViewFactory     = mggManager.getService(CyNetworkViewFactory.class);
+		this.networkViewManager     = mggManager.getService(CyNetworkViewManager.class);
+		this.visualStyleFactory     = mggManager.getService(VisualStyleFactory.class);
 		this.discreteMappingFactory = mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
-		this.vmfFactoryP = mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
-		this.vmmServiceRef = mggManager.getService(VisualMappingManager.class);
+		this.vmfFactoryP            = mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=passthrough)");
+		this.vmmServiceRef          = mggManager.getService(VisualMappingManager.class);
 		this.layoutAlgorithmManager = mggManager.getService(CyLayoutAlgorithmManager.class);
-		this.paletteManager = mggManager.getService(PaletteProviderManager.class);
+		this.paletteManager         = mggManager.getService(PaletteProviderManager.class);
 	}
 	
 
 	public void actionPerformed(ActionEvent e) {
 
+		
+		
 		// If the style already existed, remove it first
 		Iterator it = vmmServiceRef.getAllVisualStyles().iterator();
 		while (it.hasNext()){
@@ -116,41 +124,96 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				VisualProperty<?> vp = BasicVisualLexicon.NODE_FILL_COLOR;
 
 				style.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
-
 				// Node Borders
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_WIDTH, 2.0);
 				style.setDefaultValue(BasicVisualLexicon.NODE_BORDER_PAINT, Color.DARK_GRAY);
-				style.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, 2.0); // Set default edge width
+
+				style.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, 4.0); // Set default edge width
 				style.setDefaultValue(BasicVisualLexicon.EDGE_STROKE_SELECTED_PAINT, Color.ORANGE); // Set default color for when selecting an edge
+				style.setDefaultValue(BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE, ArrowShapeVisualProperty.NONE);
+				
+
 				
 				// Node shape mapping based on "taxonomy-level"
 		        String columnName = "microbetag::ncbi-tax-level";
 		        VisualProperty<NodeShape> nodeShapeVP = BasicVisualLexicon.NODE_SHAPE;
-		        DiscreteMapping<String, NodeShape> shapeMapping = (DiscreteMapping<String, NodeShape>) discreteMappingFactory
-						.createVisualMappingFunction(columnName, String.class, nodeShapeVP);
-		        Map<String, NodeShape> taxonomyShapeMap = getTaxonomyShapeMap(); // Assuming you have this method defined somewhere
+		        DiscreteMapping<String, NodeShape> shapeMapping = 
+		        		(DiscreteMapping<String, NodeShape>) discreteMappingFactory.createVisualMappingFunction(
+		        				columnName, String.class, nodeShapeVP
+		        		);
+
+		        Map<String, NodeShape> taxonomyShapeMap = getTaxonomyShapeMap(); // Assuming you have the getTaxonomyShapeMap() method defined somewhere
 		        for (Map.Entry<String, NodeShape> entry : taxonomyShapeMap.entrySet()) {
 		            shapeMapping.putMapValue(entry.getKey(), entry.getValue());
 		        }
 		        style.addVisualMappingFunction(shapeMapping);
 				
-			
-		        
+					        
 				// Node Labels
 				style.setDefaultValue(BasicVisualLexicon.NODE_LABEL, "");
-				PassthroughMapping<String, String> labelMapping = (PassthroughMapping<String, String>) vmfFactoryP
-						.createVisualMappingFunction("name", String.class, BasicVisualLexicon.NODE_LABEL);
+				PassthroughMapping<String, String> labelMapping = 
+						(PassthroughMapping<String, String>) vmfFactoryP.createVisualMappingFunction(
+								"name", String.class, BasicVisualLexicon.NODE_LABEL)
+						;
 				style.addVisualMappingFunction(labelMapping);
 
 				
-				// discrete mapping function(species-colors)
-				DiscreteMapping<String, Paint> colorMapping = (DiscreteMapping<String, Paint>) discreteMappingFactory
-				                    .createVisualMappingFunction(columnName, String.class, vp);
+				// Node color based on "taxonomy-level" -- discrete mapping function(species-colors)
+				@SuppressWarnings("unchecked")
+				DiscreteMapping<String, Paint> colorMapping = 
+					    (DiscreteMapping<String, Paint>) discreteMappingFactory.createVisualMappingFunction(
+					        columnName, String.class, vp
+					    );
+				
 				Map<String, Paint> speciesColorMap = getSpeciesColorMap();
 				for (Map.Entry<String, Paint> entry : speciesColorMap.entrySet()) {
 				    colorMapping.putMapValue(entry.getKey(), entry.getValue());
 				}
 				style.addVisualMappingFunction(colorMapping); // Add the mapping function to the visual style
+				
+
+				
+				
+
+				
+				
+				// Edge directed or not 
+		        String interactionColumn = "interaction type";
+		        VisualProperty<ArrowShape> arrowShape = BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE;
+		        DiscreteMapping<String, ArrowShape> arrowShapeMapping = 
+		        		(DiscreteMapping<String, ArrowShape>) discreteMappingFactory.createVisualMappingFunction(
+		        				interactionColumn, String.class, arrowShape
+		        		);
+
+		        Map<String, ArrowShape> edgesShapeMap = getEdgeShapeMap(); // Assuming you have the getTaxonomyShapeMap() method defined somewhere
+		        for (Map.Entry<String, ArrowShape> entry : edgesShapeMap.entrySet()) {
+		        	arrowShapeMapping.putMapValue(entry.getKey(), entry.getValue());
+		        }
+		        style.addVisualMappingFunction(arrowShapeMapping);
+
+				
+		        for (Map.Entry<String, ArrowShape> entry : edgesShapeMap.entrySet()) {
+		            System.out.println("Mapping interaction type '" + entry.getKey() +
+		                               "' to arrow shape: " + entry.getValue().getDisplayName());
+		            arrowShapeMapping.putMapValue(entry.getKey(), entry.getValue());
+		        }
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				
 				// Get the current network
 				//CyNetwork currentNetwork = ((MGGManager) networkManager).getCurrentNetwork();
@@ -228,9 +291,6 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 				        
 
 
-			    
-			    
-
 			 // Create a DiscreteMapping for null weights
 			 DiscreteMapping<String, Paint> edgeNullWeightMapping = (DiscreteMapping<String, Paint>)
 			     mggManager.getService(VisualMappingFunctionFactory.class, "(mapping.type=discrete)")
@@ -276,4 +336,14 @@ public class CreateMGGVisualStyle extends AbstractCyAction {
 
 				return speciesColorMap;
 			}
+
+			private Map<String, ArrowShape> getEdgeShapeMap() {
+				Map<String, ArrowShape> edgeShapeMap = new HashMap<>();
+				edgeShapeMap.put("co-occurrence", ArrowShapeVisualProperty.NONE);
+				edgeShapeMap.put("complementarity", ArrowShapeVisualProperty.ARROW);
+				// Add more taxonomy-level to shape mappings as needed
+				return edgeShapeMap;
+			}
+			
+
 }
