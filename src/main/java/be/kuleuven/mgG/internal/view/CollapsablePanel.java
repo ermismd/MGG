@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 
 
 public class CollapsablePanel extends JPanel {
+
 	private static String RIGHT_ARROW = "\uF0DA";
 	private static String DOWN_ARROW = "\uF0D7";
 	private static String CIRCLE = "\u2022"; 
@@ -26,9 +27,11 @@ public class CollapsablePanel extends JPanel {
 	HeaderPanel headerPanel_;
 
 	private class HeaderPanel extends JPanel implements ActionListener {
+
 		Font font;
 		JButton expandButton;
 		JLabel label;
+		
 		boolean expanded = false;
 
 		public HeaderPanel(Font iconFont, String text, boolean collapsed, int fontSize) {

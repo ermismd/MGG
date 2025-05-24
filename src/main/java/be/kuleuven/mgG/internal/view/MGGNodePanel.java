@@ -1162,21 +1162,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 
     @Override
     double initFilter(String type, String label) {
-//        double minValue = 1.0;
-//        for (CyNode node: currentNetwork.getNodeList()) {
-//            CyRow nodeRow = currentNetwork.getRow(node);
-//
-//            Double v = nodeRow.get(type, label, Double.class);
-//            if (v == null) {
-//                minValue = 0.0;
-//                break;
-//            } else if (v < minValue) {
-//                minValue = v.doubleValue();
-//            }
-//        }
-//        return minValue;
     	return 0;
-
     }
 
 
@@ -1186,4 +1172,10 @@ public class MGGNodePanel extends AbstractMggPanel {
 		return 0;
 	}
 
+	
+	@Override
+	String initSign(String type, String text) {
+		return "<";
+	}
+	
 }

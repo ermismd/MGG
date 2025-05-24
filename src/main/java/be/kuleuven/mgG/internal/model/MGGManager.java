@@ -112,11 +112,14 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
 	
 	
 	private Map<String, Color> channelColors;
-	public static String[] channels = { "cooperation", "competition"
-};
+	
+	public static String[] channels = { "cooperation", "competition"};
 	
 	public static String HighlightNeighbors = "highlightNeighbors";
 	public static String ShowSingletons = "showSingletons";
+
+	public static String[] signs = {">","<"}; 
+
 	
 	//private Icon MGGicon;
 
@@ -547,48 +550,5 @@ public class MGGManager implements SessionAboutToBeSavedListener, SessionLoadedL
     	        jsonException.printStackTrace();
     	    }
     	}
-//	@Override
-//	public void handleEvent(SessionAboutToBeSavedEvent e) {
-//		String tmpDir = System.getProperty("java.io.tmpdir");
-//	    File jsonFile = new File(tmpDir, SERVER_RESPONSE_FILE);
-//
-//	    try {
-//	        FileOutputStream fos = new FileOutputStream(jsonFile);
-//	        OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
-//	        BufferedWriter writer = new BufferedWriter(osw);
-//
-//	        writer.write(serverResponse.toJSONString());
-//	        writer.close();
-//	        osw.close();
-//	        fos.close();
-//
-//	        List<File> files = new ArrayList<File>();
-//	        files.add(jsonFile);
-//
-//	        try {
-//	            e.addAppFiles(APP_NAME, files);
-//	        } catch (Exception add) {
-//	            add.printStackTrace();
-//	        }
-//	    } catch (Exception jsonException) {
-//	        jsonException.printStackTrace();
-//	    }
-//		
-//	}
-
-
-
-
-
-	
-	
-	
-	
-
-	
-
-
-
-
 
 }

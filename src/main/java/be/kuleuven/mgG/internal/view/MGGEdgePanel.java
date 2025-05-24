@@ -34,6 +34,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import javax.swing.JComboBox;
+
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -62,432 +64,583 @@ import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
 import be.kuleuven.mgG.internal.utils.ViewUtils;
 import be.kuleuven.mgG.internal.utils.LogUtils;
 
-
-
 public class MGGEdgePanel extends AbstractMggPanel {
 
-    JButton fetchEdges;
-    private JPanel subScorePanel = null;
-    //JPanel scorePanel;
-    JButton deleteEdges;
-    private JPanel WeightPanel = null;
-    private boolean showComplEdgesState ;
-    private boolean showSeedComplEdgesState;
-    //JPanel seedPanel;
-    private Color defaultBackground; 
-    private JButton showSeedComplEdgesButton;
-    private JButton showComplEdgesButton;
+	JButton fetchEdges;
+	private JPanel subScorePanel = null;
 
-    private JPanel edgesSPanel = null;
-    private Map < CyNetwork, Map < String, Boolean >> colors;
+	// JPanel scorePanel;
+	JButton deleteEdges;
+	private JPanel WeightPanel = null;
+	private boolean showComplEdgesState;
+	private boolean showSeedComplEdgesState;
 
-    // Function to check whether a column is []   
-	public boolean isNotEmpty(String [] entries) {
-	    for (String entry : entries) {
-	        // Check if the current element is not equal to "[ ]"
-	        if (!entry.equals("[]")) {
-	            // If at least one element is not "[ ]", return true
-	            return true;
-	        }
-	    }
-	    return false;
+	// JPanel seedPanel;
+	private Color defaultBackground;
+	private JButton showSeedComplEdgesButton;
+	private JButton showComplEdgesButton;
+
+	private JPanel edgesSPanel = null;
+	private Map<CyNetwork, Map<String, Boolean>> colors;
+
+	// Function to check whether a column is []
+	public boolean isNotEmpty(String[] entries) {
+		for (String entry : entries) {
+			// Check if the current element is not equal to "[ ]"
+			if (!entry.equals("[]")) {
+				// If at least one element is not "[ ]", return true
+				return true;
+			}
+		}
+		return false;
 	}
-    
-	// Function to check if an edge is not empty 
+
+	// Function to check if an edge is not empty
 	public boolean checkIfEdgeIsNotEmpty(CyNetwork net, CyEdge edge, CyColumn column) {
-	    
-	    Object value = net.getRow(edge).get(column.getName(), column.getType());
-	    
-	    if (value == null) {
-	        return false;
-	    }
 
-	    // Check if value is indeed a List
-	    if (value instanceof List) {
-	        List<?> list = (List<?>) value;
-	        
-	        // Iterate over list items and process each item (which is a String)
-	        for (Object entry : list) {
-	            String[] entries = entry.toString().split(",");
-	            boolean isIt = isNotEmpty(entries);
-	            String strIsIt = Boolean.toString(isIt);
-	            return isIt;
-	        }
-	    }
+		Object value = net.getRow(edge).get(column.getName(), column.getType());
 
-	    // In case it's not a list or something else goes wrong
-	    LogUtils.info("The value is not a list.");
-	    return false;		
+		if (value == null) {
+			return false;
+		}
+
+		// Check if value is indeed a List
+		if (value instanceof List) {
+			List<?> list = (List<?>) value;
+
+			// Iterate over list items and process each item (which is a String)
+			for (Object entry : list) {
+				String[] entries = entry.toString().split(",");
+				boolean isIt = isNotEmpty(entries);
+//	            String strIsIt = Boolean.toString(isIt);
+				return isIt;
+			}
+		}
+
+		// In case it's not a list or something else goes wrong
+		LogUtils.info("The value is not a list.");
+		return false;
 	}
 
-	
 	public MGGEdgePanel(final MGGManager manager) {
 
-        super(manager);
-        filters.get(currentNetwork).put("microbetag", new HashMap < > ());
-        //filters.get(currentNetwork).put("seed", new HashMap<>());
-        filters.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap<>());
-      
-	
-        colors = new HashMap < > ();
-        colors.put(currentNetwork, new HashMap < > ());
+		super(manager);
+		filters.get(currentNetwork).put("microbetag", new HashMap<>());
+		filters.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap<>());
 
-        init();
-        revalidate();
-        repaint();
-    }
+		// Initialize filterSigns map for current network
+        filterSign.get(currentNetwork).put("microbetag", new HashMap < > ());    // new String()
+        filterSign.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap < > ());
 
-    private void init() {
-        setLayout(new GridBagLayout());
+		//
+		colors = new HashMap<>();
+		colors.put(currentNetwork, new HashMap<>());
 
-        EasyGBC c = new EasyGBC();
+		init();
+		revalidate();
+		repaint();
+	}
 
-        JPanel controlPanel = createControlPanel();
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        add(controlPanel, c.anchor("west").down().noExpand());
+	private void init() {
+		setLayout(new GridBagLayout());
 
-        JPanel mainPanel = new JPanel(); {
-            mainPanel.setLayout(new GridBagLayout());
-            mainPanel.setBackground(defaultBackground);
-            EasyGBC d = new EasyGBC();
-            mainPanel.add(createWeightPanel(), d.down().anchor("west").expandHoriz());
-            mainPanel.add(createSeedPanel(), d.down().anchor("west").expandHoriz());
-            mainPanel.add(createEdgesPanel(), d.down().anchor("west").expandHoriz());
-            
+		EasyGBC c = new EasyGBC();
 
-            mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
-        }
-        JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-        add(scrollPane, c.down().anchor("west").expandBoth());
-    }
+		JPanel controlPanel = createControlPanel();
+		controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		add(controlPanel, c.anchor("west").down().noExpand());
 
-    private JPanel createControlPanel() {
-        JPanel controlPanel = new JPanel();
-        GridLayout layout = new GridLayout(2, 2);
-        EasyGBC d = new EasyGBC();
-        //layout.setVgap(0);
-        controlPanel.setLayout(layout);
+		JPanel mainPanel = new JPanel();
+		{
+			mainPanel.setLayout(new GridBagLayout());
+			mainPanel.setBackground(defaultBackground);
+			EasyGBC d = new EasyGBC();
+			mainPanel.add(createWeightPanel(), d.down().anchor("west").expandHoriz());
+			mainPanel.add(createSeedPanel(), d.down().anchor("west").expandHoriz());
+			mainPanel.add(createEdgesPanel(), d.down().anchor("west").expandHoriz());
 
-        JPanel upperPanel = new JPanel(new GridBagLayout());
-        
-        // Initialize the showSeedComplEdgesButton
-        showSeedComplEdgesButton = new JButton("Edges with Seed Complementarities");
-        showSeedComplEdgesButton.setFont(labelFont);
-        showSeedComplEdgesButton.setToolTipText("Show/Hide Edges with Seed Complementarities");
+			mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
+		}
+		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(scrollPane, c.down().anchor("west").expandBoth());
+	}
 
-        showSeedComplEdgesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+//-------------------------TOGGLE BUTTONS FOR TYPES OF COMPLEMENS  -------------------------------------
 
-              // Toggle the state
-              showSeedComplEdgesState = !showSeedComplEdgesState;
+	//---------
+	// SHOW ONLY EDGES WITH PATHWAY OR SEED COMPLEMENTS...
+	//---------	
+	private JPanel createControlPanel() {
 
-              // Update the button label based on the current state
-              if (showSeedComplEdgesState) {
-                  showSeedComplEdgesButton.setText("All Edges ");
-                  showSeedComplEdgesState=true;
-                  doShowSeedComplEdges(true); // edges with Compl values
-                  showComplEdgesButton.setEnabled(false); // Disable pathway complements button
-                                    
-              } else {
-                  showSeedComplEdgesButton.setText("Edges with Seed Complementarities");
-                  showSeedComplEdgesState=false;
-                  doShowSeedComplEdges(false); // Show all edges
-                  showComplEdgesButton.setEnabled(true); // Enable   pathway complements button
-              }
-            }
-        });
-        upperPanel.add(showSeedComplEdgesButton);
+		JPanel controlPanel = new JPanel();
+		GridLayout layout = new GridLayout(2, 2);
+		EasyGBC d = new EasyGBC();
+		// layout.setVgap(0);
+		controlPanel.setLayout(layout);
 
-        // Initialize the showComplEdgesButton
-        showComplEdgesButton = new JButton("Edges with Pathway Complementarities");
-        showComplEdgesButton.setFont(labelFont);
-        showComplEdgesButton.setToolTipText("Show/Hide Edges with Pathway Complementarities");
-        showComplEdgesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	 // Toggle the state
-              showComplEdgesState = !showComplEdgesState;
-//
+		JPanel upperPanel = new JPanel(new GridBagLayout());
+
+		// Initialize the showSeedComplEdgesButton
+		showSeedComplEdgesButton = new JButton("Edges with Seed Complementarities");
+		showSeedComplEdgesButton.setFont(labelFont);
+		showSeedComplEdgesButton.setToolTipText("Show/Hide Edges with Seed Complementarities");
+
+		showSeedComplEdgesButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				// Toggle the state
+				showSeedComplEdgesState = !showSeedComplEdgesState;
+
+				// Update the button label based on the current state
+				if (showSeedComplEdgesState) {
+					showSeedComplEdgesButton.setText("All Edges ");
+					showSeedComplEdgesState = true;
+					doShowSeedComplEdges(true); // edges with Compl values
+					showComplEdgesButton.setEnabled(false); // Disable pathway complements button
+
+				} else {
+					showSeedComplEdgesButton.setText("Edges with Seed Complementarities");
+					showSeedComplEdgesState = false;
+					doShowSeedComplEdges(false); // Show all edges
+					showComplEdgesButton.setEnabled(true); // Enable pathway complements button
+				}
+			}
+		});
+		
+		upperPanel.add(showSeedComplEdgesButton);
+
+		// Initialize the showComplEdgesButton
+		showComplEdgesButton = new JButton("Edges with Pathway Complementarities");
+		showComplEdgesButton.setFont(labelFont);
+		showComplEdgesButton.setToolTipText("Show/Hide Edges with Pathway Complementarities");
+
+		showComplEdgesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				// Toggle the state
+				showComplEdgesState = !showComplEdgesState;
+
 //              // Update the button label 
-              if (showComplEdgesState) {
-                  showComplEdgesButton.setText("All Edges");
-                  showComplEdgesState=true;
-                  doShowComplEdges(true); // 
-                  showSeedComplEdgesButton.setEnabled(false); // Disable  seed complementarities button
-              } else {
-                  showComplEdgesButton.setText("Edges with Pathway Complementarities");
-                  showComplEdgesState=false;
-                  doShowComplEdges(false); // Show all edges
-                  showSeedComplEdgesButton.setEnabled(true); // Enable  seed complementatities button
-              }}
-        });
-        
-        upperPanel.add(showComplEdgesButton);
+				if (showComplEdgesState) {
+					showComplEdgesButton.setText("All Edges");
+					showComplEdgesState = true;
+					doShowComplEdges(true);
+					showSeedComplEdgesButton.setEnabled(false); // Disable seed complementarities button
+				} else {
+					showComplEdgesButton.setText("Edges with Pathway Complementarities");
+					showComplEdgesState = false;
+					doShowComplEdges(false); // Show all edges
+					showSeedComplEdgesButton.setEnabled(true); // Enable seed complementatities button
+				}
+			}
+		});
 
-        upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
-        controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
+		upperPanel.add(showComplEdgesButton);
 
-        controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        controlPanel.setMaximumSize(new Dimension(100, 100));
+		upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
+		controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
 
-        return controlPanel;
-        
+		controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		controlPanel.setMaximumSize(new Dimension(100, 100));
 
-    }
-    
-    
-    private void doShowComplEdges(boolean show) {
+		return controlPanel;
 
-    	CyNetworkView view = manager.getCurrentNetworkView();
-        CyNetwork net = view.getModel();
+	}
+	
+	private void doShowComplEdges(boolean show) {
 
-        // Iterate over all edges
-        for (CyEdge edge : net.getEdgeList()) {
-            View<CyEdge> edgeView = view.getEdgeView(edge);
-            if (edgeView == null) continue;
+		CyNetworkView view = manager.getCurrentNetworkView();
+		CyNetwork net = view.getModel();
 
-            boolean hasComplValue = false;
-            for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
-                if (column.getName().startsWith("compl::")) {
+		// Iterate over all edges
+		for (CyEdge edge : net.getEdgeList()) {
+			View<CyEdge> edgeView = view.getEdgeView(edge);
+			if (edgeView == null)
+				continue;
 
-                    if (checkIfEdgeIsNotEmpty(net, edge, column)) {
-                        hasComplValue = true;
-                        break;
-                    }
-                }
-            }
-            if (show) {
-//            	LogUtils.info("I AM IN THE SHOW");
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
-            } else {
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
-            }
-        }
+			boolean hasComplValue = false;
+			for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
+				if (column.getName().startsWith("compl::")) {
 
-         view.updateView(); 
-    }
+					if (checkIfEdgeIsNotEmpty(net, edge, column)) {
+						hasComplValue = true;
+						break;
+					}
+				}
+			}
+			if (show) {
+				edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
+			} else {
+				edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
+			}
+		}
 
+		view.updateView();
+	}
 
-    private void doShowSeedComplEdges(boolean show) {
-        CyNetworkView view = manager.getCurrentNetworkView();
-        CyNetwork net = view.getModel();
+	private void doShowSeedComplEdges(boolean show) {
+		CyNetworkView view = manager.getCurrentNetworkView();
+		CyNetwork net = view.getModel();
 
-        // Iterate over all edges
-        for (CyEdge edge : net.getEdgeList()) {
-            View<CyEdge> edgeView = view.getEdgeView(edge);
-            if (edgeView == null) continue;
+		// Iterate over all edges
+		for (CyEdge edge : net.getEdgeList()) {
+			View<CyEdge> edgeView = view.getEdgeView(edge);
+			if (edgeView == null)
+				continue;
 
-            boolean hasComplValue = false;
-            for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
-                if (column.getName().startsWith("seedCompl::")) {
-                	LogUtils.info("about to check iif edge is empty");
-                    if (checkIfEdgeIsNotEmpty(net, edge, column)) {
-                        hasComplValue = true;
-                        break;
-                    }
-                }
-            }
-            if (show) {
+			boolean hasComplValue = false;
+			for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
+				if (column.getName().startsWith("seedCompl::")) {
+					LogUtils.info("about to check iif edge is empty");
+					if (checkIfEdgeIsNotEmpty(net, edge, column)) {
+						hasComplValue = true;
+						break;
+					}
+				}
+			}
+			if (show) {
 //            	LogUtils.info("I AM IN THE  seed  SHOW");
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
-            } else {
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
-            }
-        }
+				edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, hasComplValue);
+			} else {
+				edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
+			}
+		}
 
-         view.updateView(); 
-    }
+		view.updateView();
+	}
 
-//------------------------------------Weight Panel-------------------------------------
-    private JPanel createWeightPanel() {
+//--------------------------  SHOW COOCCURENCE EDGES WITH SCORE -------------------------------------
+	private Map<String, JComboBox<String>> signCombos = new HashMap<>();
+	
+	private JPanel createWeightPanel() {
 
-        WeightPanel = new JPanel();
-        WeightPanel.setLayout(new GridBagLayout());
-        EasyGBC c = new EasyGBC();
+		WeightPanel = new JPanel();
+		WeightPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
 
-        List < String > WeightList = Mutils.getWeightList(currentNetwork);
+		List<String> WeightList = Mutils.getWeightList(currentNetwork);
 
-        for (String weight: WeightList) {
-            WeightPanel.add(createFilterSlider("microbetag", weight, currentNetwork, true, 100.0),
-                c.anchor("west").down().expandHoriz());
-        }
+		for (String weight : WeightList) {
+			WeightPanel.add(
+					createFilterSlider(
+							"microbetag", 
+							weight, 
+							currentNetwork, 
+							true, 
+							100.0
+					),
+					c.anchor("west").down().expandHoriz());
+		}
+
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont,
+				"Filter-out edges based on co-occurrence score", WeightPanel, false, 10);
+		collapsablePanel.setToolTipText("Hide edges with a co-occurrence score lower than the chosen value");
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		collapsablePanel.setAlwaysExpanded();
+		return collapsablePanel;
+	}
+
+	public void updateWeightPanelPanel() {
+		if (WeightPanel == null)
+			return;
+		WeightPanel.removeAll();
+		EasyGBC c = new EasyGBC();
+		List<String> WeightList = Mutils.getWeightList(currentNetwork);
+		for (String weight : WeightList) {
+			WeightPanel.add(createFilterSlider("microbetag", weight, currentNetwork, true, 100.0),
+					c.anchor("west").down().expandHoriz());
+		}
+		return;
+	}
 
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "weight Filters", WeightPanel, false, 10);
-        collapsablePanel.setToolTipText("Show edges with Weight bigger than the chosen value");
-        collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
-        collapsablePanel.setAlwaysExpanded();
-        return collapsablePanel;
-    }
+//------------------------  SHOW COMPLEMENTARITY EDGES WITH SCORE -------------------------------------
+	
+	
+	private JPanel createSeedPanel() {
 
-    public void updateWeightPanelPanel() {
-        if (WeightPanel == null) return;
-        WeightPanel.removeAll();
-        EasyGBC c = new EasyGBC();
-        List < String > WeightList = Mutils.getWeightList(currentNetwork);
-        for (String weight: WeightList) {
-            WeightPanel.add(createFilterSlider("microbetag", weight, currentNetwork, true, 100.0),
-                c.anchor("west").down().expandHoriz());
-        }
-        return;
-    }
-
-    //---------------------------------Seed Panel----------------------------------------
-    private JPanel createSeedPanel() {
 		subScorePanel = new JPanel();
 		subScorePanel.setLayout(new GridBagLayout());
 		EasyGBC c = new EasyGBC();
 
 		List<String> seedList = Mutils.getSeedList(currentNetwork);
+		
+		// create 4 panels: Color, Label, Sign and Score SLIDER
 
-		// create 3 panels: Color, Label, and Filter
+//		-------
+//		COLOR 
+//		-------
 		{
 			JPanel colorPanel = new JPanel();
-			colorPanel.setMinimumSize(new Dimension(25,30));
+			colorPanel.setMinimumSize(new Dimension(25, 30));
 			colorPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Color");
-			lbl.setToolTipText("Color edges with this type seed score.");
+			lbl.setToolTipText("Color edges with the selected metabolic index.");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			colorPanel.add(lbl, d.anchor("north").noExpand());
 
-			for (String seedScore: seedList) {
+			for (String seedScore : seedList) {
 				colorPanel.add(createScoreCheckBox(seedScore), d.down().expandVert());
 			}
 
-			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			// colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			subScorePanel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
 
+//		-------
+//		SEED INDEX TYPE (LABEL)
+//		-------
 		{
 			JPanel labelPanel = new JPanel();
 			labelPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
-			JLabel lbl = new JLabel("Seed Score");
+			JLabel lbl = new JLabel("Seed Index");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			labelPanel.add(lbl, d.anchor("north").noExpand());
-			for (String seedScore: seedList) {
+			for (String seedScore : seedList) {
 				JLabel scoreLabel = new JLabel(seedScore);
 				scoreLabel.setFont(textFont);
-				scoreLabel.setMinimumSize(new Dimension(100,30));
-				scoreLabel.setMaximumSize(new Dimension(100,30));
+				scoreLabel.setMinimumSize(new Dimension(100, 30));
+				scoreLabel.setMaximumSize(new Dimension(100, 30));
 				labelPanel.add(scoreLabel, d.down().expandVert());
 			}
 			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 			subScorePanel.add(labelPanel, c.right().expandVert());
 		}
 
+		
+//		-------------------------------------
+//		SIGN FOR SEEDS  
+//		-------------------------------------
+				
+		{
+		    JPanel signPanel = new JPanel();
+		    signPanel.setMinimumSize(new Dimension(25, 30));
+		    signPanel.setLayout(new GridBagLayout());
+		    EasyGBC d = new EasyGBC();
+
+		    JLabel lbl = new JLabel("Sign");
+		    
+		    lbl.setToolTipText("Choose if the score should be greater or lower than the threshold.");
+		    lbl.setFont(labelFont);
+		    lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+		    signPanel.add(lbl, d.anchor("north").noExpand());
+
+		    // Store selected sign for each seedScore using a JComboBox
+		    for (String seedScore : seedList) {
+
+		        JComboBox<String> combo = new JComboBox<>(new String[]{">", "<"});
+		        combo.setName("sign_" + seedScore); // helpful for later retrieval
+		        signCombos.put(seedScore, combo);
+		        signPanel.add(combo, d.down().expandVert());
+		    }
+
+		    
+		    System.out.println("\n\n\n\n this is my combo: " + signCombos);
+		    
+		    subScorePanel.add(signPanel, c.right().anchor("northwest").expandVert());
+		}
+
+		
+//		-------		
+//		Score SLIDER
+//		-------
 		{
 			JPanel filterPanel = new JPanel();
 			filterPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
-			JLabel lbl = new JLabel("Filters");
-			lbl.setToolTipText("Hide edges  score below the chosen .");
+			JLabel lbl = new JLabel("Seed Score");
+			lbl.setToolTipText("Hide edges with a seed score higher/lowe than the threshold set.");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
-			for (String seedScore: seedList) {
-				JComponent scoreSlider = createFilterSlider3("seed", seedScore, currentNetwork, false, 100.0);
-				scoreSlider.setMinimumSize(new Dimension(100,30));
+
+			for (String seedScore : seedList) {
+				JComponent scoreSlider = createFilterSlider3(
+						"seed", 
+						seedScore, 
+						currentNetwork, 
+						false, 
+						100.0
+				);
+				scoreSlider.setMinimumSize(new Dimension(100, 30));
 				// scoreSlider.setMaximumSize(new Dimension(100,30));
 				filterPanel.add(scoreSlider, d.down().expandBoth());
-				
+
 			}
-			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			
+			// filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			subScorePanel.add(filterPanel, c.right().expandBoth());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Seed Scores", subScorePanel, false, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(
+				iconFont, 
+				"Seed Scores", 
+				subScorePanel, 
+				false, 10
+		);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		collapsablePanel.setAlwaysExpanded();
 		return collapsablePanel;
 
 	}
-    
-    public void updateSeedPanel() {
-    	if (subScorePanel==null) return;
-    	subScorePanel.removeAll();
-    	EasyGBC c = new EasyGBC();
+	
+//	--------------   UPDATE  SEED PANEL  ---------------- 
+	
+	public void updateSeedPanel() {
+
+		if (subScorePanel == null)
+			return;
+		subScorePanel.removeAll();
+		EasyGBC c = new EasyGBC();
 		List<String> seedList = Mutils.getSeedList(currentNetwork);
 
-		// create 3 panels: Color, Label, and Filter
+		// create 4 panels: Color, Greater/Lower, Label, and Filter
+
+//		-------
+//		UPDATE COLOR 
+//		-------
+		
 		{
+			
+			System.out.println("updaTing color"); 
+			
 			JPanel colorPanel = new JPanel();
-			colorPanel.setMinimumSize(new Dimension(25,30));
+			colorPanel.setMinimumSize(new Dimension(25, 30));
 			colorPanel.setLayout(new GridBagLayout());
+
 			EasyGBC d = new EasyGBC();
 			JLabel lbl = new JLabel("Color");
-			lbl.setToolTipText("Color edges with this type seed score.");
+			lbl.setToolTipText("Color edges with the selected metabolic index.");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			colorPanel.add(lbl, d.anchor("north").noExpand());
 
-			for (String seedScore: seedList) {
+			for (String seedScore : seedList) {
 				colorPanel.add(createScoreCheckBox(seedScore), d.down().expandVert());
 			}
-
-			//colorPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			subScorePanel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
 
+		
+//		--------------
+//		UPDATE SEED INDEX TYPE (LABEL) 
+//		--------------
+		
 		{
 			JPanel labelPanel = new JPanel();
 			labelPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
-			JLabel lbl = new JLabel("Seed Score");
+			JLabel lbl = new JLabel("Seed Index");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			labelPanel.add(lbl, d.anchor("north").noExpand());
-			for (String seedScore: seedList) {
+			for (String seedScore : seedList) {
 				JLabel scoreLabel = new JLabel(seedScore);
 				scoreLabel.setFont(textFont);
-				scoreLabel.setMinimumSize(new Dimension(100,30));
-				scoreLabel.setMaximumSize(new Dimension(100,30));
+				scoreLabel.setMinimumSize(new Dimension(100, 30));
+				scoreLabel.setMaximumSize(new Dimension(100, 30));
 				labelPanel.add(scoreLabel, d.down().expandVert());
 			}
 			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 			subScorePanel.add(labelPanel, c.right().expandVert());
 		}
-
+		
+//		--------------
+//		UPDATE SIGN 
+//		--------------
+		
 		{
-			
+		    JPanel signPanel = new JPanel();
+		    signPanel.setMinimumSize(new Dimension(25, 30));
+		    signPanel.setLayout(new GridBagLayout());
+		    EasyGBC d = new EasyGBC();
+
+		    JLabel lbl = new JLabel("Sign");
+		    lbl.setToolTipText("Choose if the score should be greater or lower than the threshold.");
+		    lbl.setFont(labelFont);
+		    lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+		    signPanel.add(lbl, d.anchor("north").noExpand());
+
+		    // Store selected sign for each seedScore using a JComboBox
+		    for (String seedScore : seedList) {
+
+		    	System.out.println("updating filter panel for sign: " + seedScore);
+		    	
+		    	JComboBox<String> combo = new JComboBox<>(new String[]{">", "<"});		        
+		        combo.setName("sign_" + seedScore); // helpful for later retrieval
+		        signCombos.put(seedScore, combo);
+		        signPanel.add(combo, d.down().expandVert());
+		    }
+		    
+		    System.out.println("\n\n\n\n this is my updatedd combo: " + signCombos);
+
+		    subScorePanel.add(signPanel, c.right().anchor("northwest").expandVert());
+		}
+		
+//		-------		
+//		UPDATE Score SLIDER
+//		-------
+		
+		{
+
 			JPanel filterPanel = new JPanel();
 			filterPanel.setLayout(new GridBagLayout());
 			EasyGBC d = new EasyGBC();
-			JLabel lbl = new JLabel("Filters");
-			lbl.setToolTipText("Hide edges  score below the chosen .");
+			JLabel lbl = new JLabel("Seed Score");
+			lbl.setToolTipText("Hide edges score below the chosen.");
 			lbl.setFont(labelFont);
 			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 			filterPanel.add(lbl, d.anchor("north").noExpand());
-			for (String seedScore: seedList) {
-				JComponent scoreSlider = createFilterSlider3("seed", seedScore, currentNetwork, false, 100.0);
-				scoreSlider.setMinimumSize(new Dimension(100,30));
-				// scoreSlider.setMaximumSize(new Dimension(100,30));
-				filterPanel.add(scoreSlider, d.down().expandBoth());
+			for (String seedScore : seedList) {
+
+				JComponent scoreSlider = createFilterSlider3(
+						"seed", 
+						seedScore, 
+						currentNetwork, 
+						false, 
+						100.0
+				);
 				
+				scoreSlider.setMinimumSize(new Dimension(100, 30));
+				filterPanel.add(scoreSlider, d.down().expandBoth());
+
 			}
-			//filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			// filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			subScorePanel.add(filterPanel, c.right().expandBoth());
 		}
 		return;
 	}
-    
-    private JComponent createScoreCheckBox(String seedScore) {
+
+	
+//	----  END OF UPDATE SeedPanel
+	
+	
+	private JComponent createScoreCheckBox(String seedScore) {
+
 		Map<String, Color> colorMap = manager.getChannelColors();
 		JCheckBox cb = new JCheckBox("");
-		cb.setMinimumSize(new Dimension(20,30));
-		cb.setMaximumSize(new Dimension(20,30));
+		cb.setMinimumSize(new Dimension(20, 30));
+		cb.setMaximumSize(new Dimension(20, 30));
 		cb.setBackground(colorMap.get(seedScore));
 		cb.setOpaque(true);
-		if (colors.containsKey(currentNetwork) && colors.get(currentNetwork).containsKey(seedScore) 
-				&& colors.get(currentNetwork).get(seedScore))
+
+		if (
+				colors.containsKey(currentNetwork) && 
+				colors.get(currentNetwork).containsKey(seedScore) && 
+				colors.get(currentNetwork).get(seedScore)
+		)
 			cb.setSelected(true);
-		
+
+		// Listener		
 		cb.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				Boolean selected = Boolean.FALSE;
@@ -501,16 +654,19 @@ public class MGGEdgePanel extends AbstractMggPanel {
 		});
 		return cb;
 	}
-    
-    void doColors() {
+
+	
+	
+	// Function to color edges with a certain type of seed index 
+	void doColors() {
 		Map<String, Boolean> color = colors.get(currentNetwork);
 		Map<String, Color> colorMap = manager.getChannelColors();
 		CyNetworkView view = manager.getCurrentNetworkView();
-		for (CyEdge edge: currentNetwork.getEdgeList()) {
+		for (CyEdge edge : currentNetwork.getEdgeList()) {
 			CyRow edgeRow = currentNetwork.getRow(edge);
 			double max = -1;
 			Color clr = null;
-			for (String lbl: color.keySet()) {
+			for (String lbl : color.keySet()) {
 				if (!color.get(lbl))
 					continue;
 				Double v = edgeRow.get(Mutils.Seed_NAMESPACE, lbl, Double.class);
@@ -525,59 +681,75 @@ public class MGGEdgePanel extends AbstractMggPanel {
 				view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_UNSELECTED_PAINT, clr);
 		}
 	}
-    //------------------------------------------------------------------------------------
 
-    private JPanel createEdgesPanel() {
-        edgesSPanel = new JPanel();
-        edgesSPanel.setLayout(new GridBagLayout());
-        EasyGBC c = new EasyGBC();
+	
+//	---------------------------------------
+	
+//	SECOND PART OF THE PANEL FOR THE SELECTED EDGES
+	
+//	----------------------------------------
 
-        if (currentNetwork != null) {
-            List < CyEdge > edges = CyTableUtil.getEdgesInState(currentNetwork, CyNetwork.SELECTED, true);
-            for (CyEdge edge: edges) {
-                JPanel newPanel = createEdgePanel(edge);
-                newPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+	
+	
+	// ------------------------------------------------------------------------------------
 
-                edgesSPanel.add(newPanel, c.anchor("west").down().expandHoriz());
-            }
-        }
-        edgesSPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected edges", edgesSPanel, false, 10);
-        collapsablePanel.setAlwaysExpanded();
-        collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
-        return collapsablePanel;
-    }
+	private JPanel createEdgesPanel() {
+		
+		edgesSPanel = new JPanel();
+		edgesSPanel.setLayout(new GridBagLayout());
+		EasyGBC c = new EasyGBC();
+
+		if (currentNetwork != null) {
+			List<CyEdge> edges = CyTableUtil.getEdgesInState(currentNetwork, CyNetwork.SELECTED, true);
+			for (CyEdge edge : edges) {
+				JPanel newPanel = createEdgePanel(edge);
+				newPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+				edgesSPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+			}
+		}
+		edgesSPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected edges", edgesSPanel, false, 10);
+		collapsablePanel.setAlwaysExpanded();
+		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		return collapsablePanel;
+	}
 
 
-    private void updateEdgesPanel() {
-        if (edgesSPanel == null) return;
-        edgesSPanel.removeAll();
-        EasyGBC c = new EasyGBC();
+	
+	private void updateEdgesPanel() {
+		if (edgesSPanel == null)
+			return;
+		edgesSPanel.removeAll();
+		EasyGBC c = new EasyGBC();
 
-        List < CyEdge > edges = CyTableUtil.getEdgesInState(currentNetwork, CyNetwork.SELECTED, true);
+		List<CyEdge> edges = CyTableUtil.getEdgesInState(currentNetwork, CyNetwork.SELECTED, true);
 
-        if (edges.size() > 50) {
-            return;
-        }
-        for (CyEdge edge: edges) {
-            JPanel newPanel = createEdgePanel(edge);
-            newPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            edgesSPanel.add(newPanel, c.anchor("west").down().expandHoriz());
-        }
-        return;
-    }
+		if (edges.size() > 50) {
+			return;
+		}
+		for (CyEdge edge : edges) {
+			JPanel newPanel = createEdgePanel(edge);
+			newPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			edgesSPanel.add(newPanel, c.anchor("west").down().expandHoriz());
+		}
+		return;
+	}
 
-    
-    //  method to get taxon name from node table
-    private String getTaxonName(CyTable nodeTable, CyNode node) {
+	// method to get taxon name from node table
+	
+	
+	private String getTaxonName(CyTable nodeTable, CyNode node) {
         if (nodeTable.getColumn("taxonomy::species") != null) {
             Object taxonValue = nodeTable.getRow(node.getSUID()).get("taxonomy::species", String.class);
             return taxonValue != null ? taxonValue.toString() : null;
         }
         return null;
     }
-    
-    private JPanel createEdgePanel(CyEdge edge) {
+
+
+	//	MAIN EDGE PANEL OF THE SELECTED EDGES, e.g. below the filters GUI
+	private JPanel createEdgePanel(CyEdge edge) {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -592,7 +764,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         gbc.anchor = GridBagConstraints.WEST; // Left-align 
         gbc.insets = new Insets(5, 5, 5, 5); // 5pix marg
 
-        EasyGBC c = new EasyGBC();
+//        EasyGBC c = new EasyGBC();
 
         CyNetwork currentNetwork = manager.getCurrentNetwork();
         if (currentNetwork == null) return panel;
@@ -622,10 +794,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
         gbc.gridy++;
 
         Object nameValue = (edgeTable.getColumn("shared name") != null) ? edgeTable.getRow(edge.getSUID()).get("shared name", edgeTable.getColumn("shared name").getType()) : null;
-       // JTextArea nameArea = new JTextArea("Edge Name: " + (nameValue != null ? nameValue.toString() : "null"));
-      //  setJTextAreaAttributes(nameArea);
-       // panel.add(nameArea, gbc);
-        //gbc.gridy++;
 
         // Split the name to get Donor and Beneficiary
         String[] nameParts = nameValue != null ? nameValue.toString().split(" \\(completed by\\) | \\(cooccurs with\\) | \\(depletes\\)") : new String[] {
@@ -682,10 +850,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
             panel.add(competitionSeedArea, gbc);
             gbc.gridy++;
        }
+
         
-        
-        
-  
      // Create a sub-panel  for the complement input components
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
@@ -743,21 +909,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         Border etchedBorder = BorderFactory.createEtchedBorder();
         Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
         
-        
-       // if (cooperationSeedValue != null) {
-         //   JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
-        //    cooperationLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        //    PathwaysPanel.add(cooperationLabel, pathgbc);
-        //    pathgbc.gridy++;
-     //   }
-
-        //if (competitionSeedValue != null) {
-         //   JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
-         //   competitionLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-         //   PathwaysPanel.add(competitionLabel, pathgbc);
-          //  pathgbc.gridy++;
-      //  }
-        
+                
         
         boolean hasPathwayComplementarities = false; // Flag to track
  
@@ -785,7 +937,9 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	
                 	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
                 	DefaultTableModel tableM = new DefaultTableModel() {
-                		 @Override
+                		 private static final long serialVersionUID = 1L;
+
+						@Override
                 		    public Class<?> getColumnClass(int columnIndex) {
                 		        switch (columnIndex) {
                 		            //case 0: return SwingLink.class; // For Kegg Module links
@@ -977,7 +1131,9 @@ public class MGGEdgePanel extends AbstractMggPanel {
             	
             	//DefaultTableModel tableM = new DefaultTableModel(new String[]{"Kegg Module", "Complement", "Module Alternative", "Color Map"}, 0);
             	DefaultTableModel tableM = new DefaultTableModel() {
-            		 @Override
+            		 private static final long serialVersionUID = 1L;
+
+					@Override
             		    public Class<?> getColumnClass(int columnIndex) {
             		        switch (columnIndex) {
             		            //case 2: return SwingLink.class; // For Kegg Module links
@@ -1121,65 +1277,69 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
      }
 
-//    private void showSelectableLinkDialog(String linkText) {
-//	    JTextField textField = new JTextField(linkText);
-//	    textField.setEditable(false);
-//	    textField.setBorder(null);
-//	    JOptionPane.showMessageDialog(null, textField, "Copy Link", JOptionPane.INFORMATION_MESSAGE);
-//	}
-    
-    
 
+	
+	
+//	---------------------------------------
+	
+//	END OF SECOND PART OF THE PANEL FOR THE SELECTED EDGES
+	
+//	----------------------------------------	
+	
+	
 
-    //-----------------------------------------------------------------------------
+	
+//	---------------------------------------
+	
+//	BACK TO FILTERING AND THE UPPER PART OF THE PANEL
+	
+//	----------------------------------------	
 
-
-    void undoFilters() {
-        CyNetworkView view = manager.getCurrentNetworkView();
-        if (view != null) {
-            for (View < CyEdge > edge: view.getEdgeViews()) {
-                edge.clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
-            }
-
-        }
-    }
-
-
-
+	
+	void undoFilters() {
+	    CyNetworkView view = manager.getCurrentNetworkView();
+	    if (view != null) {
+	        for (View < CyEdge > edge: view.getEdgeViews()) {
+	            edge.clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
+	        }
+	
+	    }
+	}
+	
+	    @Override
+	double initFilter(String type, String label) {
+	
+	    	double minValue = 1.0; 
+	    	
+	    	for (CyEdge edge: currentNetwork.getEdgeList()) {
+	            CyRow edgeRow = currentNetwork.getRow(edge);
+	            
+	            Double edgeScore = edgeRow.get(type, label, Double.class); // Get the edge weight 
+	            // Skip this edge if the score is null.
+	            if (edgeScore == null) {
+	                minValue = -1.0;
+	                break;
+	            }
+	
+	            // Update minValue if a lower value is found.
+	            else if (edgeScore < minValue) {
+	                minValue = edgeScore.doubleValue();
+	            }
+	        }
+	        return minValue;
+	    }
+	
+	
 
     @Override
-
-    double initFilter(String type, String label) {
-
-
-        double minValue = 1.0; 
-        for (CyEdge edge: currentNetwork.getEdgeList()) {
-            CyRow edgeRow = currentNetwork.getRow(edge);
-            Double edgeScore = edgeRow.get(type, label, Double.class); // Get the edge weight 
-            // Skip this edge if the score is null.
-            if (edgeScore == null) {
-                minValue = -1.0;
-                break;
-            }
-
-            // Update minValue if a lower value is found.
-            else if (edgeScore < minValue) {
-                minValue = edgeScore.doubleValue();
-            }
-        }
-
-        return minValue;
-            
-         
-    }
-
-
-	@Override
 	double initFilterSeed(String type, String label) {
-		double minValue = 1.0;
+	
+    	double minValue = 1.0;
+	
 		for (CyEdge edge: currentNetwork.getEdgeList()) {
-            CyRow edgeRow = currentNetwork.getRow(edge);
 
+			CyRow edgeRow = currentNetwork.getRow(edge);
+			
             Double v = edgeRow.get(type, label, Double.class);
             if (v == null) {
                 minValue = 0.0;
@@ -1187,52 +1347,109 @@ public class MGGEdgePanel extends AbstractMggPanel {
             } else if (v < minValue) {
                 minValue = v.doubleValue();
             }
-        }
-        return minValue;
+        
+		
+		}
+
+		return minValue;
 
 	}
 
 
+
+//	---------------------------------------------------
+	@Override
+	String initSign(String type, String label) {
+
+		String v = ">";
+		
+        return v;
+	}
+	
+//	---------------------------------------------------
+	
+	
+	
+	
+	
     @Override
     void doFilter(String type) {
-
-        // Check if the network and filter type exists
+    	
+    
+    	// SIGNS
+    	List<String> seedList = Mutils.getSeedList(currentNetwork);
+    	Map<String, String> signMap = filterSign.get(currentNetwork).get(type);
+    	for (String seedScore : seedList) {
+    	    JComboBox<String> combo = signCombos.get(seedScore);
+    	    if (combo != null) {
+    	        String selectedSign = (String) combo.getSelectedItem();
+    	        System.out.println("Selected sign for " + seedScore + ": " + selectedSign);    	        
+    	        // You can store it in your `filterSign` map if needed:
+    	        
+    	        if (signMap != null) {
+    	            signMap.put(seedScore, selectedSign);
+    	        }
+    	    }
+    	}    	
+    	System.out.println("can i print a map?" + signMap);
+    	
+        // THRESHOLDS --- Check if the network and filter type exists
         Map < String, Double > filter = filters.get(currentNetwork).get(type);
-        CyNetworkView view = manager.getCurrentNetworkView();
-        CyNetwork net = view.getModel();
-
-        // double weightThreshold = scoreSlider.getValue() / 100.0;
-        // double weightThreshold = filters.get(currentNetwork).get(type).get("weight");
+        for (Map.Entry<String, Double> entry : filter.entrySet()) {
+	      System.out.println("Label: " + entry.getKey() + ", Score: " + entry.getValue());
+        }
 
         // Iterate through each edge in the current network.
+        CyNetworkView view = manager.getCurrentNetworkView();
+
         for (CyEdge edge: currentNetwork.getEdgeList()) {
-            CyRow edgeRow = currentNetwork.getRow(edge);
+
+        	CyRow edgeRow = currentNetwork.getRow(edge);
 
             boolean show = true;
-            for (String lbl: filter.keySet()) {
-                Double v = edgeRow.get(type, lbl, Double.class);
-               // double nv = filter.get(lbl);
+            
+            for (String lbl: filter.keySet()) {            	
+            	
+            	Double v = edgeRow.get(type, lbl, Double.class);
                 Double nv = (filter.get(lbl));
-                if ((v == null && nv > 0) || (v != null && v < nv)) {
+
+                // If the value is null we need to keep the edge as shown, thus we make it 100.
+                double actualValue = (v == null) ? 100.0 : v;
+
+                System.out.println(">> lbl: " + lbl);
+                System.out.println(">> Actual value: " + actualValue  );
+                System.out.println("~~ My sign: " + signMap.get(lbl));
+                
+//                if (actualValue < nv) {	
+//                    show = false;
+//                    break;
+//                }
+
+                String sign = signMap.get(lbl);
+                
+                if (sign.equals(">") && actualValue < nv) {
+                	System.out.println("Mute edges with score higher than threshold");
+                    show = false;
+                    break;
+                } else if (sign.equals("<") && actualValue > nv) {
+                	System.out.println("Mute edges with score lower than threshold");
                     show = false;
                     break;
                 }
+                
+                
+                
             }
-
-            //View < CyEdge > edgeView = view.getEdgeView(edge);
-            //if (edgeView == null) continue;
 
             if (show) {
                 // Make the edge visible
                 view.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);
-                //view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
-                System.out.println("Edge " + edge + " is set to visible");
+
             } else {
-                // Hide the edge and deselect it if it doesn't meet the criteria
-                view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
-               // net.getRow(edge).set(CyNetwork.SELECTED, false);
+
+            	// Hide the edge and deselect it if it doesn't meet the criteria
+                view.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);              
                 view.getModel().getRow(edge).set(CyNetwork.SELECTED, false);
-                System.out.println("Edge " + edge + " is hidden");
 
             }
         }
@@ -1241,50 +1458,57 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 
 
-    /*
-     * public void updateSubPanel() { subScorePanel.removeAll(); EasyGBC d = new
-     * EasyGBC(); subScorePanel.add(createSubScorePanel(),
-     * d.anchor("west").expandHoriz()); subScorePanel.add(new JPanel(),
-     * d.down().anchor("west").expandBoth()); }
-     */
     
-	
-
     public void networkChanged(CyNetwork newNetwork) {
-        this.currentNetwork = newNetwork;
-        
-        if (currentNetwork==null) {
-        	if (subScorePanel !=null)
-        		subScorePanel.removeAll();
-        	return;
-        }
-        
+
+    	
+    	System.out.println("network was changed !");
+    	
+    	
+    	this.currentNetwork = newNetwork;
+
         if (currentNetwork == null) {
-            if (WeightPanel != null)
-                WeightPanel.removeAll();
+            if (subScorePanel != null) subScorePanel.removeAll();
+            if (WeightPanel != null) WeightPanel.removeAll();
             return;
         }
 
+        // Initialize filters for the current network
         if (!filters.containsKey(currentNetwork)) {
-            filters.put(currentNetwork, new HashMap < > ());
-            filters.get(currentNetwork).put("microbetag", new HashMap < > ());
+            Map<String, Map<String, Double>> typeMap = new HashMap<>();
+            typeMap.put("microbetag", new HashMap<>());
+            typeMap.put(Mutils.Seed_NAMESPACE, new HashMap<>());
+            filters.put(currentNetwork, typeMap);
         }
 
-        if (!colors.containsKey(currentNetwork)) {
-			colors.put(currentNetwork, new HashMap<>());
-		}
-        
-        if (!filters.containsKey(currentNetwork)) {
-            filters.put(currentNetwork, new HashMap < > ());
-            filters.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap < > ());
+        // Initialize filter signs
+        if (!filterSign.containsKey(currentNetwork)) {
+            Map<String, Map<String, String>> signMap = new HashMap<>();
+            signMap.put(Mutils.Seed_NAMESPACE, new HashMap<>());
+            filterSign.put(currentNetwork, signMap);
         }
-        
-        
+
+        // Initialize colors
+        if (!colors.containsKey(currentNetwork)) {
+            colors.put(currentNetwork, new HashMap<>());
+        }
+
         updateSeedPanel();
         updateWeightPanelPanel();
         updateEdgesPanel();
     }
 
+    
+ 
+    
+    public String getSelectedSign(String label) {
+        JComboBox<String> combo = signCombos.get(label);
+        return (combo != null) ? (String) combo.getSelectedItem() : ">";
+    }
+    
+    
+    
+    
     public void selectedEdges(Collection < CyEdge > edges) {
 
         edgesSPanel.removeAll();
