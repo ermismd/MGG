@@ -50,8 +50,8 @@ public abstract class AbstractMggPanel extends JPanel {
 
 		IconManager iconManager = manager.getService(IconManager.class);
 		iconFont  = iconManager.getIconFont(17.0f);
-		labelFont = new Font("Arial", Font.BOLD, 12);
-		textFont  = new Font("Arial", Font.PLAIN, 11);
+		labelFont = new Font("SansSerif", Font.BOLD, 12);
+		textFont  = new Font("SansSerif", Font.PLAIN, 11);
 
 		filters = new HashMap<>();
 		filters.put(currentNetwork, new HashMap<>());			
@@ -88,11 +88,8 @@ public abstract class AbstractMggPanel extends JPanel {
 			value = filters.get(network).get(type).get(text);
 			System.out.println("value := " + value);
 			System.out.println("text := "  + text);
-			System.out.println("I AM INTO THE INITFILE FOR COOCCURRENCE IN ABSTTRACTT");
 	
 		} else {
-
-			System.out.println("I AM INTO THE INITFILE FOR COOCCURRENCE IN ABSTTRACTT");
 			// Attempt to initialize it
 			value = initFilter(type, text);
 		}

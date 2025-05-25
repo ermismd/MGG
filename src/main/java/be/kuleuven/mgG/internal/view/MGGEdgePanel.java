@@ -147,6 +147,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 	}
 
 	private void init() {
+
 		setLayout(new GridBagLayout());
 
 		EasyGBC c = new EasyGBC();
@@ -166,8 +167,11 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 			mainPanel.add(new JLabel(""), d.down().anchor("west").expandBoth());
 		}
-		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPane = new JScrollPane(
+				mainPanel, 
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+		);
 		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(scrollPane, c.down().anchor("west").expandBoth());
 	}
@@ -252,7 +256,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 		controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		controlPanel.setMaximumSize(new Dimension(100, 100));
-
+		
 		return controlPanel;
 
 	}
@@ -909,9 +913,15 @@ public class MGGEdgePanel extends AbstractMggPanel {
 			}
 		}
 		edgesSPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected edges", edgesSPanel, false, 12);
-		collapsablePanel.setAlwaysExpanded();
+		CollapsablePanel collapsablePanel = new CollapsablePanel(
+				iconFont, 
+				"Selected edges", 
+				edgesSPanel, 
+				true, 
+				12
+		);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
+		collapsablePanel.toggleSelection();
 		return collapsablePanel;
 	}
 
@@ -1041,7 +1051,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
             gbc.gridy++;
         }
 
-//        Object competitionSeedValue = (edgeTable.getColumn("seed::competition") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition", edgeTable.getColumn("seed::competition").getType()) : null;
+
         Object competitionSeedValue;
         if (edgeTable.getColumn("seed::competition") != null) {
 
@@ -1065,7 +1075,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         // Label 
         JLabel complementLabel = new JLabel("Search KEGG term: ");
-        complementLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        complementLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
         inputPanel.add(complementLabel);
 
         // JTextField for input
@@ -1270,8 +1280,16 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
                     newPanel.add(scrollPane, BorderLayout.CENTER);
 
-                	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 12);
-                	collapsablePanel .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+                	CollapsablePanel collapsablePanel = new CollapsablePanel(
+                			iconFont, 
+                			panelTitle, 
+                			newPanel, 
+                			true, 
+                			12
+                	);
+                	collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+                	collapsablePanel.toggleSelection();
+                	
                 	PathwaysPanel.add(collapsablePanel, pathgbc);
                 	pathgbc.gridy++;
                 }
@@ -1280,9 +1298,18 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         
         if (hasPathwayComplementarities) {
-			CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 12);
+			CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(
+					iconFont, 
+					"Pathway Complementarities", 
+					PathwaysPanel, 
+					true, 
+					12
+			);
 			PathwaysCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+			PathwaysCollapsablePanel.toggleSelection();
+
 			showseedpanel=false;
+
 			panel.add(PathwaysCollapsablePanel, gbc);
 			gbc.gridy++;
      
@@ -1480,8 +1507,15 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 
                 newPanel.add(scrollPane, BorderLayout.CENTER);
 
-            	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 12);
+            	CollapsablePanel collapsablePanel = new CollapsablePanel(
+            			iconFont, 
+            			panelTitle, 
+            			newPanel, 
+            			true, 
+            			12
+            	);
             	collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+            	collapsablePanel.toggleSelection();
             	SeedComplementaritiesPanel.add(collapsablePanel, seedgbc);
             	seedgbc.gridy++;
             }
@@ -1490,8 +1524,15 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
     
 	if(hasSeedComplementarities) {
-		CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 12);
-		SeedCollapsablePanel  .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+		CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(
+				iconFont, 
+				"Seed Complementarities", 
+				SeedComplementaritiesPanel, 
+				true, 
+				12
+		);
+		SeedCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+		SeedCollapsablePanel.toggleSelection();
 		panel.add(SeedCollapsablePanel , gbc);
 		gbc.gridy++;
 		
@@ -1501,10 +1542,10 @@ public class MGGEdgePanel extends AbstractMggPanel {
    
         String edgeId = (nameValue != null) ? nameValue.toString() : "Selected Edges";
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, edgeId, panel, false, 12);
+        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, edgeId, panel, true, 12);
         
         collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
-        collapsablePanel.setAlwaysExpanded();
+        collapsablePanel.toggleSelection();
 
         return collapsablePanel;
 

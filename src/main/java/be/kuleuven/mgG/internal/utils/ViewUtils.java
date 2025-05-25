@@ -17,7 +17,7 @@ public class ViewUtils {
 	       // textArea.setWrapStyleWord(true);
 	        textArea.setLineWrap(true);
 	        textArea.setEditable(false);
-	        textArea.setFont(new Font("Arial", Font.PLAIN, 11));
+	        textArea.setFont(new Font("SansSerif", Font.PLAIN, 11));
 	        textArea.setOpaque(false);
 	        textArea.setBorder(null);
 	        textArea.setPreferredSize(new Dimension(400, 15));
@@ -36,13 +36,13 @@ public class ViewUtils {
 		    // Bold style
 		    Style boldStyle = textPane.addStyle("Bold", null);
 		    StyleConstants.setBold(boldStyle, true);
-		    StyleConstants.setFontFamily(boldStyle, "Arial");
+		    StyleConstants.setFontFamily(boldStyle, "SansSerif");
 		    StyleConstants.setFontSize(boldStyle, 11);
 		
 		    // Plain style
 		    Style plainStyle = textPane.addStyle("Plain", null);
 		    StyleConstants.setBold(plainStyle, false);
-		    StyleConstants.setFontFamily(plainStyle, "Arial");
+		    StyleConstants.setFontFamily(plainStyle, "SansSerif");
 		    StyleConstants.setFontSize(plainStyle, 11);
 		
 		    int colonIndex = labelText.indexOf(":");
