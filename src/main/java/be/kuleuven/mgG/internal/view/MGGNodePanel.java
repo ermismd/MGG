@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -68,7 +69,6 @@ public class MGGNodePanel extends AbstractMggPanel {
     private boolean updating = false;
     private JPanel nodesPanel = null;
     private Color defaultBackground;
-    //private JPanel PhendbScPanel = null;
 
     private JPanel PhenDbFilterPanel = null;
     
@@ -165,39 +165,6 @@ public class MGGNodePanel extends AbstractMggPanel {
         }
         
         
-
-//        {
-//            highlightBox = new JCheckBox("Highlight first neighbors");
-//            highlightBox.setFont(labelFont);
-//            highlightBox.addItemListener(new ItemListener() {
-//                public void itemStateChanged(ItemEvent e) {
-//                    if (e.getStateChange() == ItemEvent.SELECTED) {
-//                        manager.setHighlightNeighbors(true);
-//                        doHighlight(manager.getCurrentNetworkView());
-//                    } else {
-//                        manager.setHighlightNeighbors(false);
-//                        clearHighlight(manager.getCurrentNetworkView());
-//                    }
-//                }
-//            });
-//            
-//            upperPanel.add(highlightBox, upperGBC.anchor("northwest").noExpand());
-//        }
-        
-//    	{
-//			showSingletons = new JCheckBox("Singletons");
-//			showSingletons.setFont(labelFont);
-//			showSingletons.setSelected(true);
-//			showSingletons.addItemListener(new ItemListener() {
-//				public void itemStateChanged(ItemEvent e) {
-//					if (updating) return;
-//					manager.setShowSingletons(showSingletons.isSelected());
-//					Mutils.hideSingletons(manager.getCurrentNetworkView(), showSingletons.isSelected());
-//				}
-//			});
-//			upperPanel.add(showSingletons, upperGBC.right().insets(0,10,0,0).noExpand());
-//		}
-//        
         {
 	        showSingletons = new JButton(Hide_Singletons);
 	        showSingletons.setToolTipText("Press to hide nodes that have no edges");
@@ -223,28 +190,6 @@ public class MGGNodePanel extends AbstractMggPanel {
 		layout2.setVgap(0);
 		lowerPanel.setLayout(layout2);
 		
-//    	{
-//			showMspecies = new JCheckBox("Show MSpecies");
-//			showMspecies.setFont(labelFont);
-//			showMspecies.addItemListener(new ItemListener() {
-//					public void itemStateChanged(ItemEvent e) {
-//						if (updating) return;
-//						manager.setShowMspecies(showMspecies.isSelected());
-//						Mutils.doShowMspecies(manager.getCurrentNetworkView(),showMspecies.isSelected());
-//						
-////						 if (e.getStateChange() == ItemEvent.SELECTED) {
-////							// manager.setShowMspecies(true);
-////					            doShowMspecies(true); // Show MSpecies nodes
-////					        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-////					        	//manager.setShowMspecies(false);
-////					            doShowMspecies(false); // Hide MSpecies nodes
-////					        }
-//			}
-//			});		
-//			lowerPanel.add(showMspecies);
-//		}
-		
-		 
 		
 		{
 		showMspecies = new JButton("Show Species");
@@ -333,7 +278,7 @@ public class MGGNodePanel extends AbstractMggPanel {
             }
         }
         nodesPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected nodes", nodesPanel, false, 10);
+        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected nodes", nodesPanel, false, 12);
         collapsablePanel.setAlwaysExpanded();
         collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
         return collapsablePanel;
@@ -375,6 +320,7 @@ public class MGGNodePanel extends AbstractMggPanel {
         // Set constraints
         gbc.gridx = 0; // Column 0
         gbc.gridy = 0; // Start from row 0
+        gbc.ipady = 13;  // Like in the edge case, sets the height of a row in the table with the node's credentials, in pixels.
         gbc.anchor = GridBagConstraints.WEST; // Left-align 
         gbc.insets = new Insets(5, 5, 5, 5); // 5pixel marg
 
@@ -389,22 +335,34 @@ public class MGGNodePanel extends AbstractMggPanel {
 
 
         Object taxonValue = (nodeTable.getColumn("microbetag::taxon") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxon", nodeTable.getColumn("microbetag::taxon").getType()) : null;
-        JTextArea taxonArea = new JTextArea("Taxon Name: " + (taxonValue != null ? taxonValue.toString() : "null"));
-        ViewUtils.setJTextAreaAttributes(taxonArea);
-        panel.add(taxonArea, gbc);
+//        JTextArea taxonArea = new JTextArea("Taxon Name: " + (taxonValue != null ? taxonValue.toString() : "null"));
+//        ViewUtils.setJTextAreaAttributes(taxonArea);
+        JTextPane taxonPane = ViewUtils.createStyledLabelEdges(
+        		"Taxon Name: " + (taxonValue != null ? taxonValue.toString() : "null")
+        );
+        panel.add(taxonPane, gbc);
         gbc.gridy++;
+
+        
         
         Object idValue = (nodeTable.getColumn("name") != null) ? nodeTable.getRow(node.getSUID()).get("name", nodeTable.getColumn("name").getType()) : null;
-        JTextArea idArea = new JTextArea("Sequence ID: " + (idValue != null ? idValue.toString() : "null"));
-        ViewUtils.setJTextAreaAttributes(idArea);
-        panel.add(idArea, gbc);
+        
+        JTextPane idPane = ViewUtils.createStyledLabelEdges(
+        		"Sequence ID: " + (idValue != null ? idValue.toString() : "null")
+        );
+//        JTextArea idArea = new JTextArea("Sequence ID: " + (idValue != null ? idValue.toString() : "null"));
+//        ViewUtils.setJTextAreaAttributes(idArea);
+        panel.add(idPane, gbc);
         gbc.gridy++;
         
         
         Object taxonomyValue = (nodeTable.getColumn("microbetag::taxonomy") != null) ? nodeTable.getRow(node.getSUID()).get("microbetag::taxonomy", nodeTable.getColumn("microbetag::taxonomy").getType()) : null;
-        JTextArea taxonomyArea = new JTextArea("Taxonomy: " + (taxonomyValue != null ? taxonomyValue.toString() : "null"));
-        ViewUtils.setJTextAreaAttributes(taxonomyArea);
-        panel.add(taxonomyArea, gbc);
+//        JTextArea taxonomyArea = new JTextArea("Taxonomy: " + (taxonomyValue != null ? taxonomyValue.toString() : "null"));
+//        ViewUtils.setJTextAreaAttributes(taxonomyArea);
+        JTextPane taxonomyPane = ViewUtils.createStyledLabelEdges(
+        		"Taxonomy: " + (taxonomyValue != null ? taxonomyValue.toString() : "null")
+        );
+        panel.add(taxonomyPane, gbc);
         gbc.gridy++;
 
 
@@ -615,7 +573,7 @@ public class MGGNodePanel extends AbstractMggPanel {
 //        gbc.gridy++;
 
         if (hasTruePresentValues) {
-            CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, true, 10);
+            CollapsablePanel phenDBCollapsablePanel = new CollapsablePanel(iconFont, "phenDB attributes", phenDBPanel, true, 12);
             phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
             // Add the CollapsablePanel to the main panel
@@ -656,7 +614,7 @@ public class MGGNodePanel extends AbstractMggPanel {
             }
         }
         if (hasFaprotaxTerms) {
-            CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, true, 10);
+            CollapsablePanel faprotaxCollapsablePanel = new CollapsablePanel(iconFont, "Faprotax Attributes", faprotaxPanel, true, 12);
             faprotaxCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 
             // Add the CollapsablePanel to the main panel
@@ -676,7 +634,7 @@ public class MGGNodePanel extends AbstractMggPanel {
         String nodeId = (idValue != null) ? idValue.toString() : "Selected Nodes";
 
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, nodeId, panel, false, 10);
+        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, nodeId, panel, false, 12);
         collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
         collapsablePanel.setAlwaysExpanded();
 
@@ -770,7 +728,7 @@ public class MGGNodePanel extends AbstractMggPanel {
         }
         
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "PhenDb/Faprotax Filters", PhenDbFilterPanel, true, 10);
+        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "PhenDb/Faprotax Filters", PhenDbFilterPanel, true, 12);
         collapsablePanel.setToolTipText("Show nodes that have Phendb and Faprotax attributes");
         collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
         return collapsablePanel;              

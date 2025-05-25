@@ -43,13 +43,15 @@ public abstract class AbstractMggPanel extends JPanel {
 	
 
 	public AbstractMggPanel(final MGGManager manager) {
-		this.manager = manager;
-		this.openBrowser = manager.getService(OpenBrowser.class);
+
+		this.manager        = manager;
+		this.openBrowser    = manager.getService(OpenBrowser.class);
 		this.currentNetwork = manager.getCurrentNetwork();
+
 		IconManager iconManager = manager.getService(IconManager.class);
-		iconFont = iconManager.getIconFont(17.0f);
-		labelFont = new Font("Arial", Font.BOLD, 10);
-		textFont = new Font("Arial", Font.PLAIN, 10);
+		iconFont  = iconManager.getIconFont(17.0f);
+		labelFont = new Font("Arial", Font.BOLD, 12);
+		textFont  = new Font("Arial", Font.PLAIN, 11);
 
 		filters = new HashMap<>();
 		filters.put(currentNetwork, new HashMap<>());			
@@ -76,9 +78,8 @@ public abstract class AbstractMggPanel extends JPanel {
 			String type, String text, CyNetwork network, boolean labels, double max
 	) {
 
-
 		double value = 0.0;
-		
+
 		if (filters.containsKey(network) && 
 			filters.get(network).containsKey(type) && 
 		    filters.get(network).get(type).containsKey(text)
@@ -87,13 +88,16 @@ public abstract class AbstractMggPanel extends JPanel {
 			value = filters.get(network).get(type).get(text);
 			System.out.println("value := " + value);
 			System.out.println("text := "  + text);
+			System.out.println("I AM INTO THE INITFILE FOR COOCCURRENCE IN ABSTTRACTT");
 	
 		} else {
 
+			System.out.println("I AM INTO THE INITFILE FOR COOCCURRENCE IN ABSTTRACTT");
 			// Attempt to initialize it
 			value = initFilter(type, text);
 		}
 
+		
 		Box box = Box.createHorizontalBox();
 		
 		if (labels) {
@@ -126,54 +130,13 @@ public abstract class AbstractMggPanel extends JPanel {
 		return box;
 	}
 	
-	// I think this is deprecated
-	protected JComponent createFilterSlider2(
-			String type, String text, CyNetwork network, boolean labels, double max
-	) {
-		double value = 0.0;
-		if (filters.containsKey(network) && 
-		    filters.get(network).containsKey(type) && 
-		    filters.get(network).get(type).containsKey(text)) {
-			value = filters.get(network).get(type).get(text);
-			// System.out.println("value = "+value);
-		} else {
-			value = initFilter(type, text);
-		}
-		Box box = Box.createHorizontalBox();
-		if (labels) {
-			JLabel label = new JLabel(text);
-			label.setFont(labelFont);
-			label.setPreferredSize(new Dimension(100,20));
-			box.add(Box.createRigidArea(new Dimension(10,0)));
-			box.add(label);
-			box.add(Box.createHorizontalGlue());
-		}
-		 // Assume max is positive and represents the maximum value for the slider.
-	    // Slider's range is from -100 to max * 100, assuming max is also a double.
-		JSlider slider;
-		slider = new JSlider(0,(int)max,(int)(value*100));
-		slider.setToolTipText("Filter ranges between 0.0 and " + max/100);
-		slider.setPreferredSize(new Dimension(150,20));
-		box.add(slider);
-		// box.add(Box.createHorizontalGlue());
-		JTextField textField;
-		textField = new JTextField(String.format("%.2f",value),4);
-		textField.setPreferredSize(new Dimension(30,20));
-		textField.setMaximumSize(new Dimension(30,20));
-		textField.setFont(textFont);
-		box.add(textField);
-		// Hook it up
-		addChangeListeners(type, text, slider, textField, max);
-		box.setAlignmentX(Component.LEFT_ALIGNMENT);
-		return box;
-	}
 
 	// SEED SLIDER !
 	protected JComponent createFilterSlider3(
 			String type, String text, CyNetwork network, boolean labels, double max
 	) {
 		double value = 0.0;
-		String svalue = ">";
+
 		if (
 			filters.containsKey(network) && 
 			filters.get(network).containsKey(type) && 
@@ -182,22 +145,10 @@ public abstract class AbstractMggPanel extends JPanel {
 			value = filters.get(network).get(type).get(text);
 	
 		} else {
+			
 			value = initFilterSeed(type, text);
 		}
 
-		if (
-				filterSign.containsKey(network) &&
-				filterSign.get(network).containsKey(type) && 
-				filterSign.get(network).get(type).containsKey(text)
-		) {
-			svalue = filterSign.get(network).get(type).get(text);
-			
-		} else {
-
-			svalue = initSign(type, text);
-		}
-		
-		System.out.println("THTIS IS MY SIGN in absttractt:" + svalue);
 		
 		Box box = Box.createHorizontalBox();
 		if (labels) {
@@ -245,9 +196,10 @@ public abstract class AbstractMggPanel extends JPanel {
 	        	double v= ( (double)weightThreshold ) / 100.0;		            
 	            
 	        	textField.setText(String.format("%.2f",v));
-	            
+	            	        	
 	        	addFilter(type, label, v);
 
+	        	// Perform the filtering function
 	            doFilter(type);  
 		            
 		        }
@@ -267,6 +219,8 @@ public abstract class AbstractMggPanel extends JPanel {
 
 
 	protected void addFilter(String type, String label, double value) {
+		
+		System.out.println("add filer for " + type + " and label: " + label);
 		Map<String,Double> filter = filters.get(currentNetwork).get(type);
 		filter.put(label, value);
 
@@ -275,7 +229,6 @@ public abstract class AbstractMggPanel extends JPanel {
 	}
 
 	
-
 	protected void addSign(String type, String label, String sign) {
 	    Map<String, String> filter = filterSign.get(currentNetwork).get(type);
 	    filter.put(label, sign);
