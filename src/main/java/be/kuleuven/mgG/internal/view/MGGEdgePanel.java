@@ -42,7 +42,7 @@ import javax.swing.JTextField;
 
 import javax.swing.Timer;
 import javax.swing.border.Border;
-
+import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 import org.cytoscape.model.CyColumn;
@@ -63,6 +63,8 @@ import be.kuleuven.mgG.internal.utils.SwingLink;
 import be.kuleuven.mgG.internal.utils.SwingLinkCellRenderer;
 import be.kuleuven.mgG.internal.utils.ViewUtils;
 import be.kuleuven.mgG.internal.utils.LogUtils;
+import java.util.ArrayList;
+
 
 public class MGGEdgePanel extends AbstractMggPanel {
 
@@ -82,6 +84,9 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 	private JPanel edgesSPanel = null;
 	private Map<CyNetwork, Map<String, Boolean>> colors;
+	
+	// MY MAP FOR SIGNS 
+	private Map<String, JComboBox<String>> signCombos = new HashMap<>();
 
 	// Function to check whether a column is []
 	public boolean isNotEmpty(String[] entries) {
@@ -125,11 +130,11 @@ public class MGGEdgePanel extends AbstractMggPanel {
 	public MGGEdgePanel(final MGGManager manager) {
 
 		super(manager);
-		filters.get(currentNetwork).put("microbetag", new HashMap<>());
+		filters.get(currentNetwork).put(Mutils.Weight_NAMESPACE, new HashMap<>());
 		filters.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap<>());
 
 		// Initialize filterSigns map for current network
-        filterSign.get(currentNetwork).put("microbetag", new HashMap < > ());    // new String()
+        filterSign.get(currentNetwork).put(Mutils.Weight_NAMESPACE, new HashMap < > ());    // new String()
         filterSign.get(currentNetwork).put(Mutils.Seed_NAMESPACE, new HashMap < > ());
 
 		//
@@ -242,7 +247,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 		upperPanel.add(showComplEdgesButton);
 
-		upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
+		upperPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 		controlPanel.add(upperPanel, d.anchor("northwest").expandHoriz());
 
 		controlPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -295,8 +300,11 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 			boolean hasComplValue = false;
 			for (CyColumn column : net.getDefaultEdgeTable().getColumns()) {
+
 				if (column.getName().startsWith("seedCompl::")) {
-					LogUtils.info("about to check iif edge is empty");
+					
+					LogUtils.info("about to check if edge is empty");
+					
 					if (checkIfEdgeIsNotEmpty(net, edge, column)) {
 						hasComplValue = true;
 						break;
@@ -315,7 +323,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 	}
 
 //--------------------------  SHOW COOCCURENCE EDGES WITH SCORE -------------------------------------
-	private Map<String, JComboBox<String>> signCombos = new HashMap<>();
+	
 	
 	private JPanel createWeightPanel() {
 
@@ -325,36 +333,231 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 		List<String> WeightList = Mutils.getWeightList(currentNetwork);
 
-		for (String weight : WeightList) {
-			WeightPanel.add(
-					createFilterSlider(
-							"microbetag", 
-							weight, 
-							currentNetwork, 
-							true, 
-							100.0
-					),
-					c.anchor("west").down().expandHoriz());
+		// -------         CO OCCURENCE COLOR
+		
+		{
+			JPanel colorPanel = new JPanel();
+			colorPanel.setMinimumSize(new Dimension(25, 30));
+			colorPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("");
+//			lbl.setToolTipText("Color edges with co-occurrence weight of..");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			colorPanel.add(lbl, d.anchor("north").noExpand());
+
+//			for (String weight : WeightList) {
+//				colorPanel.add(createScoreCheckBox(weight), d.down().expandVert());
+//			}
+
+			WeightPanel.add(colorPanel, c.anchor("northwest").expandVert());
+		}
+		
+		// -------         CO OCCURENCE LABEL TYPE
+		
+		{
+			JPanel labelPanel = new JPanel();
+			labelPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+
+			JLabel lbl = new JLabel("");    // Co-occurrence
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			labelPanel.add(lbl, d.anchor("north").noExpand());
+			for (String weight : WeightList) {
+				JLabel weightLabel = new JLabel("");   // weight
+				weightLabel.setFont(textFont);
+				weightLabel.setMinimumSize(new Dimension(100, 30));
+				weightLabel.setMaximumSize(new Dimension(100, 30));
+				labelPanel.add(weightLabel, d.down().expandVert());
+			}
+			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+			WeightPanel.add(labelPanel, c.right().expandVert());
+		}
+		
+		// -------         CO OCCURENCE SIGN 
+		
+		{
+		    JPanel signPanel = new JPanel();
+		    signPanel.setMinimumSize(new Dimension(25, 30));
+		    signPanel.setLayout(new GridBagLayout());
+		    EasyGBC d = new EasyGBC();
+
+		    JLabel lbl = new JLabel("Sign");
+		    lbl.setToolTipText("Set if the score should be greater or lower than the threshold.");
+		    lbl.setFont(labelFont);
+		    lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+		    signPanel.add(lbl, d.anchor("north").noExpand());
+
+		    // Store selected sign for each seedScore using a JComboBox
+		    for (String weight : WeightList) {
+
+		        JComboBox<String> combo = new JComboBox<>(new String[]{">", "<"});
+		        combo.setName("sign_" + weight); // helpful for later retrieval
+		        signCombos.put(weight, combo);
+		        signPanel.add(combo, d.down().expandVert());
+		    }
+		    
+		    WeightPanel.add(signPanel, c.right().anchor("northwest").expandVert());
 		}
 
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont,
-				"Filter-out edges based on co-occurrence score", WeightPanel, false, 10);
-		collapsablePanel.setToolTipText("Hide edges with a co-occurrence score lower than the chosen value");
+		// ---- CO - OCCURRENCE SLIDER
+		
+		{
+			JPanel filterPanel = new JPanel();
+			filterPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Correlation score");
+			lbl.setToolTipText("Hide edges with a seed score higher/lower than the threshold set.");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			filterPanel.add(lbl, d.anchor("north").noExpand());
+
+			for (String weight : WeightList) {
+				JComponent scoreSlider = createFilterSlider(
+						Mutils.Weight_NAMESPACE, 
+						weight, 
+						currentNetwork, 
+						false, 
+						100.0
+				);
+				scoreSlider.setMinimumSize(new Dimension(100, 30));
+				// scoreSlider.setMaximumSize(new Dimension(100,30));
+				filterPanel.add(scoreSlider, d.down().expandBoth());
+
+			}
+			
+			// filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			WeightPanel.add(filterPanel, c.right().expandBoth());
+		}
+		
+		
+		// --------		ADD COLLADBSABLE PANEL
+		
+		CollapsablePanel collapsablePanel = new CollapsablePanel(
+				iconFont,
+				"Filter-out co-occurrence / co-exclusion edges", 
+				WeightPanel, 
+				false, 
+				12
+		);
+		collapsablePanel.setToolTipText(
+				"Hide edges with a co-occurrence score not reaching the threshold provided."
+		);
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		collapsablePanel.setAlwaysExpanded();
 		return collapsablePanel;
+	
 	}
 
-	public void updateWeightPanelPanel() {
+
+	public void updateWeightPanel() {
 		if (WeightPanel == null)
 			return;
 		WeightPanel.removeAll();
 		EasyGBC c = new EasyGBC();
+
 		List<String> WeightList = Mutils.getWeightList(currentNetwork);
-		for (String weight : WeightList) {
-			WeightPanel.add(createFilterSlider("microbetag", weight, currentNetwork, true, 100.0),
-					c.anchor("west").down().expandHoriz());
+		
+		// -------         CO OCCURENCE COLOR
+		
+		{
+			JPanel colorPanel = new JPanel();
+			colorPanel.setMinimumSize(new Dimension(25, 30));
+			colorPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("");
+//			lbl.setToolTipText("Color edges with the selected metabolic index.");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			colorPanel.add(lbl, d.anchor("north").noExpand());
+
+//			for (String weight : WeightList) {
+//				colorPanel.add(createScoreCheckBox(weight), d.down().expandVert());
+//			}
+
+			WeightPanel.add(colorPanel, c.anchor("northwest").expandVert());
 		}
+		
+		// -------         CO OCCURENCE LABEL TYPE
+		
+		{
+			JPanel labelPanel = new JPanel();
+			labelPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+
+			JLabel lbl = new JLabel("");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			labelPanel.add(lbl, d.anchor("north").noExpand());
+
+			for (String weight : WeightList) {
+				JLabel weightLabel = new JLabel("");
+				weightLabel.setFont(textFont);
+				weightLabel.setMinimumSize(new Dimension(100, 30));
+				weightLabel.setMaximumSize(new Dimension(100, 30));
+				labelPanel.add(weightLabel, d.down().expandVert());
+			}
+			labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+			WeightPanel.add(labelPanel, c.right().expandVert());
+		}
+		
+		// -------         CO OCCURENCE SIGN 
+		
+		{
+		    JPanel signPanel = new JPanel();
+		    signPanel.setMinimumSize(new Dimension(25, 30));
+		    signPanel.setLayout(new GridBagLayout());
+		    EasyGBC d = new EasyGBC();
+
+		    JLabel lbl = new JLabel("Sign");
+		    lbl.setToolTipText("Choose if the score should be greater or lower than the threshold.");
+		    lbl.setFont(labelFont);
+		    lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+		    signPanel.add(lbl, d.anchor("north").noExpand());
+
+		    // Store selected sign for each seedScore using a JComboBox
+		    for (String weight : WeightList) {
+
+		        JComboBox<String> combo = new JComboBox<>(new String[]{">", "<"});
+		        combo.setName("sign_" + weight); // helpful for later retrieval
+		        signCombos.put(weight, combo);
+		        signPanel.add(combo, d.down().expandVert());
+		    }
+		    
+		    WeightPanel.add(signPanel, c.right().anchor("northwest").expandVert());
+		}
+
+		// ---- CO - OCCURRENCE SLIDER
+		
+		{
+			JPanel filterPanel = new JPanel();
+			filterPanel.setLayout(new GridBagLayout());
+			EasyGBC d = new EasyGBC();
+			JLabel lbl = new JLabel("Correlation score");
+			lbl.setToolTipText("Hide edges with a correlation score higher/lower than the threshold set.");
+			lbl.setFont(labelFont);
+			lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			filterPanel.add(lbl, d.anchor("north").noExpand());
+
+			for (String weight : WeightList) {
+				JComponent scoreSlider = createFilterSlider(
+						Mutils.Weight_NAMESPACE, 
+						weight, 
+						currentNetwork, 
+						false, 
+						100.0
+				);
+				scoreSlider.setMinimumSize(new Dimension(100, 30));
+				// scoreSlider.setMaximumSize(new Dimension(100,30));
+				filterPanel.add(scoreSlider, d.down().expandBoth());
+
+			}
+			
+			// filterPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			WeightPanel.add(filterPanel, c.right().expandBoth());
+		}
+
 		return;
 	}
 
@@ -442,9 +645,6 @@ public class MGGEdgePanel extends AbstractMggPanel {
 		        signCombos.put(seedScore, combo);
 		        signPanel.add(combo, d.down().expandVert());
 		    }
-
-		    
-		    System.out.println("\n\n\n\n this is my combo: " + signCombos);
 		    
 		    subScorePanel.add(signPanel, c.right().anchor("northwest").expandVert());
 		}
@@ -465,7 +665,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 			for (String seedScore : seedList) {
 				JComponent scoreSlider = createFilterSlider3(
-						"seed", 
+						Mutils.Seed_NAMESPACE, 
 						seedScore, 
 						currentNetwork, 
 						false, 
@@ -483,17 +683,17 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
 		CollapsablePanel collapsablePanel = new CollapsablePanel(
 				iconFont, 
-				"Seed Scores", 
+				"Filter-out complementarity edges", 
 				subScorePanel, 
-				false, 10
+				false, 12
 		);
+		collapsablePanel.setToolTipText("Hidee edges with seed, and probably pathway, complementarities based on a seed index score.");
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		collapsablePanel.setAlwaysExpanded();
 		return collapsablePanel;
 
 	}
 	
-//	--------------   UPDATE  SEED PANEL  ---------------- 
 	
 	public void updateSeedPanel() {
 
@@ -603,7 +803,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 			for (String seedScore : seedList) {
 
 				JComponent scoreSlider = createFilterSlider3(
-						"seed", 
+						Mutils.Seed_NAMESPACE, 
 						seedScore, 
 						currentNetwork, 
 						false, 
@@ -709,7 +909,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 			}
 		}
 		edgesSPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected edges", edgesSPanel, false, 10);
+		CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, "Selected edges", edgesSPanel, false, 12);
 		collapsablePanel.setAlwaysExpanded();
 		collapsablePanel.setBorder(BorderFactory.createEtchedBorder());
 		return collapsablePanel;
@@ -753,18 +953,19 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0; // use the full horizontal space
+        gbc.weighty = 1.0;
 
         // Set constraints
         gbc.gridx = 0; // Column 0
-        gbc.gridy = 0; // Start from row 0
+        gbc.gridy = 1; // Start from row 0
+        gbc.ipady = 10;  // This sets the height, in pixels of each line in the beneficiary, donor  ids, part of the table
         gbc.anchor = GridBagConstraints.WEST; // Left-align 
         gbc.insets = new Insets(5, 5, 5, 5); // 5pix marg
-
-//        EasyGBC c = new EasyGBC();
 
         CyNetwork currentNetwork = manager.getCurrentNetwork();
         if (currentNetwork == null) return panel;
@@ -781,45 +982,52 @@ public class MGGEdgePanel extends AbstractMggPanel {
         // Get taxon names for source and target nodes
         String sourceTaxon = getTaxonName(nodeTable, sourceNode);
         String targetTaxon = getTaxonName(nodeTable, targetNode);
+                
+        JTextPane sourceTaxonPane = ViewUtils.createStyledLabelEdges("Donor Taxon: " + targetTaxon);
         
-        
-        JTextArea sourceTaxonArea = new JTextArea("Donor Taxon: " + targetTaxon );
-        ViewUtils.setJTextAreaAttributesEdges(sourceTaxonArea);
-        panel.add(sourceTaxonArea, gbc);
+        panel.add(sourceTaxonPane, gbc);
         gbc.gridy++;
     
-        JTextArea targetTaxonArea = new JTextArea("Beneficiary Taxon: " + sourceTaxon);
-        ViewUtils.setJTextAreaAttributesEdges(targetTaxonArea);
-        panel.add(targetTaxonArea, gbc);
+        JTextPane targetTaxonPane = ViewUtils.createStyledLabelEdges("Beneficiary Taxon: " + sourceTaxon);
+        panel.add(targetTaxonPane, gbc);
         gbc.gridy++;
 
         Object nameValue = (edgeTable.getColumn("shared name") != null) ? edgeTable.getRow(edge.getSUID()).get("shared name", edgeTable.getColumn("shared name").getType()) : null;
 
         // Split the name to get Donor and Beneficiary
-        String[] nameParts = nameValue != null ? nameValue.toString().split(" \\(completed by\\) | \\(cooccurs with\\) | \\(depletes\\)") : new String[] {
-            "",
-            ""
-        };
+        String[] nameParts = nameValue != null ? 
+        		nameValue
+        		.toString()
+        		.split(
+        				" \\(completed by\\) | \\(cooccurs with\\) | \\(depletes\\)") : new String[] {
+		            "",
+		            ""
+		        };
         
         String donor = nameParts.length > 0 ? nameParts[0] : "";
         String beneficiary = nameParts.length > 1 ? nameParts[1] : "";
 
-        
-        JTextArea donorArea = new JTextArea("Donor / Seed Set B: " +  beneficiary );
-        ViewUtils.setJTextAreaAttributesEdges(donorArea);
-        panel.add(donorArea, gbc);
+        JTextPane donorPane = ViewUtils.createStyledLabelEdges("Donor / Seed Set B: " +  beneficiary );
+        panel.add(donorPane, gbc);
         gbc.gridy++;
-        
-        JTextArea BeneficiaryArea = new JTextArea( "Beneficiary / Seed Set A: " + donor);
-        ViewUtils.setJTextAreaAttributesEdges(BeneficiaryArea);
-        panel.add(BeneficiaryArea, gbc);
+              
+        JTextPane BeneficiaryPane = ViewUtils.createStyledLabelEdges("Beneficiary / Seed Set A: " + donor);
+        panel.add(BeneficiaryPane, gbc);
         gbc.gridy++;
         
 
-        Object interactionValue = (edgeTable.getColumn("interaction type") != null) ? edgeTable.getRow(edge.getSUID()).get("interaction type", edgeTable.getColumn("interaction type").getType()) : null;
-        JTextArea interactionArea = new JTextArea("Interaction: " + (interactionValue != null ? interactionValue.toString() : "null"));
-        ViewUtils.setJTextAreaAttributesEdges(interactionArea);
-        panel.add(interactionArea, gbc);
+        Object interactionValue = (
+        		edgeTable.getColumn("interaction type") != null) ? 
+        				edgeTable.getRow(edge.getSUID())
+        				.get(
+        						"interaction type", 
+        						edgeTable.getColumn("interaction type"
+        				).getType()) : null;
+        
+        JTextPane interactionPane = ViewUtils.createStyledLabelEdges(
+        		"Interaction: " + (interactionValue != null ? interactionValue.toString() : "null")
+        );        
+        panel.add(interactionPane, gbc);
         gbc.gridy++;
         
 
@@ -828,7 +1036,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation", edgeTable.getColumn("seed::cooperation").getType()) : null;
         if (cooperationSeedValue != null && showseedpanel==false) {
             JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
-            ViewUtils.setJTextAreaAttributesEdges(cooperationSeedArea);
+            ViewUtils.setJTextAreaAttributes(cooperationSeedArea);
            panel.add(cooperationSeedArea, gbc);
             gbc.gridy++;
         }
@@ -846,13 +1054,13 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         if (competitionSeedValue != null &&showseedpanel==false) {
             JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
-           ViewUtils.setJTextAreaAttributesEdges(competitionSeedArea);
+           ViewUtils.setJTextAreaAttributes(competitionSeedArea);
             panel.add(competitionSeedArea, gbc);
             gbc.gridy++;
        }
 
         
-     // Create a sub-panel  for the complement input components
+        // Create a sub-panel  for the complement input components
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
 
         // Label 
@@ -908,8 +1116,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         Border etchedBorder = BorderFactory.createEtchedBorder();
         Border emptyBorder = BorderFactory.createEmptyBorder(0, 5, 0, 0);
-        
-                
+                        
         
         boolean hasPathwayComplementarities = false; // Flag to track
  
@@ -1047,14 +1254,23 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 	
             
                 	// size of the scroll pane based on the number of rows
+                	int minHeight = 100; // minimum height in pixels
                     int rowHeight = table.getRowHeight();
                     int tableHeight = (table.getRowCount() * rowHeight) + table.getTableHeader().getPreferredSize().height;
                     JScrollPane scrollPane = new JScrollPane(table);
-                    scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, Math.min(tableHeight, 400))); //  maximum height to 400 pixels
+                    
+                    int preferredHeight = Math.max(minHeight, Math.min(tableHeight, 600));
+                    
+                    scrollPane.setPreferredSize(
+                    		new Dimension(
+                    				scrollPane.getPreferredSize().width, 
+                    				preferredHeight
+                    		)
+                    ); //  maximum height to 400 pixels
 
                     newPanel.add(scrollPane, BorderLayout.CENTER);
 
-                	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 10);
+                	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 12);
                 	collapsablePanel .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
                 	PathwaysPanel.add(collapsablePanel, pathgbc);
                 	pathgbc.gridy++;
@@ -1064,7 +1280,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         
         
         if (hasPathwayComplementarities) {
-			CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 10);
+			CollapsablePanel PathwaysCollapsablePanel = new CollapsablePanel(iconFont, "Pathway Complementarities", PathwaysPanel, true, 12);
 			PathwaysCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 			showseedpanel=false;
 			panel.add(PathwaysCollapsablePanel, gbc);
@@ -1089,14 +1305,14 @@ public class MGGEdgePanel extends AbstractMggPanel {
        
      if (cooperationSeedValue != null) {
          JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
-         cooperationLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+         cooperationLabel.setFont(textFont);
          SeedComplementaritiesPanel.add(cooperationLabel, seedgbc);
          seedgbc.gridy++;
      }
 
      if (competitionSeedValue != null) {
          JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
-         competitionLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+         competitionLabel.setFont(textFont);
          SeedComplementaritiesPanel.add(competitionLabel, seedgbc);
          seedgbc.gridy++;
      }
@@ -1240,14 +1456,31 @@ public class MGGEdgePanel extends AbstractMggPanel {
             	});
         
             	// size of the scroll pane based on the number of rows
-                int rowHeight = table.getRowHeight();
+            	int minHeight = 100; // minimum height in pixels
+            	int rowHeight = table.getRowHeight();                
                 int tableHeight = (table.getRowCount() * rowHeight) + table.getTableHeader().getPreferredSize().height;
+                
                 JScrollPane scrollPane = new JScrollPane(table);
-                scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, Math.min(tableHeight, 400))); //  maximum height to 400 pixels
+                
+                int preferredHeight = Math.max(minHeight, Math.min(tableHeight, 600));
+                scrollPane.setPreferredSize(
+                		new Dimension(
+                				scrollPane.getPreferredSize().width, 
+                				preferredHeight
+                		)
+                ); //  maximum height to 400 pixels
 
+                                
+                scrollPane.setBorder(BorderFactory.createCompoundBorder(
+                	    BorderFactory.createEtchedBorder(), // outer border
+                	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // top, left, bottom, right padding
+                	));
+
+                
+                
                 newPanel.add(scrollPane, BorderLayout.CENTER);
 
-            	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 10);
+            	CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, panelTitle, newPanel, true, 12);
             	collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
             	SeedComplementaritiesPanel.add(collapsablePanel, seedgbc);
             	seedgbc.gridy++;
@@ -1257,7 +1490,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
     
 	if(hasSeedComplementarities) {
-		CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 10);
+		CollapsablePanel SeedCollapsablePanel = new CollapsablePanel(iconFont, "Seed Complementarities", SeedComplementaritiesPanel, true, 12);
 		SeedCollapsablePanel  .setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
 		panel.add(SeedCollapsablePanel , gbc);
 		gbc.gridy++;
@@ -1268,7 +1501,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
    
         String edgeId = (nameValue != null) ? nameValue.toString() : "Selected Edges";
 
-        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, edgeId, panel, false, 10);
+        CollapsablePanel collapsablePanel = new CollapsablePanel(iconFont, edgeId, panel, false, 12);
         
         collapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
         collapsablePanel.setAlwaysExpanded();
@@ -1306,15 +1539,17 @@ public class MGGEdgePanel extends AbstractMggPanel {
 	    }
 	}
 	
-	    @Override
+	@Override
 	double initFilter(String type, String label) {
 	
 	    	double minValue = 1.0; 
 	    	
 	    	for (CyEdge edge: currentNetwork.getEdgeList()) {
-	            CyRow edgeRow = currentNetwork.getRow(edge);
+
+	    		CyRow edgeRow = currentNetwork.getRow(edge);
 	            
 	            Double edgeScore = edgeRow.get(type, label, Double.class); // Get the edge weight 
+	            
 	            // Skip this edge if the score is null.
 	            if (edgeScore == null) {
 	                minValue = -1.0;
@@ -1375,28 +1610,35 @@ public class MGGEdgePanel extends AbstractMggPanel {
     @Override
     void doFilter(String type) {
     	
-    
-    	// SIGNS
+    	System.out.println("ini dofilter");
+    	
+    	// SCORE TYPES
     	List<String> seedList = Mutils.getSeedList(currentNetwork);
-    	Map<String, String> signMap = filterSign.get(currentNetwork).get(type);
-    	for (String seedScore : seedList) {
-    	    JComboBox<String> combo = signCombos.get(seedScore);
+    	List<String> WeightList = Mutils.getWeightList(currentNetwork);
+
+    	List<String> mergedList = new ArrayList<>(seedList); 
+    	mergedList.addAll(WeightList); 	
+    	
+    	// SIGNS
+    	Map<String, String> signMap = filterSign.get(currentNetwork).get(type);    	
+    	for (String score : mergedList) {
+    	    JComboBox<String> combo = signCombos.get(score);
     	    if (combo != null) {
     	        String selectedSign = (String) combo.getSelectedItem();
-    	        System.out.println("Selected sign for " + seedScore + ": " + selectedSign);    	        
+    	        System.out.println("Selected sign for " + score + ": " + selectedSign);    	        
     	        // You can store it in your `filterSign` map if needed:
     	        
     	        if (signMap != null) {
-    	            signMap.put(seedScore, selectedSign);
+    	            signMap.put(score, selectedSign);
     	        }
     	    }
     	}    	
-    	System.out.println("can i print a map?" + signMap);
+    	System.out.println("\n\n >>can i print a map?" + signMap);
     	
         // THRESHOLDS --- Check if the network and filter type exists
         Map < String, Double > filter = filters.get(currentNetwork).get(type);
         for (Map.Entry<String, Double> entry : filter.entrySet()) {
-	      System.out.println("Label: " + entry.getKey() + ", Score: " + entry.getValue());
+	      System.out.println(" --> Label: " + entry.getKey() + ", Score Type: " + entry.getValue());
         }
 
         // Iterate through each edge in the current network.
@@ -1416,29 +1658,19 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 // If the value is null we need to keep the edge as shown, thus we make it 100.
                 double actualValue = (v == null) ? 100.0 : v;
 
-                System.out.println(">> lbl: " + lbl);
-                System.out.println(">> Actual value: " + actualValue  );
-                System.out.println("~~ My sign: " + signMap.get(lbl));
-                
-//                if (actualValue < nv) {	
-//                    show = false;
-//                    break;
-//                }
-
+//                System.out.println(">> lbl: " + lbl);
+//                System.out.println(">> Actual value: " + actualValue  );
+//                System.out.println("~~ My sign: " + signMap.get(lbl));
+                                
                 String sign = signMap.get(lbl);
                 
                 if (sign.equals(">") && actualValue < nv) {
-                	System.out.println("Mute edges with score higher than threshold");
                     show = false;
                     break;
                 } else if (sign.equals("<") && actualValue > nv) {
-                	System.out.println("Mute edges with score lower than threshold");
                     show = false;
                     break;
                 }
-                
-                
-                
             }
 
             if (show) {
@@ -1476,7 +1708,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         // Initialize filters for the current network
         if (!filters.containsKey(currentNetwork)) {
             Map<String, Map<String, Double>> typeMap = new HashMap<>();
-            typeMap.put("microbetag", new HashMap<>());
+            typeMap.put(Mutils.Weight_NAMESPACE, new HashMap<>());
             typeMap.put(Mutils.Seed_NAMESPACE, new HashMap<>());
             filters.put(currentNetwork, typeMap);
         }
@@ -1484,6 +1716,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         // Initialize filter signs
         if (!filterSign.containsKey(currentNetwork)) {
             Map<String, Map<String, String>> signMap = new HashMap<>();
+            signMap.put(Mutils.Weight_NAMESPACE, new HashMap<>());
             signMap.put(Mutils.Seed_NAMESPACE, new HashMap<>());
             filterSign.put(currentNetwork, signMap);
         }
@@ -1494,7 +1727,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
         }
 
         updateSeedPanel();
-        updateWeightPanelPanel();
+        updateWeightPanel();
         updateEdgesPanel();
     }
 
