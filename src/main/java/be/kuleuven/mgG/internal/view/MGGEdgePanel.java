@@ -992,9 +992,8 @@ public class MGGEdgePanel extends AbstractMggPanel {
         // Get taxon names for source and target nodes
         String sourceTaxon = getTaxonName(nodeTable, sourceNode);
         String targetTaxon = getTaxonName(nodeTable, targetNode);
-                
+
         JTextPane sourceTaxonPane = ViewUtils.createStyledLabelEdges("Donor Taxon: " + targetTaxon);
-        
         panel.add(sourceTaxonPane, gbc);
         gbc.gridy++;
     
@@ -1043,31 +1042,26 @@ public class MGGEdgePanel extends AbstractMggPanel {
 
         boolean showseedpanel=true;
         
+        // Get competition seed score from edge table - the way we get the competitionSeedValue is as in the one-line in the cooperaionSeeValue above
+        Object competitionSeedValue = null;
+
+        // Check if the column "seed::cooperation" exists in the edge table
+        CyColumn competitionColumn = edgeTable.getColumn("seed::competition");
+
+	        if (competitionColumn != null) {
+	        // Get the row corresponding to the current edge
+	        CyRow edgeRow = edgeTable.getRow(edge.getSUID());
+	
+	        // Get the value of the "seed::cooperation" column for that edge
+	        competitionSeedValue = edgeRow.get("seed::competition", competitionColumn.getType());
+	    }
+
+	    // Get competition std in one-line
+        Object competitionSeedValueStd = (edgeTable.getColumn("seed::competition-std") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::competition-std", edgeTable.getColumn("seed::competition-std").getType()) : null;
+
+        // Get cooperation seed score from edge table
         Object cooperationSeedValue = (edgeTable.getColumn("seed::cooperation") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation", edgeTable.getColumn("seed::cooperation").getType()) : null;
-        if (cooperationSeedValue != null && showseedpanel==false) {
-            JTextArea cooperationSeedArea = new JTextArea("Seed Scores: Cooperation : " + cooperationSeedValue.toString());
-            ViewUtils.setJTextAreaAttributes(cooperationSeedArea);
-           panel.add(cooperationSeedArea, gbc);
-            gbc.gridy++;
-        }
-
-
-        Object competitionSeedValue;
-        if (edgeTable.getColumn("seed::competition") != null) {
-
-            competitionSeedValue = edgeTable.getRow(edge.getSUID())
-                                           .get("seed::competition", edgeTable.getColumn("seed::competition").getType());
-        } else {
-            competitionSeedValue = null;
-        }
-
-        
-        if (competitionSeedValue != null &&showseedpanel==false) {
-            JTextArea competitionSeedArea = new JTextArea("Seed Scores: Competition: " + competitionSeedValue.toString());
-           ViewUtils.setJTextAreaAttributes(competitionSeedArea);
-            panel.add(competitionSeedArea, gbc);
-            gbc.gridy++;
-       }
+        Object cooperationSeedValueStd = (edgeTable.getColumn("seed::cooperation-std") != null) ? edgeTable.getRow(edge.getSUID()).get("seed::cooperation-std", edgeTable.getColumn("seed::cooperation-std").getType()) : null;
 
         
         // Create a sub-panel  for the complement input components
@@ -1329,21 +1323,29 @@ public class MGGEdgePanel extends AbstractMggPanel {
      seedgbc.anchor = GridBagConstraints.WEST; // Left-align 
      seedgbc.insets = new Insets(5, 5, 5, 5); // 5pixel marg
 
-       
-     if (cooperationSeedValue != null) {
-         JLabel cooperationLabel = new JLabel("Cooperation Seed Score: " + cooperationSeedValue.toString());
-         cooperationLabel.setFont(textFont);
-         SeedComplementaritiesPanel.add(cooperationLabel, seedgbc);
-         seedgbc.gridy++;
-     }
-
-     if (competitionSeedValue != null) {
-         JLabel competitionLabel = new JLabel("Competition Seed Score: " + competitionSeedValue.toString());
-         competitionLabel.setFont(textFont);
-         SeedComplementaritiesPanel.add(competitionLabel, seedgbc);
-         seedgbc.gridy++;
-     }
      
+     //     scores and std
+     if (cooperationSeedValue != null) {
+    	    String text = "Cooperation Seed Score: " + cooperationSeedValue.toString();
+    	    if (cooperationSeedValueStd != null) {
+    	        text += " (std: " + cooperationSeedValueStd.toString() + ")";
+    	    }
+    	    JLabel cooperationLabel = new JLabel(text);
+    	    cooperationLabel.setFont(textFont);
+    	    SeedComplementaritiesPanel.add(cooperationLabel, seedgbc);
+    	    seedgbc.gridy++;
+    	}
+
+    	if (competitionSeedValue != null) {
+    	    String text = "Competition Seed Score: " + competitionSeedValue.toString();
+    	    if (competitionSeedValueStd != null) {
+    	        text += " (std: " + competitionSeedValueStd.toString() + ")";
+    	    }
+    	    JLabel competitionLabel = new JLabel(text);
+    	    competitionLabel.setFont(textFont);
+    	    SeedComplementaritiesPanel.add(competitionLabel, seedgbc);
+    	    seedgbc.gridy++;
+    	}     
      
      boolean hasSeedComplementarities = false;
      
@@ -1650,9 +1652,7 @@ public class MGGEdgePanel extends AbstractMggPanel {
 	
     @Override
     void doFilter(String type) {
-    	
-    	System.out.println("ini dofilter");
-    	
+
     	// SCORE TYPES
     	List<String> seedList = Mutils.getSeedList(currentNetwork);
     	List<String> WeightList = Mutils.getWeightList(currentNetwork);
@@ -1666,21 +1666,24 @@ public class MGGEdgePanel extends AbstractMggPanel {
     	    JComboBox<String> combo = signCombos.get(score);
     	    if (combo != null) {
     	        String selectedSign = (String) combo.getSelectedItem();
-    	        System.out.println("Selected sign for " + score + ": " + selectedSign);    	        
-    	        // You can store it in your `filterSign` map if needed:
     	        
+    	        // System.out.println("Selected sign for " + score + ": " + selectedSign);
+
+    	        // You can store it in your `filterSign` map if needed:    	        
     	        if (signMap != null) {
     	            signMap.put(score, selectedSign);
     	        }
     	    }
-    	}    	
-    	System.out.println("\n\n >>can i print a map?" + signMap);
+    	}
     	
         // THRESHOLDS --- Check if the network and filter type exists
         Map < String, Double > filter = filters.get(currentNetwork).get(type);
-        for (Map.Entry<String, Double> entry : filter.entrySet()) {
-	      System.out.println(" --> Label: " + entry.getKey() + ", Score Type: " + entry.getValue());
-        }
+        
+        // The following is just an example of how you can print the elements of the filter Map.
+
+        // for (Map.Entry<String, Double> entry : filter.entrySet()) {
+	    //   System.out.println(" --> Label: " + entry.getKey() + ", Score Type: " + entry.getValue());
+        // }
 
         // Iterate through each edge in the current network.
         CyNetworkView view = manager.getCurrentNetworkView();
@@ -1699,9 +1702,9 @@ public class MGGEdgePanel extends AbstractMggPanel {
                 // If the value is null we need to keep the edge as shown, thus we make it 100.
                 double actualValue = (v == null) ? 100.0 : v;
 
-//                System.out.println(">> lbl: " + lbl);
-//                System.out.println(">> Actual value: " + actualValue  );
-//                System.out.println("~~ My sign: " + signMap.get(lbl));
+				//                System.out.println(">> lbl: " + lbl);
+				//                System.out.println(">> Actual value: " + actualValue  );
+				//                System.out.println("~~ My sign: " + signMap.get(lbl));
                                 
                 String sign = signMap.get(lbl);
                 

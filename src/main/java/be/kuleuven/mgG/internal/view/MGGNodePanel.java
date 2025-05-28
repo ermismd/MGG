@@ -601,6 +601,9 @@ public class MGGNodePanel extends AbstractMggPanel {
         			12
         	);
             phenDBCollapsablePanel.setBorder(BorderFactory.createCompoundBorder(emptyBorder, etchedBorder));
+            phenDBCollapsablePanel.setToolTipText(
+             		"For cases where a node was mapped to several genomes, microbetag returns the intersection of traits with the same prediction and the score is their average."
+             );
             phenDBCollapsablePanel.toggleSelection();
 
             // Add the CollapsablePanel to the main panel
