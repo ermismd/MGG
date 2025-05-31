@@ -104,7 +104,10 @@ public class CreateNetworkTask extends AbstractTask {
 
 	   
 	    if (jsonResponse == null) {
-	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response. Conctact microbetag group.");
+	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "microbetag failed to return an annotated network. "
+	        		+ "Go through the Error returned (see 'Show tasks') and consider instructions on microbetag's RTD: https://microbetag.readthedocs.io .  "
+	        		+ "If you still cannot run microbetag successfully, consider joining the microbetag Matrix community, forward the Error and the Traceback"
+	        		+ "and help will come: https://matrix.to/#/#microbetagcommunity:matrix.org");
 	        return; 
 	    }
 
