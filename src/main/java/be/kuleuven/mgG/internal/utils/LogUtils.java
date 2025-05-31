@@ -23,7 +23,7 @@ public class LogUtils {
 	public static void log(TaskMonitor taskMonitor, TaskMonitor.Level level, String message) {
 		if (taskMonitor != null) {
 			taskMonitor.showMessage(level, message);
-			return;
+//			return;
 		}
 		switch (level) {
 			case ERROR:

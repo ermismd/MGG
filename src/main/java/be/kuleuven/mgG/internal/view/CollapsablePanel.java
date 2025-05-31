@@ -16,41 +16,41 @@ import javax.swing.JPanel;
 
 
 public class CollapsablePanel extends JPanel {
+
 	private static String RIGHT_ARROW = "\uF0DA";
 	private static String DOWN_ARROW = "\uF0D7";
-	private static String CIRCLE = "\u2022"; 
+	private static String CIRCLE = "\uF111"; 
 	
 	Font awesomeFont;
 
 	JPanel contentPanel_;
 	HeaderPanel headerPanel_;
 
+	
+	// Inside HeaderPanel.java
+	private Runnable toggleAction;
+
+	public void setToggleAction(Runnable toggleAction) {
+	    this.toggleAction = toggleAction;
+	}
+	
 	private class HeaderPanel extends JPanel implements ActionListener {
+
 		Font font;
 		JButton expandButton;
 		JLabel label;
-		boolean expanded = false;
+		
+		boolean expanded = true;
 
 		public HeaderPanel(Font iconFont, String text, boolean collapsed, int fontSize) {
-			font = new Font("Arial", Font.BOLD, fontSize);
+			font = new Font("SansSerif", Font.BOLD, fontSize);
 
 			this.setLayout(new GridBagLayout());
 			this.expanded = !collapsed;
 
 			EasyGBC c = new EasyGBC();
 
-//			if (collapsed)
-//				expandButton = new JButton(RIGHT_ARROW);
-//				
-//			else
-//				expandButton = new JButton(DOWN_ARROW);
-//			expandButton.addActionListener(this);
-//			expandButton.setBorderPainted(false);
-//			expandButton.setContentAreaFilled(false);
-//			expandButton.setOpaque(false);
-//			expandButton.setFocusPainted(false);
-//			expandButton.setFont(iconFont);
-//			this.add(expandButton, c.anchor("west").noExpand());
+
 			
 			 if (collapsed) {
 	                expandButton = new JButton(RIGHT_ARROW);
@@ -93,6 +93,7 @@ public class CollapsablePanel extends JPanel {
 
 	}
 
+	
 	public CollapsablePanel(Font iconFont, String text, JPanel panel, boolean collapsed) {
 		this(iconFont, text, panel, collapsed, 14);
 	}

@@ -2,75 +2,83 @@ package be.kuleuven.mgG.internal;
 
 import static org.cytoscape.work.ServiceProperties.COMMAND;
 import static org.cytoscape.work.ServiceProperties.COMMAND_DESCRIPTION;
-import static org.cytoscape.work.ServiceProperties.COMMAND_EXAMPLE_JSON;
-import static org.cytoscape.work.ServiceProperties.COMMAND_LONG_DESCRIPTION;
+
 import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
-import static org.cytoscape.work.ServiceProperties.COMMAND_SUPPORTS_JSON;
-import static org.cytoscape.work.ServiceProperties.ID;
 import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
 import static org.cytoscape.work.ServiceProperties.IN_TOOL_BAR;
-import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
-import static org.cytoscape.work.ServiceProperties.LARGE_ICON_URL;
 import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.TITLE;
-import static org.cytoscape.work.ServiceProperties.TOOL_BAR_GRAVITY;
-import static org.cytoscape.work.ServiceProperties.TOOLTIP;
 
 import java.util.Properties;
+import org.osgi.framework.BundleContext;
 
-import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.application.events.SetCurrentNetworkListener;
-import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CyAction;
-import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.application.swing.CytoPanel;
-import org.cytoscape.application.swing.CytoPanelComponent;
-import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.application.swing.events.CytoPanelComponentSelectedListener;
-import org.cytoscape.io.BasicCyFileFilter;
-import org.cytoscape.io.DataCategory;
-import org.cytoscape.io.read.InputStreamTaskFactory;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
-import org.cytoscape.model.events.NetworkAddedListener;
-import org.cytoscape.model.subnetwork.CyRootNetworkManager;
-import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskFactory;
-import org.json.simple.JSONArray;
-import org.cytoscape.service.util.CyServiceRegistrar;
-import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
-import org.cytoscape.service.util.CyServiceRegistrar;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import be.kuleuven.mgG.internal.tasks.AboutTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckAbudanceFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckMetaDataFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.CheckNetworkTaskFactory;
-import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyle;
 import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyleTaskFactory;
-import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
-import be.kuleuven.mgG.internal.tasks.GetTermsFromNetworkEnrichmentTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportFileTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportMetadataTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ImportNetworkDataTaskFactory;
-import be.kuleuven.mgG.internal.tasks.MCLClusterTaskFactory;
 import be.kuleuven.mgG.internal.tasks.SendDataToServerTaskFactory;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelAction;
 import be.kuleuven.mgG.internal.tasks.ShowResultsPanelTaskFactory;
-
 import be.kuleuven.mgG.internal.utils.Mutils;
 import be.kuleuven.mgG.internal.view.EnrichmentAnalysisTaskFactory;
-import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
-
 import be.kuleuven.mgG.internal.model.MGGManager;
+
+
+
+//import static org.cytoscape.work.ServiceProperties.TOOL_BAR_GRAVITY;
+//import static org.cytoscape.work.ServiceProperties.TOOLTIP;
+//import static org.cytoscape.work.ServiceProperties.COMMAND_SUPPORTS_JSON;
+//import static org.cytoscape.work.ServiceProperties.ID;
+//import static org.cytoscape.work.ServiceProperties.COMMAND_EXAMPLE_JSON;
+//import static org.cytoscape.work.ServiceProperties.COMMAND_LONG_DESCRIPTION;
+//import static org.cytoscape.work.ServiceProperties.INSERT_SEPARATOR_BEFORE;
+//import static org.cytoscape.work.ServiceProperties.LARGE_ICON_URL;
+//
+//
+//
+//import org.cytoscape.application.CyApplicationManager;
+//import org.cytoscape.application.events.SetCurrentNetworkListener;
+//import org.cytoscape.application.swing.AbstractCyAction;
+//import org.cytoscape.application.swing.CySwingApplication;
+//import org.cytoscape.application.swing.CytoPanel;
+//import org.cytoscape.application.swing.CytoPanelComponent;
+//import org.cytoscape.application.swing.CytoPanelName;
+//import org.cytoscape.application.swing.events.CytoPanelComponentSelectedListener;
+//import org.cytoscape.io.BasicCyFileFilter;
+//import org.cytoscape.io.DataCategory;
+//import org.cytoscape.io.read.InputStreamTaskFactory;
+//import org.cytoscape.model.CyNetworkFactory;
+//import org.cytoscape.model.CyNetworkManager;
+//import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
+//import org.cytoscape.model.events.NetworkAddedListener;
+//import org.cytoscape.model.subnetwork.CyRootNetworkManager;
+//import org.cytoscape.view.model.CyNetworkViewManager;
+//import org.json.simple.JSONArray;
+//import org.osgi.framework.ServiceReference;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.cytoscape.session.events.SessionLoadedListener;
+//
+//import be.kuleuven.mgG.internal.tasks.CreateMGGVisualStyle;
+//import be.kuleuven.mgG.internal.tasks.CreateNetworkTaskFactory;
+//import be.kuleuven.mgG.internal.tasks.GetTermsFromNetworkEnrichmentTaskFactory;
+//import be.kuleuven.mgG.internal.tasks.MCLClusterTaskFactory;
+//import be.kuleuven.mgG.internal.view.JSONDisplayPanel;
+
+
+
 
 
 
@@ -83,7 +91,8 @@ public class CyActivator extends AbstractCyActivator {
     }
 
     public void start(BundleContext bc) {
-        final StreamUtil streamUtil = getService(bc, StreamUtil.class);
+
+    	final StreamUtil streamUtil = getService(bc, StreamUtil.class);
         final CyServiceRegistrar serviceRegistrar = getService(bc, CyServiceRegistrar.class);
 
         final MGGManager MGGManager = new MGGManager(serviceRegistrar);

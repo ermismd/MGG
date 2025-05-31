@@ -120,18 +120,11 @@ public class ImportNetworkData extends AbstractTask {
 	    JSONObject networkJsonObject = new JSONObject();
 	    networkJsonObject.put("network", networkData);
 	    
-	//  JSONObject for abudance data
+	    //  JSONObject for abundance data
 	    JSONObject datajsonObject=new JSONObject();
 	    datajsonObject=mggManager.getJsonObject();
 	    
-	    
-	    
-	  
-			
-	    
-    	
-    
-	      if (hasWeights && areNodesInDataJson(networkJsonObject,  datajsonObject)) {
+	    if (hasWeights && areNodesInDataJson(networkJsonObject,  datajsonObject)) {
 	       //  If all are present
 	        mggManager.setNetworkObject(networkJsonObject);
 	        taskMonitor.setTitle("Uploading Network");
@@ -143,9 +136,10 @@ public class ImportNetworkData extends AbstractTask {
 	  
 	      // taskMonitor.showMessage(TaskMonitor.Level.INFO ,"Network Object" +networkJsonObject.toString());
 	      // taskMonitor.showMessage(TaskMonitor.Level.INFO ,"Data object" +datajsonObject.toString());
-	      }
-	    else {
-	        // If not all  are present
+	    
+	    } else {
+    
+    	// If not all  are present
 	     mggManager.setNetworkObject(null);
 	      taskMonitor.showMessage(TaskMonitor.Level.ERROR, 
 	        "Node ids of the network are not present with sequence identifiers of "
@@ -162,10 +156,8 @@ public class ImportNetworkData extends AbstractTask {
 
 		
 	private boolean areNodesInDataJson(JSONObject networkJsonObject, JSONObject dataJsonObject) {
-		
-	   
-
-		
+		// This function checks whether the node names of the loaded network, belong to the abundance table already loaded.
+		// If not, then the network will not be loaded successfully, since microbetag would fail.
 		
 		 JSONArray networkData = (JSONArray) networkJsonObject.get("network");
 		    Set<String> nodeNamesInNetwork = new HashSet<>();
@@ -175,9 +167,7 @@ public class ImportNetworkData extends AbstractTask {
 		        nodeNamesInNetwork.add((String) edge.get(1)); 
 		    }
 
-		 
 		    Set<String> nodeNamesInData = new HashSet<>();
-
 		  
 		    if (dataJsonObject.containsKey("data")) {
 		        JSONArray data = (JSONArray) dataJsonObject.get("data");
@@ -188,16 +178,9 @@ public class ImportNetworkData extends AbstractTask {
 		            String nodeName = (String) row.get(0); 
 		            nodeNamesInData.add(nodeName);
 		        }
-		    }
-
-		   
+		    }		   
 		    return nodeNamesInData.containsAll(nodeNamesInNetwork);
 		}
-		    
-		    
+  
 	}
 	    
-
-	
-
-

@@ -1,17 +1,8 @@
 	
 package be.kuleuven.mgG.internal.tasks;
 
-import java.awt.Color;
-import java.awt.Paint;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -20,36 +11,50 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.event.CyEventHelper;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
-import org.cytoscape.view.layout.CyLayoutAlgorithm;
-import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
-import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.model.VisualProperty;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
-import org.cytoscape.view.presentation.property.values.NodeShape;
-import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
-import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.VisualStyle;
-import org.cytoscape.view.vizmap.VisualStyleFactory;
-import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
-import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
-import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.ObservableTask;
-import org.cytoscape.work.TaskMonitor;
-import org.cytoscape.work.json.JSONResult;
+
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.cytoscape.util.color.*;
+
+//import java.awt.Color;
+//import java.awt.Paint;
+//import java.nio.file.Files;
+//import java.nio.file.Paths;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.HashSet;
+//import java.util.List;
+//import java.util.Map;
+//import java.util.Set;
+//import org.cytoscape.application.CyApplicationManager;
+//import org.cytoscape.event.CyEventHelper;
+//import org.cytoscape.model.CyEdge;
+//import org.cytoscape.model.CyNetwork;
+//import org.cytoscape.model.CyNetworkFactory;
+//import org.cytoscape.model.CyNetworkManager;
+//import org.cytoscape.model.CyNode;
+//import org.cytoscape.model.CyTable;
+//import org.cytoscape.view.layout.CyLayoutAlgorithm;
+//import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
+//import org.cytoscape.view.model.CyNetworkView;
+//import org.cytoscape.view.model.CyNetworkViewFactory;
+//import org.cytoscape.view.model.CyNetworkViewManager;
+//import org.cytoscape.view.model.VisualProperty;
+//import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+//import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+//import org.cytoscape.view.presentation.property.values.NodeShape;
+//import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+//import org.cytoscape.view.vizmap.VisualMappingManager;
+//import org.cytoscape.view.vizmap.VisualStyle;
+//import org.cytoscape.view.vizmap.VisualStyleFactory;
+//import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
+//import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
+//import org.cytoscape.work.ObservableTask;
+//import org.cytoscape.work.json.JSONResult;
+//import org.json.simple.JSONObject;
+//import org.cytoscape.util.color.*;
+
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskMonitor;
+
 
 import be.kuleuven.mgG.internal.model.MGGManager;
 
@@ -99,13 +104,16 @@ public class CreateNetworkTask extends AbstractTask {
 
 	   
 	    if (jsonResponse == null) {
-	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response to create the network from.");
+	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "microbetag failed to return an annotated network. "
+	        		+ "Go through the Error returned (see 'Show tasks') and consider instructions on microbetag's RTD: https://microbetag.readthedocs.io .  "
+	        		+ "If you still cannot run microbetag successfully, consider joining the microbetag Matrix community, forward the Error and the Traceback"
+	        		+ "and help will come: https://matrix.to/#/#microbetagcommunity:matrix.org");
 	        return; 
 	    }
 
 	    try {
 	        String cxContent = jsonResponse.toJSONString();
-	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx";
+	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx2";    // changed cx to cx2
 
 	        
 	        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -132,51 +140,4 @@ public class CreateNetworkTask extends AbstractTask {
 	        e.printStackTrace();
 	    }
 	}
-	}
-//		taskMonitor.setTitle("Creating the network");
-//		taskMonitor.setStatusMessage("Creating the network...");
-//
-//		JSONArray jsonResponse = mggManager.getServerResponse();
-//		
-//		// Check if jsonResponse is not null
-//	    if (jsonResponse == null) {
-//	        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "No server response to create the network from.");
-//	        return; // Exit the method early as there's no response to process
-//	    }
-//		
-//		try {
-//		      
-//	        String cxContent = jsonResponse.toJSONString();
-//	        
-//	        
-//	        CloseableHttpClient httpClient = HttpClients.createDefault();
-//	        String cytoscapeAPIURL = "http://localhost:1234/v1/networks?format=cx";
-//	        
-//	        
-//	        HttpPost httpPost = new HttpPost(cytoscapeAPIURL);
-//	        StringEntity entity = new StringEntity(cxContent);
-//	        httpPost.setEntity(entity);
-//	        httpPost.setHeader("Accept", "application/json");
-//	        httpPost.setHeader("Content-type", "application/json");
-//	        
-//	       
-//	        CloseableHttpResponse response = httpClient.execute(httpPost);
-//	        HttpEntity responseEntity = response.getEntity();
-//	        
-//	        if(responseEntity != null) {
-//	            String result = EntityUtils.toString(responseEntity);
-//	            System.out.println(result);
-//	        }
-//	        
-//	    } catch (IOException e) {
-//	        e.printStackTrace();
-//	    }
-//	}
-//		
-//                   
-//	}
-
-	
-	
-
-
+}

@@ -38,7 +38,7 @@ public class MGGCytoPanel extends JPanel
 	// Define colors
 	public static final Color[] MY_COLORS = new Color[] { Color.BLACK, Color.RED, Color.BLUE, Color.YELLOW };
 	//  Font object
-	private static final Font myFont = new Font("Arial", Font.PLAIN, 16);
+	private static final Font myFont = new Font("SansSerif", Font.PLAIN, 16);
 
 	private JTabbedPane tabs;
 	private MGGNodePanel  nodePanel;
@@ -130,7 +130,7 @@ public class MGGCytoPanel extends JPanel
 	public void updateControls() {
 		nodePanel.updateControls();
 		
-		edgePanel.updateWeightPanelPanel();
+		edgePanel.updateWeightPanel();
 		
 		edgePanel.updateSeedPanel();
 	}

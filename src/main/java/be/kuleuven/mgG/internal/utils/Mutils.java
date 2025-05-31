@@ -33,12 +33,12 @@ import be.kuleuven.mgG.internal.view.MGGNodePanel;
 public class Mutils {
 
     // Namespaces
-    public static String MY_NAMESPACE = "MGGid";
-    public static String MY_ATTRIBUTE = "id";
+    public static String MY_NAMESPACE       = "MGGid";
+    public static String MY_ATTRIBUTE       = "id";
     public static String PhenDbSc_NAMESPACE = "phendbScore";
-    public static String PhenDb_NAMESPACE = "phendb";
-    public static String Weight_NAMESPACE = "microbetag";
-    public static String Seed_NAMESPACE = "seed";
+    public static String PhenDb_NAMESPACE   = "phendb";
+    public static String Weight_NAMESPACE   = "microbetag";
+    public static String Seed_NAMESPACE     = "seed";
     public static String Faprotax_NAMESPACE = "faprotax";
 
     
@@ -94,12 +94,7 @@ public class Mutils {
         return isMGGNetwork(network);
         
     }
-    	
-    	
-    	
-	
-    
-    
+
 
     // This method will tell us if we have the new side panel functionality (i.e. namespaces)
     public static boolean ifHaveMGG(CyNetwork network) {
@@ -111,7 +106,7 @@ public class Mutils {
         return false;          
     }
 
-    
+
     public static void hideSingletons(CyNetworkView view, boolean show) {
 		CyNetwork net = view.getModel();
 		for (View<CyNode> nv: view.getNodeViews()) {
@@ -124,6 +119,7 @@ public class Mutils {
 				nv.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
 		}
 	}
+
     
     public static void doShowMspecies(CyNetworkView view, boolean show, boolean showSingletons,boolean phendbselected) {
     	
@@ -135,9 +131,7 @@ public class Mutils {
     
         //CyNetworkView view = manager.getCurrentNetworkView();
         CyNetwork net = view.getModel();
-
         String columnName = "microbetag::ncbi-tax-level";
-        //String targetValue = "mspecies";
 
         // Check if the column exists
        if (net.getDefaultNodeTable().getColumn(columnName) == null) {
@@ -152,17 +146,15 @@ public class Mutils {
             if (nodeView == null) continue;
             CyNode node=nodeView.getModel();
             if (show) {
-                CyRow nodeRow = net.getRow(node);
-                String attributeValue = nodeRow.get(columnName, String.class);
-               boolean isVisible = "mspecies".equals(attributeValue);
-               
+                
+            	CyRow nodeRow = net.getRow(node);
+                
+            	@SuppressWarnings("unchecked")  //  the compiler cannot verify that it is a List<String> at runtime 
+                List<String> attributeValues = nodeRow.get(columnName, List.class);
+                boolean isVisible = attributeValues != null && attributeValues.contains("mspecies");
+                
                 nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, isVisible);}
-//            else
-//            	nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
-//            } //else {
-//                // If 'show' is false, set all nodes to visible
-//               //nodeView.clearValueLock(BasicVisualLexicon.NODE_VISIBLE);
-//            }   
+
             else {
                 // When show is false
                 if (showSingletons==false) {
@@ -177,10 +169,7 @@ public class Mutils {
             }
         }
     }
-          
-    	
-    
-    
+
 
     public static void clearHighlight(MGGManager manager, CyNetworkView view) {
         // if (node == null) return;
@@ -256,9 +245,7 @@ public class Mutils {
         return null;
     }
 
-    
-    
-    
+
     public static List < String > getPhenDbScList(CyNetwork network) {
         List < String > phendbScores = new ArrayList < > ();
         if (network == null) {
@@ -374,22 +361,25 @@ public class Mutils {
     
     public static ListMultipleSelection<String> updateAttributeList(CyNetwork network, 
             ListMultipleSelection<String> attributes) {
-if (network == null)
-return new ListMultipleSelection<String>();
 
-List<String> attributeArray = getAllAttributes(network, network.getDefaultNodeTable());
-attributeArray.addAll(getAllAttributes(network, network.getDefaultEdgeTable()));
-ListMultipleSelection<String> newAttribute = new ListMultipleSelection<String>(attributeArray);	
-if (attributeArray.size() > 0){
-if (attributes != null) {
-newAttribute.setSelectedValues(attributes.getSelectedValues());
-} else {
-newAttribute.setSelectedValues(Collections.singletonList(attributeArray.get(0)));
-}
-return newAttribute;
-}
-return new ListMultipleSelection<String>("--None--");
-}
+    	if (network == null)
+    		return new ListMultipleSelection<String>();
+		
+		List<String> attributeArray = getAllAttributes(network, network.getDefaultNodeTable());
+		attributeArray.addAll(getAllAttributes(network, network.getDefaultEdgeTable()));
+		ListMultipleSelection<String> newAttribute = new ListMultipleSelection<String>(attributeArray);	
+		
+		if (attributeArray.size() > 0){
+			if (attributes != null) {
+				newAttribute.setSelectedValues(attributes.getSelectedValues());
+			} else {
+				newAttribute.setSelectedValues(Collections.singletonList(attributeArray.get(0)));
+			}
+			return newAttribute;
+		}
+		
+		return new ListMultipleSelection<String>("--None--");
+    }
 
     
     private static List<String> getAllAttributes(CyNetwork network, CyTable table) {
@@ -430,7 +420,7 @@ return new ListMultipleSelection<String>("--None--");
 
         // Lifestyle
         String[] lifestyleAttributes = {
-            "aerobe","anaerobe","aSaccharolytic", "autoCo2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative",
+            "aerobe","anaerobe","aSaccharolytic","a_saccharolytic", "autoCo2", "auto_co2", "fermentative", "Aerobe","Anaerobe", "halophilic","methanotroph","methanotrophy","nonFermentative", "non_fermentative",
             "phototrophy","psychrophilic","saccharolytic","symbiont","thermophilic","methylotrophy","chitinolysis","knallgas bacteria",
             "cellulolysis","xylanolysis","plant pathogen","ligninolysis","fermentation","aerobic chemoheterotrophy","invertebrate parasites",
             "human pathogens septicemia","intracellular parasites","predatory or exoparasitic","human pathogens pneumonia","human pathogens nosocomia",
@@ -438,7 +428,7 @@ return new ListMultipleSelection<String>("--None--");
             "photosynthetic cyanobacteria","fish parasites","aerobic anoxygenic phototrophy","anoxygenic photoautotrophy H2 oxidizing",
             "anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing","anoxygenic photoautotrophy",
             "human gut","human associated","mammal gut","chemoheterotrophy","animal parasites or symbionts","oxygenic photoautotrophy",
-            "photoautotrophy","phototrophy","photoheterotrophy","dGlucose"
+            "photoautotrophy","phototrophy","photoheterotrophy","d_Glucose", "dGlucose"
         };
         
         
@@ -452,18 +442,18 @@ return new ListMultipleSelection<String>("--None--");
             "phototrophy", "aerobic chemoheterotrophy", "nonphotosynthetic cyanobacteria",       
             "photosynthetic cyanobacteria","aerobic anoxygenic phototrophy","anoxygenic photoautotrophy H2 oxidizing",
             "anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing","anoxygenic photoautotrophy",
-            "chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","phototrophy","photoheterotrophy","dGlucose" };
+            "chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","phototrophy","photoheterotrophy","dGlucose", "d_glucose"};
         
         for (String attr : energySourceAttributes) {
             attributeCategoryMap.put(attr, "Lifestyle: Energy Source");
         }
         
-        String[] carbonSourceAttributes = {"autoCo2","aSaccharolytic","fermentative","methanotroph","methanotrophy","nonFermentative",
-        		"phototrophy","saccharolytic","methylotrophy","chitinolysis","cellulolysis","xylanolysis","ligninolysis","fermentation",
+        String[] carbonSourceAttributes = {"autoCo2","auto_co2","aSaccharolytic", "a_saccharolytic", "fermentative","methanotroph","methanotrophy","nonFermentative",
+        		"phototrophy","saccharolytic", "methylotrophy","chitinolysis","cellulolysis","xylanolysis","ligninolysis","fermentation",
         		"aerobic chemoheterotrophy","nonphotosynthetic cyanobacteria","photosynthetic cyanobacteria","aerobic anoxygenic phototrophy",
         		"anoxygenic photoautotrophy H2 oxidizing","anoxygenic photoautotrophy S oxidizing","anoxygenic photoautotrophy Fe oxidizing",
         		"anoxygenic photoautotrophy","chemoheterotrophy","oxygenic photoautotrophy","photoautotrophy","photoheterotrophy",
-        		"dGlucose"};
+        		"dGlucose", "d_glucose"};
         
         for (String attr : carbonSourceAttributes) {
             attributeCategoryMap.put(attr, "Lifestyle: Carbon Source");
@@ -481,8 +471,8 @@ return new ListMultipleSelection<String>("--None--");
         }		
         
         
-        String[] biogeochemical_processesAttributes = { "NOB","nitrogen fixation","aob","dark sulfite oxidation","fixingN2",
-        		"nitrate ammonification","sulfateReducer","sulfite respiration","arsenate detoxification","nitrite ammonification",
+        String[] biogeochemical_processesAttributes = { "NOB","nitrogen fixation","aob", "AOB", "dark sulfite oxidation","fixingN2", "fixing_n2",
+        		"nitrate ammonification","sulfateReducer", "sulfate_reducer", "sulfite respiration","arsenate detoxification","nitrite ammonification",
         		"acetoclastic methanogenesis","thiosulfate respiration","arsenate respiration","nitrite respiration",
         		"methanogenesis by disproportionation of methyl groups","respiration of sulfur compounds","dissimilatory arsenate reduction",
         		"dark sulfide oxidation","methanogenesis using formate","oil bioremediation","arsenite oxidation detoxification",
@@ -494,7 +484,7 @@ return new ListMultipleSelection<String>("--None--");
         		"dark iron oxidation","nitrous oxide denitrification","nitrate respiration","aerobic ammonia oxidation",
         		"nitrate reduction","denitrification","nitrogen respiration","aerobic nitrite oxidation","chlorate reducers",
         		"sulfate respiration","nitrification","dark hydrogen oxidation","iron respiration","sulfur respiration","plastic degradation",
-        		"reductive acetogenesis","ureolysis"     };
+        		"reductive acetogenesis","ureolysis"};
 
         
         for (String attr : biogeochemical_processesAttributes) {
@@ -516,17 +506,19 @@ return new ListMultipleSelection<String>("--None--");
         }	
         
         
-        String[] nitrogenCycleattributes = {"NOB","aob","fixingN2","anammox","nitrate denitrification","nitrite denitrification",
+        String[] nitrogenCycleattributes = {
+        		"NOB","aob", "AOB", "fixingN2", "fixing_n2", "anammox","nitrate denitrification","nitrite denitrification",
         		"nitrous oxide denitrification","aerobic ammonia oxidation","denitrification","aerobic nitrite oxidation",
         		"nitrogen fixation","nitrate ammonification","nitrite ammonification","nitrite respiration","nitrate respiration",
-        		"nitrate reduction","nitrogen respiration","nitrification","ureolysis" };
+        		"nitrate reduction","nitrogen respiration", "nitrification","ureolysis", "nitrogen_fixation" 
+        };
 
         		
         for (String attr : nitrogenCycleattributes) {
             attributeCategoryMap.put(attr, "Biogeochemical processes: Nitrogen Cycle");
         }	
         
-        String[] sulfurCycleAttributes  = {"sulfateReducer","sulfate respiration","sulfur respiration","dark sulfite oxidation",
+        String[] sulfurCycleAttributes  = {"sulfateReducer", "sulfate_reducer", "sulfate respiration","sulfur respiration","dark sulfite oxidation",
         		"sulfite respiration","thiosulfate respiration","respiration of sulfur compounds","dark sulfide oxidation",
         		"dark sulfur oxidation","dark thiosulfate oxidation","dark oxidation of sulfur compounds" };
 
@@ -547,8 +539,8 @@ return new ListMultipleSelection<String>("--None--");
             
         	
         
-        String[] metaboliteProducedAttributes= {"aceticAcid","butanol","butyricAcid","dLacticAcid","ethanol",
-        		"hydrogen","indole","isobutyricAcid","isovalericAcid","lLacticAcid","formicAcid","rAcetoin","succinicAcid"};
+        String[] metaboliteProducedAttributes= {"aceticAcid", "acetic_acid", "butanol","butyricAcid", "butyric_acid", "dLacticAcid", "d_lactic_acid", "ethanol",
+        		"hydrogen","indole","isobutyricAcid", "isobutyric_acid", "isovalericAcid", "isovaleric_acid", "lLacticAcid", "l_lactic_acid", "formicAcid", "formic_acid", "rAcetoin", "r_acetoin", "succinicAcid", "succinic_acid"};
 
         
         for (String attr : metaboliteProducedAttributes) {
