@@ -309,11 +309,12 @@ public class CreateMGGVisualStyleTask extends AbstractTask {
 		// Palette set1= paletteProvider.getPalette("Set1 colors");
 		Color[] set1Palette = set1.getColors(9);
 
+		speciesColorMap.put("mspecies", set1Palette[2]);
+		speciesColorMap.put("species", set1Palette[1]);
 		speciesColorMap.put("genus", set1Palette[7]);
 		speciesColorMap.put("family", set1Palette[3]);
-		speciesColorMap.put("mspecies", set1Palette[2]);
+		speciesColorMap.put("metavar", set1Palette[4]);   // set1Palette[5] -> this is yellow as when selected
 		speciesColorMap.put("null", set1Palette[8]);
-		speciesColorMap.put("species", set1Palette[1]);
 		// speciesColorMap.put("GRC5", set1Palette[5]);
 
 		return speciesColorMap;
