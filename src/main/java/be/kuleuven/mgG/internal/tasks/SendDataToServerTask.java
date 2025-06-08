@@ -68,6 +68,22 @@ public class SendDataToServerTask extends AbstractTask {
     )
      public boolean SENSITIVE=false;
   
+     
+     @Tunable(
+    		 description="max_k",
+    		 tooltip="Maximum size of conditioning sets, high values can strongly increase runtime. \n"
+    		 		+ "max_k = 0 results in no conditioning (univariate mode). (default: 3)" , 
+    		 groups={"Additional Parameter if Input is Abudance Table"}, 
+    		 dependsOn = "INPUT=abundance table", 
+    		 gravity=11.0, 
+    		 required=true
+    )
+     public int MAX_K=3;
+       
+     
+     
+     
+     
      @Tunable(
     		 description="Choose delimiter", 
     		 groups={"Input Parameters"},
@@ -193,6 +209,7 @@ public class SendDataToServerTask extends AbstractTask {
 	        inputParameters.add("delimiter:" + DELIMITER.getSelectedValue()); 
 	        inputParameters.add("sensitive:" + SENSITIVE);
 	        inputParameters.add("heterogeneous:" + HETEROGENEOUS);
+	        inputParameters.add("max_k:" + MAX_K);
 	        inputParameters.add("phen_traits:" + PHEN_TRAITS);
 	        inputParameters.add("faprotax:" + FAPROTAX);
 	        inputParameters.add("pathway_complementarity:" + PATH_COMPLEMENTS);
